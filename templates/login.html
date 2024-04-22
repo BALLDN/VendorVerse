@@ -5,14 +5,40 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}"/>
     <title>Login to VendorVerse!</title>
 
-    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        body
+        {
+            background:#c5d5cb !important;
+        }
+    </style>
 </head>
 
 <body>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">VendorVerse</a>
+          </div>
+          <ul class="nav navbar-nav">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Register</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
+          </ul>
+        </div>
+      </nav>
     <div class="login">
         <form>
             <div class="form_element">
-                <h2>Please login to use the application</h2>
+                <h2>Please login to VendorVerse!</h2>
+                <br>
                 <label for="email">Email</label> 
                 <input type="text" name="email" id="email"></input>
             </div>
@@ -20,10 +46,16 @@
                 <label for="password">Password</label>
                 <input name="password" id="password" type="password"></input>
             </div>
+            <a href="register">Don't have an account? Sign up here!</a>
             <br>
-            <button>Login</button>
+            <br>
+            <button class="btn btn-primary">Login</button>
         </form>
     </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
 </html>

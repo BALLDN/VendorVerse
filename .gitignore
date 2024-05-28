@@ -2,4 +2,6 @@
 .vscode/*
 .venv
 .sonarlint
+.github
 __pycache__
+sonar-project.properties

@@ -10,6 +10,11 @@ body {
    background: linear-gradient(to right, #4e54c8, #8f94fb) !important;
 }
 
+.registration_card{
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+
 #header{
     height: 100px;
     margin: auto;

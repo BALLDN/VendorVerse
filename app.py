@@ -18,3 +18,7 @@ def register():
 @app.route('/home')
 def home():
     return render_template('home_page.html')
+
+@app.route('/reset')
+def reset():
+    return render_template('forgot_password.html')

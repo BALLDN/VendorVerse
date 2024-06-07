@@ -35,6 +35,7 @@
               <div class="card-body p-5">
               <h2 class="text-uppercase text-center mb-5">Login to VendorVerse</h2>
 
+<<<<<<< HEAD
               {% for mesg in get_flashed_messages() %}
                 <div class="alert alert-danger">
                   <strong >{{ mesg }}</strong>
@@ -52,21 +53,43 @@
                     <input type="email" id="Email" name="Email" class="form-control form-control-md" required>
                   {% endif %}
 
+=======
+<<<<<<< Updated upstream
+              <form method="POST">
+=======
+              <form method=post>
+>>>>>>> Stashed changes
+
+                <div data-mdb-input-init class="form-outline mb-4">
+                  <label class="form-label" for="Email">Email Address</label>
+                  <input type="email" id="Email" name="Email" class="form-control form-control-md">
+>>>>>>> 45527d8 (Registration Page now Functional)
                 </div>
 
                 <div data-mdb-input-init class="form-outline mb-4">
                   <label class="form-label" for="Password">Password</label>
+<<<<<<< HEAD
                   <input type="password" id="Password" name="Password" class="form-control form-control-md" required>
+=======
+                  <input type="password" id="Password" name="Password" class="form-control form-control-md">
+>>>>>>> 45527d8 (Registration Page now Functional)
                 </div>
 
                 <!-- An element to toggle between password visibility -->
                <input type="checkbox" onclick="showPassword()">Show Password
 
 
+<<<<<<< Updated upstream
                 <div class="d-flex justify-content-center">
                   <button  type="submit" data-mdb-button-init
                     data-mdb-ripple-init class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Login</button>
                 </div>
+=======
+               <div class="d-flex justify-content-center">
+                <button id="signInButton" type="submit" class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Login</button>
+            </div>
+            
+>>>>>>> Stashed changes
 
                 <p class="text-center text-muted mt-2 mb-0">Don't have an account? <a href="{{url_for("register")}}"
                   class="fw-bold text-body">Register</a></p>
@@ -83,7 +106,14 @@
     </div>
   </div>
 </section>
+<<<<<<< HEAD
 <script type="module" src="./static/firebase.js"></script> <!-- Auth functions -->
+=======
+<<<<<<< Updated upstream
+=======
+    <script type="module" src="./static/firebase.js"></script> <!-- Auth functions -->
+>>>>>>> Stashed changes
+>>>>>>> 45527d8 (Registration Page now Functional)
 </body>
 
 </html>

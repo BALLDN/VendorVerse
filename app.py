@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import firebase_admin
 from models.user_model import User
 from models.booking_model import bookings
@@ -10,6 +11,21 @@ app = Flask(__name__)
 # Put in to Flash Error Message, need to improve sessions later
 app.secret_key = "Secret Key"
 
+=======
+<<<<<<< Updated upstream
+from flask import Flask, redirect, render_template, request, url_for
+from flask import jsonify
+=======
+import firebase_admin
+from user_model import users
+from firebase_admin import credentials
+from firebase_admin import firestore
+from flask import Flask, redirect, render_template, request, url_for
+>>>>>>> Stashed changes
+
+app = Flask(__name__)
+
+>>>>>>> 45527d8 (Registration Page now Functional)
 # Use the application default credentials.
 
 cred = credentials.Certificate("serviceAccount.json")
@@ -32,6 +48,7 @@ def login():
         return render_template('login.html')
 
     if request.method == 'POST':
+<<<<<<< HEAD
 
         # Get username used in login form
         login_email = request.form['Email']
@@ -80,6 +97,25 @@ def register():
 
         return url_response
 
+=======
+<<<<<<< Updated upstream
+        return redirect(url_for('vendor_details_page'))
+    return render_template('login.html')
+
+
+@app.route('/register')
+=======
+        users.get_users(db)
+        return redirect(url_for('home'))
+
+@app.route('/register', methods=['GET', 'POST'])
+>>>>>>> Stashed changes
+def register():
+    if request.method == 'POST':
+        users.set_user(db)
+        return redirect(url_for('home'))
+        
+>>>>>>> 45527d8 (Registration Page now Functional)
     return render_template('register.html')
 
 

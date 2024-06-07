@@ -30,14 +30,24 @@ class users:
         users_ref = database_connection.collection('Users')
         docs = users_ref.get()
         for doc in docs:
-            print('{} => {}'.format(doc.id, doc.to_dict()))
+            return('{} => {}'.format(doc.id, doc.to_dict()))
         return docs
     
     def validate_user(database_connection):
         users_ref = database_connection.collection('Users')
-        docs = users_ref.get()
-        for doc in docs:
-            if(doc.select("Email") ==  request.form['Email'] & doc.select("Password") ==  request.form['Email']):
-                return True
-        return False
+        email = request.form['Email']
+        password = request.form['Password']
+
+        query = users_ref.where("Email", "==", email) and users_ref.where("Password", "==", password)
+        results = query.get()
+        
+        if len(results) > 0:
+            return True
+        else:
+            return False
+
+        
+        
+       
+        
    

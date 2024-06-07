@@ -19,7 +19,10 @@ def login():
         users.get_users(db)
         
     if request.method == 'POST':
+        if(users.validate_user(db)):
             return redirect(url_for('home'))
+        else:
+            return "Invalid Credentials"
     
     return render_template('login.html')
 

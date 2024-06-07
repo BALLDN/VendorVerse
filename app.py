@@ -2,9 +2,12 @@ import firebase_admin
 from user_model import users
 from firebase_admin import credentials
 from firebase_admin import firestore
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, flash, redirect, render_template, request, url_for
 
 app = Flask(__name__)
+
+#Put in to Flash Error Message, need to improve sessions later
+app.secret_key = "Secret Key"
 
 # Use the application default credentials.
 
@@ -19,10 +22,16 @@ def login():
         users.get_users(db)
         
     if request.method == 'POST':
-        if(users.validate_user(db)):
-            return redirect(url_for('home'))
+        if(users.validate_user(db) == "V"):
+            return redirect(url_for('vendor'))
+        elif(users.validate_user(db) == "E"):
+            return redirect(url_for('employee'))
+        elif(users.validate_user(db) == "A"):
+            return redirect(url_for('admin'))
         else:
-            return "Invalid Credentials"
+            #Error Message displays as appropriate
+            flash(users.validate_user(db))
+            return render_template('login.html')
     
     return render_template('login.html')
 
@@ -41,7 +50,7 @@ def hello():
 
 
 @app.route('/vendor')
-def home():
+def vendor():
     return render_template('vendor_home_page.html')
 
 @app.route('/employee')

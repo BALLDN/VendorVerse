@@ -11,9 +11,9 @@ class users:
     def display(self):
         print(self.email, self.password, self.user_type, self.status)
         
-    def set_user(database_connection):
+    def add_user(database_connection):
         
-        #Must be changed to add validation and sessions/cookies to keep user logged in
+        #adds a user to db
         status = "P"
         email= request.form['Email']
         password= request.form['Password']
@@ -26,10 +26,18 @@ class users:
         return "User has been added"
     
     def get_users(database_connection):
-        #getting the docs
+        #gets all users from db
         users_ref = database_connection.collection('Users')
         docs = users_ref.get()
         for doc in docs:
             print('{} => {}'.format(doc.id, doc.to_dict()))
         return docs
+    
+    def validate_user(database_connection):
+        users_ref = database_connection.collection('Users')
+        docs = users_ref.get()
+        for doc in docs:
+            if(doc.select("Email") ==  request.form['Email'] & doc.select("Password") ==  request.form['Email']):
+                return True
+        return False
    

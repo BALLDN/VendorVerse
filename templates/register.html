@@ -39,21 +39,21 @@
             <div class="card-body p-5">
             <h2 class="text-uppercase text-center mb-5">Register for VendorVerse!</h2>
 
-            <form>
+            <form action="{{ url_for("register")}}" method=post>
 
               <div data-mdb-input-init class="form-outline mb-4">
                 <label class="form-label" for="Email">Email Address</label>
-                <input type="email" id="Email" class="form-control form-control-md">
+                <input type="email" id="Email" name="Email" class="form-control form-control-md" required>
               </div>
 
               <div data-mdb-input-init class="form-outline mb-4">
                 <label class="form-label" for="Password">Password</label>
-                <input type="password" id="Password" class="form-control form-control-md">
+                <input type="password" id="Password" name="Password" class="form-control form-control-md" required>
               </div>
 
               <div data-mdb-input-init class="form-outline mb-4">
                 <label class="form-label" for="Password">Confirm Password</label>
-                <input type="password" id="Confirm_Password" class="form-control form-control-md">
+                <input type="password" id="Confirm_Password" name="confirm_password" class="form-control form-control-md" required>
               </div>
 
               <!-- An element to toggle between password visibility -->
@@ -61,8 +61,8 @@
 
              <div data-mdb-input-init class="form-outline mb-4">
               <label class="form-label" for="user_type">User Type</label>
-              <select id="user_type" class="form-select form-select-md mb-3" aria-label=".form-select-md example">
-                  <option selected disabled>Please Select a User Type</option>
+              <select id="user_type" class="form-select form-select-md mb-3" name="User_Type" aria-label=".form-select-md example" required>
+                <!--  <option selected disabled>Please Select a User Type</option> -->
                   <option value="Vendor">Vendor</option>
                   <option value="Employee">Employee</option>
               </select>
@@ -70,14 +70,14 @@
 
 
               <div class="d-flex justify-content-center">
-                <button  type="button" data-mdb-button-init
+                <button  type="submit" data-mdb-button-init
                   data-mdb-ripple-init class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Register</button>
               </div>
 
-              <p class="text-center text-muted mt-2 mb-0">Don't have an account? <a href="register"
-                class="fw-bold text-body">Register</a></p>
+              <p class="text-center text-muted mt-2 mb-0">Already have an account? <a href="login"
+                class="fw-bold text-body">Login</a></p>
 
-              <p class="text-center text-muted mt-2 mb-0">Forgot you Password? <a href="#"
+              <p class="text-center text-muted mt-2 mb-0">Forgot your Password? <a href="#"
                   class="fw-bold text-body">Reset Password</a></p>
 
             </form>
@@ -89,6 +89,7 @@
   </div>
 </div>
 </section>
+<script type="module" src="./static/firebase.js"></script> <!-- Auth functions -->
 </body>
 
 </html>

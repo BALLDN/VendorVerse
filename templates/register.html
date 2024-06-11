@@ -74,10 +74,10 @@
                   data-mdb-ripple-init class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Register</button>
               </div>
 
-              <p class="text-center text-muted mt-2 mb-0">Already have an account? <a href="login"
+              <p class="text-center text-muted mt-2 mb-0">Already have an account? <a href="{{url_for("login")}}"
                 class="fw-bold text-body">Login</a></p>
 
-              <p class="text-center text-muted mt-2 mb-0">Forgot your Password? <a href="#"
+              <p class="text-center text-muted mt-2 mb-0">Forgot your Password? <a href="{{url_for("reset")}}"
                   class="fw-bold text-body">Reset Password</a></p>
 
             </form>

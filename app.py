@@ -39,7 +39,7 @@ def login():
 def register():
     if request.method == 'POST':
         users.add_user(db)
-        return redirect(url_for('home'))
+        return redirect(url_for('vendor'))
         
     return render_template('register.html')
 

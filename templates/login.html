@@ -37,7 +37,7 @@
 
               {% for mesg in get_flashed_messages() %}
                 <div class="alert alert-danger">
-                  <strong>{{ mesg }}</strong>
+                  <strong >{{ mesg }}</strong>
                 </div>
               {% endfor %}
 
@@ -62,10 +62,10 @@
                     data-mdb-ripple-init class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Login</button>
                 </div>
 
-                <p class="text-center text-muted mt-2 mb-0">Don't have an account? <a href="register"
+                <p class="text-center text-muted mt-2 mb-0">Don't have an account? <a href="{{url_for("register")}}"
                   class="fw-bold text-body">Register</a></p>
 
-                <p class="text-center text-muted mt-2 mb-0">Forgot you Password? <a href="forgot_password"
+                <p class="text-center text-muted mt-2 mb-0">Forgot you Password? <a href="{{url_for("reset")}}"
                     class="fw-bold text-body">Reset Password</a></p>
 
               </form>

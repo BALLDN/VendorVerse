@@ -38,14 +38,16 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        users.add_user(db)
-        return redirect(url_for('vendor'))
+        user = users.add_user(db)
+        flash("Your Account is Pending Approval")
+        return redirect(url_for('register'))
+        
         
     return render_template('register.html')
 
 
 @app.route('/')
-def hello():
+def index():
     return render_template('public_home_page.html')
 
 

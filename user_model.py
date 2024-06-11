@@ -23,7 +23,7 @@ class users:
         
         user = {"Email": user_credentials.email, "Password": user_credentials.password, "User_Type": user_credentials.user_type,"Status": user_credentials.status}
         database_connection.collection("Users").add(user) 
-        return "User has been added"
+        return user
     
     def get_users(database_connection):
         #gets all users from db

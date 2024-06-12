@@ -9,7 +9,7 @@ jobs:
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
-    environment: Build
+    environment: QA
     steps:
       - uses: actions/checkout@v3
         with:

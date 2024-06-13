@@ -6,6 +6,7 @@ on:
 
 jobs:
   deploy:
+    name: Create Artifact and Deploy
     runs-on: ubuntu-latest
     environment: CI/CD
 
@@ -13,20 +14,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.10'  
-
-    - name: Install dependencies
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        pip install -r requirements.txt
-
     - name: Create artifact
       run: |
-        zip -r app.zip * .[^.]* -x "venv/*"
+        zip -r app.zip * .[^.]* 
 
     - name: Deploy to PythonAnywhere
       env:
@@ -35,7 +25,7 @@ jobs:
         PA_USERNAME: ${{ secrets.PA_USERNAME }}
       run: |
         # Upload the zip file
-        curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/app.zip" \
+        curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/" \
              -H "Authorization: Token ${PA_API_TOKEN}" \
              --form file=@app.zip
 

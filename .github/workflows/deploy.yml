@@ -23,24 +23,10 @@ jobs:
         PA_BASE_URL: ${{ vars.PA_BASE_URL }}
         PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
         PA_USERNAME: ${{ secrets.PA_USERNAME }}
-      # run: |
-      #   curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/content.zip" \
-      #        -H "Authorization: Token ${PA_API_TOKEN}" \
-      #        -d {"content"=@content.zip}
       run: |
-        import requests
-        import os
-
-        # Define upload URL
-        upload_url = f"os.getenv('PA_BASE_URL')/api/v0/user/os.getenv('PA_USERNAME')/files/path/home/os.getenv('PA_USERNAME')/content.zip"
-
-        # Open the zip file to upload
-        with open('content.zip', 'rb') as file:
-            headers = {'Authorization': f'Token {os.getenv('PA_API_TOKEN')}'}
-            files = {'content': file} 
-            response = requests.post(upload_url, headers=headers, files=files)
-            response.raise_for_status()
-            print(f"File uploaded successfully. Status code: {response.status_code}")
+        curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/content.zip" \
+             -H "Authorization: Token ${PA_API_TOKEN}" \
+             -d {"content"=@content.zip}
 
     - name: Restart Web App
       env:

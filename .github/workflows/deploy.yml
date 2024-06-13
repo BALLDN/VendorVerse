@@ -16,7 +16,7 @@ jobs:
 
     - name: Create artifact
       run: |
-        zip -r content.zip * .[^.]* 
+        zip -r app.zip * .[^.]* 
 
     - name: Deploy to PythonAnywhere
       env:
@@ -25,9 +25,9 @@ jobs:
         PA_USERNAME: ${{ secrets.PA_USERNAME }}
       run: |
         # Upload the zip file
-        curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/content.zip" \
+        curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/app.zip" \
              -H "Authorization: Token ${PA_API_TOKEN}" \
-             --form file=@content.zip
+             -F file=@app.zip
 
         # Unzip the file, recreate venv, install dependencies, and clean up
         curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/consoles/" \

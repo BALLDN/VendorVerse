@@ -34,7 +34,7 @@ jobs:
         # Unzip the file, recreate venv, install dependencies, and clean up
         curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/consoles/" \
              -H "Authorization: Token ${PA_API_TOKEN}" \
-             -d "command=bash -c 'cd ~ && unzip -o content.zip && rm content.zip && python3 -m venv VendorVerseProd && source venv/bin/activate && pip install -r requirements.txt'"
+             -d "command=bash -c 'cd /home/${PA_USERNAME} && unzip -o content.zip && rm content.zip && python3 -m venv VendorVerseProd && source VendorVerseProd/bin/activate && pip install -r requirements.txt'"
 
         # Reload the web app
         curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/webapps/vendorverse.eu.pythonanywhere.com/reload/" \

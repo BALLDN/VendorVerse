@@ -32,11 +32,34 @@ jobs:
         PA_CONSOLE_ID: ${{ secrets.PA_CONSOLE_ID}}
       run: |
 
-        # Unzip the file, recreate venv, install dependencies, and clean up
-        curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/consoles/${PA_CONSOLE_ID}/send_input" \
-             -H "Authorization: Token ${PA_API_TOKEN}" \
-             -d "command=bash -c 'cd /home/${PA_USERNAME} && unzip -o content.zip && rm content.zip && python3 -m venv VendorVerseProd && source VendorVerseProd/bin/activate && pip install -r requirements.txt'"
-
+        send_input_to_console() {
+            local input="$1"
+        
+            # Construct URL for sending input
+            send_input_url="${API_BASE_URL}/user/${USERNAME}/consoles/${CONSOLE_ID}/send_input/"
+        
+            # Make POST request to send input to console
+            curl -s -X POST "${send_input_url}" \
+                 -H "Authorization: Token ${API_TOKEN}" \
+                 -d "input=${input}\n"
+        }
+        
+        perform_operations() {
+            local zip_file_path="$1"
+        
+            # Step 1: Send unzip command to console
+            send_input_to_console "unzip -o ${zip_file_path}"
+        
+            # Step 2: Send Python venv setup commands to console
+            send_input_to_console "python3 -m venv prod_venv"
+            send_input_to_console "source prod_venv/bin/activate"
+            send_input_to_console "pip install -r requirements.txt"
+        
+            # Step 3: Clean up zip file
+            send_input_to_console "rm ${zip_file_path}"
+        }
+        
+        perform_operations content.zip
     - name: Reload Web App
       env:
         PA_BASE_URL: ${{ vars.PA_BASE_URL }}

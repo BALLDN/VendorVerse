@@ -16,7 +16,11 @@ jobs:
 
     - name: Create artifact
       run: |
-        zip -r content.zip * .[^.]* 
+        create_artifact_zip() {
+            find . -maxdepth 1 -name ".*" ! -name "." ! -name ".." -prune -o -exec echo {} + |
+            xargs zip -r content.zip
+        }
+        create_artifact_zip
 
     - name: Upload Artifact
       env:

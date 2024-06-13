@@ -5,7 +5,7 @@ import requests
 def upload_zip_file(username, api_token, artifact_file_path):
     # Construct the upload URL based on PythonAnywhere API documentation
     api_base_url = "https://eu.pythonanywhere.com/api/v0"
-    upload_url = f"{api_base_url}/user/{username}/files/path/home/{username}/{artifact_file_path}"
+    upload_url = f"{api_base_url}/user/{username}/files/path/home/{username}/web_app/{artifact_file_path}"
 
     # Ensure the zip file exists
     if not os.path.exists(artifact_file_path):

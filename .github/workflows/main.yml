@@ -9,6 +9,7 @@ on:
     
 jobs:
   run-tests:
+    name: Run Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +33,7 @@ jobs:
         python -m unittest discover -s tests
 
   sonarcloud:
-    name: SonarCloud
+    name: Upload to SonarCloud
     runs-on: ubuntu-latest
     environment: CI/CD
     
@@ -45,46 +46,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          
-  deploy:
+
+  get-coverage:
+    name: Code Coverage Report
     runs-on: ubuntu-latest
-    environment: CI/CD
-
+    needs: [sonarcloud]
+    outputs:
+      coverage: ${{ steps.get-coverage.outputs.coverage }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.10'  
-
-    - name: Install dependencies
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        pip install -r requirements.txt
-    
-
-    - name: Create artifact
-      run: |
-        zip -r app.zip * .[^.]* -x "venv/*"
-
-    - name: Deploy to PythonAnywhere
+    - name: Get code coverage percentage
       env:
-        PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
-        PA_USERNAME: ${{ secrets.PA_USERNAME }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
-        # Upload the zip file
-        curl -X POST "https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/app.zip" \
-             -H "Authorization: Token ${PA_API_TOKEN}" \
-             --form file=@app.zip
+        sudo apt-get install -y jq
+        ANALYSIS_URL="https://sonarcloud.io/api/measures/component?component=your_project_key&metricKeys=coverage"
+        COVERAGE=$(curl -s -u ${{ secrets.SONAR_TOKEN }}: $ANALYSIS_URL | jq -r '.component.measures[0].value')
+        echo "Code Coverage: $COVERAGE%"
 
-        # Unzip the file, recreate venv, install dependencies, and clean up
-        curl -X POST "https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/" \
-             -H "Authorization: Token ${PA_API_TOKEN}" \
-             -d "command=bash -c 'cd ~ && unzip -o app.zip && rm app.zip && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt'"
+    - name: Display code coverage
+      run: echo "The code coverage is $COVERAGE%"
+          
+  trigger-deploy:
+    name: Trigger Deploy
+    runs-on: ubuntu-latest
+    needs: [get-coverage]
 
-        # Reload the web app
-        curl -X POST "https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/your_webapp_domain.com/reload/" \
-             -H "Authorization: Token ${PA_API_TOKEN}"
+    if: needs.get-coverage.outputs.coverage > 80
+    steps:
+      - name: Display message 
+        run: echo "The code coverage is $COVERAGE%. Triggering deployment..."
+        
+      - uses: ./.github/workflows/deploy.yml

@@ -36,11 +36,11 @@ jobs:
             local input="$1"
         
             # Construct URL for sending input
-            send_input_url="${API_BASE_URL}/user/${USERNAME}/consoles/${CONSOLE_ID}/send_input/"
+            send_input_url="${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/consoles/${PA_CONSOLE_ID}/send_input/"
         
             # Make POST request to send input to console
             curl -s -X POST "${send_input_url}" \
-                 -H "Authorization: Token ${API_TOKEN}" \
+                 -H "Authorization: Token ${PA_API_TOKEN}" \
                  -d "input=${input}\n"
         }
         

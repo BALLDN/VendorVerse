@@ -15,18 +15,15 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Create artifact
-      run: |
-        create_artifact_zip() {
-            find . -maxdepth 1 -name ".." -prune -o -exec echo {} + |
-            xargs zip -r content.zip
-        }
-        create_artifact_zip
+      run: find . -not -path '*/\.*' -type f -print | zip -r app.zip -@
+
 
     - name: Upload Artifact
       env:
         PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
         PA_USERNAME: ${{ secrets.PA_USERNAME }}
-      run: python3 .github/workflows/upload_artifact.py ${PA_USERNAME} ${PA_API_TOKEN} "content.zip"
+        ARTIFACT_PATH: app.zip
+      run: python3 .github/workflows/upload_artifact.py ${PA_USERNAME} ${PA_API_TOKEN} ${ARTIFACT_PATH}
 
     # - name: Setup Prod Environment
     #   env:

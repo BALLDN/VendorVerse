@@ -20,13 +20,9 @@ jobs:
 
     - name: Upload Artifact
       env:
-        PA_BASE_URL: ${{ vars.PA_BASE_URL }}
         PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
         PA_USERNAME: ${{ secrets.PA_USERNAME }}
-      run: |
-        curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/files/path/home/${PA_USERNAME}/content.zip" \
-             -H "Authorization: Token ${PA_API_TOKEN}" \
-             -d {"content"=@content.zip}
+      run: python3 upload_artifact.py ${PA_API_TOKEN} ${PA_USERNAME}
 
     - name: Restart Web App
       env:

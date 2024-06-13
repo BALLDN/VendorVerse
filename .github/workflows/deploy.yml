@@ -1,10 +1,8 @@
 name: Deploy to PythonAnywhere
 
 on:
-  push:
-    branches:
-      - main
-
+  workflow_call:
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -18,14 +16,13 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'  
+        python-version: '3.10'  
 
     - name: Install dependencies
       run: |
         python -m venv venv
         source venv/bin/activate
         pip install -r requirements.txt
-    
 
     - name: Create artifact
       run: |
@@ -44,8 +41,8 @@ jobs:
         # Unzip the file, recreate venv, install dependencies, and clean up
         curl -X POST "https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/" \
              -H "Authorization: Token ${PA_API_TOKEN}" \
-             -d "command=bash -c 'cd ~ && unzip -o app.zip && rm app.zip && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt'"
+             -d "command=bash -c 'cd ~ && unzip -o app.zip && rm app.zip && python3 -m venv VendorVerseProd && source venv/bin/activate && pip install -r requirements.txt'"
 
         # Reload the web app
-        curl -X POST "https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/your_webapp_domain.com/reload/" \
+        curl -X POST "https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/vendorverse.eu.pythonanywhere.com/reload/" \
              -H "Authorization: Token ${PA_API_TOKEN}"

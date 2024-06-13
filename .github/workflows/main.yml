@@ -35,7 +35,6 @@ jobs:
     name: SonarCloud
     runs-on: ubuntu-latest
     environment: CI/CD
-    needs: [run-tests]
     
     steps:
       - uses: actions/checkout@v3

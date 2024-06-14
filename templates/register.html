@@ -35,6 +35,12 @@
     <div class="container registration_card">
       <div class="row d-flex justify-content-center align-items-center" style="max-width: 80vw">
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-5">
+          {% for mesg in get_flashed_messages() %}
+                <div class="alert alert-success">
+                  <strong >{{ mesg }}</strong>
+                </div>
+              {% endfor %}
+
           <div class="card" style="border-radius: 15px; min-height: 80vh;">
             <div class="card-body p-5">
             <h2 class="text-uppercase text-center mb-5">Register for VendorVerse!</h2>
@@ -57,7 +63,7 @@
               </div>
 
               <!-- An element to toggle between password visibility -->
-             <input type="checkbox" onkeydown="showPassword()" onclick="showPassword()">Show Password
+             <input type="checkbox" onclick="showPassword()">Show Password
 
              <div data-mdb-input-init class="form-outline mb-4">
               <label class="form-label" for="user_type">User Type</label>
@@ -74,10 +80,10 @@
                   data-mdb-ripple-init class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Register</button>
               </div>
 
-              <p class="text-center text-muted mt-2 mb-0">Already have an account? <a href="login"
+              <p class="text-center text-muted mt-2 mb-0">Already have an account? <a href="{{url_for("login")}}"
                 class="fw-bold text-body">Login</a></p>
 
-              <p class="text-center text-muted mt-2 mb-0">Forgot your Password? <a href="#"
+              <p class="text-center text-muted mt-2 mb-0">Forgot your Password? <a href="{{url_for("reset")}}"
                   class="fw-bold text-body">Reset Password</a></p>
 
             </form>

@@ -23,21 +23,41 @@ class users:
         
         user = {"Email": user_credentials.email, "Password": user_credentials.password, "User_Type": user_credentials.user_type,"Status": user_credentials.status}
         database_connection.collection("Users").add(user) 
-        return "User has been added"
+        return user
     
     def get_users(database_connection):
         #gets all users from db
         users_ref = database_connection.collection('Users')
         docs = users_ref.get()
         for doc in docs:
-            print('{} => {}'.format(doc.id, doc.to_dict()))
+            return('{} => {}'.format(doc.id, doc.to_dict()))
         return docs
     
+    
+    #Change to return entire user credentials
     def validate_user(database_connection):
         users_ref = database_connection.collection('Users')
-        docs = users_ref.get()
-        for doc in docs:
-            if(doc.select("Email") ==  request.form['Email'] & doc.select("Password") ==  request.form['Email']):
-                return True
-        return False
+        form_email = request.form['Email']
+        password = request.form['Password']
+
+        query = users_ref.where("Email", "==", form_email)
+        results = query.get()
+        
+        for doc in results:
+            found_user_type = doc.to_dict().get("User_Type")
+            found_password = doc.to_dict().get("Password")
+        
+        
+        if len(results) > 0 and found_password == password:
+            #Decides which Homepage to load based on user type
+            return found_user_type
+        else:
+            return "Invalid Email or Password!"
+        
+        
+
+        
+        
+       
+        
    

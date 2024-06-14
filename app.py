@@ -39,6 +39,9 @@ def login():
 def register():
     if request.method == 'POST':
         user = users.add_user(db)
+        user_type = request.form['User_Type']
+        if user_type == "Vendor":
+           return redirect(url_for('vendor_details_page')) 
         flash("Your Account is Pending Approval")
         return redirect(url_for('register'))
         

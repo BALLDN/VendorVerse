@@ -10,7 +10,11 @@ def main():
     pa_username = sys.argv[1]
     pa_api_token = sys.argv[2]
     artifact_path = sys.argv[3]
+    print(pa_username)
+
+    
     try:
+        
         upload_artifact(pa_username, pa_api_token, artifact_path)
     except Exception as e:
         print(e)

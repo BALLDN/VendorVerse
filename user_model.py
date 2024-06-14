@@ -33,6 +33,8 @@ class users:
             return('{} => {}'.format(doc.id, doc.to_dict()))
         return docs
     
+    
+    #Change to return entire user credentials
     def validate_user(database_connection):
         users_ref = database_connection.collection('Users')
         form_email = request.form['Email']
@@ -49,10 +51,8 @@ class users:
         if len(results) > 0 and found_password == password:
             #Decides which Homepage to load based on user type
             return found_user_type
-        elif len(results) > 0 and found_password != password:
-            return "Invalid Password!"
         else:
-             return "Invalid Email!"
+            return "Invalid Email or Password!"
         
         
 

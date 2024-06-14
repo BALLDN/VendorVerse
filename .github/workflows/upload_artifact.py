@@ -31,19 +31,19 @@ if __name__ == "__main__":
     username = sys.argv[1]
     if username:
         print("No username provided")
+        print("Usage: python upload_artifact.py <username> <api_token> <artifact_path>")
         sys.exit(1)
     api_token = sys.argv[2]
     if api_token:
         print("No api_token provided")
+        print("Usage: python upload_artifact.py <username> <api_token> <artifact_path>")
         sys.exit(1)
     artifact_path = sys.argv[3]
     if artifact_path:
         print("No artifact_path provided")
-        sys.exit(1)
-        
-    if len(sys.argv) != 4:
         print("Usage: python upload_artifact.py <username> <api_token> <artifact_path>")
         sys.exit(1)
+
     try:
         upload_zip_file(username, api_token, artifact_path)
     except Exception as e:

@@ -32,20 +32,17 @@ def login():
             #Error Message displays as appropriate
             flash(users.validate_user(db))
             return render_template('login.html')
-    
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        user = users.add_user(db)
+        users.add_user(db)
         user_type = request.form['User_Type']
         if user_type == "Vendor":
-           return redirect(url_for('vendor_details_page')) 
+            return redirect(url_for('vendor_details_page')) 
         flash("Your Account is Pending Approval")
         return redirect(url_for('register'))
-        
-        
     return render_template('register.html')
 
 
@@ -57,6 +54,22 @@ def index():
 @app.route('/vendor')
 def vendor():
     return render_template('vendor_home_page.html')
+
+@app.route('/create_booking')
+def create_booking():
+    '''
+    Code to be implemented once sessions are introduced
+    if(session.get("User_Type") == "V"):
+        return render_template('create_booking_vendor.html')
+    else:
+        return render_template('create_booking_admin.html')
+    '''
+    return render_template('create_booking_vendor.html')
+
+'''Only Temporary until sessions are introduced'''
+@app.route('/create_booking_admin')
+def create_booking_admin():
+    return render_template('create_booking_admin.html')
 
 @app.route('/employee')
 def employee():

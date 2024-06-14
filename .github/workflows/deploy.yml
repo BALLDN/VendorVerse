@@ -46,7 +46,7 @@ jobs:
         PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
       run: |
         tree
-        python3 .github/workflows/upload_artifact.py "${PA_USERNAME}" "${PA_API_TOKEN}" "/app.zip"
+        python3 .github/workflows/upload_artifact.py "${PA_USERNAME}" "${PA_API_TOKEN}" "app.zip"
 
     # Optionally, add steps for additional deployment actions like reloading web app
     # - name: Reload Web App

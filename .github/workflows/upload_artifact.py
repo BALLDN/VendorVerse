@@ -27,10 +27,6 @@ def upload_zip_file(username, api_token, artifact_path):
             raise Exception(msg)
 
 if __name__ == "__main__":
-    # Check if username, api_token, and zip_file_path are provided as arguments
-    if len(sys.argv) != 4:
-        print("Usage: python upload_artifact.py <username> <api_token> <artifact_path>")
-        sys.exit(1)
 
     username = sys.argv[1]
     if username:
@@ -45,6 +41,9 @@ if __name__ == "__main__":
         print("No artifact_path provided")
         sys.exit(1)
         
+    if len(sys.argv) != 4:
+        print("Usage: python upload_artifact.py <username> <api_token> <artifact_path>")
+        sys.exit(1)
     try:
         upload_zip_file(username, api_token, artifact_path)
     except Exception as e:

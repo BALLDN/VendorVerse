@@ -42,10 +42,10 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        uses: SonarSource/sonarcloud-github-action@master
 
   get-coverage:
     name: Code Coverage Report
@@ -60,8 +60,8 @@ jobs:
         SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
       run: |
         sudo apt-get install -y jq
-        ANALYSIS_URL="https://sonarcloud.io/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=coverage"
-        curl -s -H "Authorization: Bearer ${SONAR_TOKEN}" $ANALYSIS_URL
+        ANALYSIS_URL="https://sonarcloud.io/api/measures/component?component=BALLDN_VendorVerse&metricKeys=coverage"
+        curl -s "$ANALYSIS_URL" -H "Authorization: Bearer ${SONAR_TOKEN}" 
       # COVERAGE=$(curl -s -H "Authorization: Bearer ${SONAR_TOKEN}" $ANALYSIS_URL | jq -r '.component.measures[0].value')
       # echo "Code Coverage: $COVERAGE%"
           

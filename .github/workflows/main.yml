@@ -61,8 +61,9 @@ jobs:
       run: |
         sudo apt-get install -y jq
         ANALYSIS_URL="https://sonarcloud.io/api/measures/component?component=${SONAR_PROJECT_KEY}&metricKeys=coverage"
-        COVERAGE=$(curl -s -H "Authorization: Bearer ${SONAR_TOKEN}" $ANALYSIS_URL | jq -r '.component.measures[0].value')
-        echo "Code Coverage: $COVERAGE%"
+        curl -s -H "Authorization: Bearer ${SONAR_TOKEN}" $ANALYSIS_URL
+      # COVERAGE=$(curl -s -H "Authorization: Bearer ${SONAR_TOKEN}" $ANALYSIS_URL | jq -r '.component.measures[0].value')
+      # echo "Code Coverage: $COVERAGE%"
           
   trigger-deploy:
     name: Trigger Deploy

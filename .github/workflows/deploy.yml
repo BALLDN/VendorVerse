@@ -1,12 +1,12 @@
-name: Deploy to PythonAnywhere
+name: Deploy to Production
 
 on:
   workflow_call:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Create Artifact and Deploy
+  create_artifact:
+    name: Create Artifact
     runs-on: ubuntu-latest
     environment: CI/CD
 
@@ -14,59 +14,41 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Create artifact
+    - name: Create Artifact
       run: find . -not -path '*/\.*' -type f -print | zip -r app.zip -@
 
     - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: app
+        path: app.zip
+
+  deploy:
+    name: Deploy Artifact to PythonAnywhere
+    runs-on: ubuntu-latest
+    needs: create_artifact
+    environment: CI/CD
+
+    steps:
+    - name: Download Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: app
+        path: app.zip
+
+    - name: Deploy Artifact
       env:
         PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
         PA_USERNAME: ${{ secrets.PA_USERNAME }}
         ARTIFACT_PATH: app.zip
       run: python3 .github/workflows/upload_artifact.py ${PA_USERNAME} ${PA_API_TOKEN} ${ARTIFACT_PATH}
 
-    # - name: Setup Prod Environment
-    #   env:
-    #     PA_BASE_URL: ${{ vars.PA_BASE_URL }}
-    #     PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
-    #     PA_USERNAME: ${{ secrets.PA_USERNAME }}
-    #     PA_CONSOLE_ID: ${{ secrets.PA_CONSOLE_ID}}
-    #     ARTIFACT_PATH: app.zip
-    #   run: |
-    #     send_input_to_console() {
-    #         local  input="$1"
-        
-    #         # Construct URL for sending input
-    #         send_input_url="${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/consoles/${PA_CONSOLE_ID}/send_input/"
-        
-    #         # Make POST request to send input to console
-    #         curl -s -X POST "${send_input_url}" \
-    #              -H "Authorization: Token ${PA_API_TOKEN}" \
-    #              -d "input=${input}\n"
-    #     }
-        
-    #     perform_operations() {
-    #         local zip_file_path="$1"
-        
-    #         # Step 1: Send unzip command to console
-    #         send_input_to_console "unzip -o ${zip_file_path}"
-        
-    #         # Step 2: Send Python venv setup commands to console
-    #         send_input_to_console "python3 -m venv prod_venv"
-    #         send_input_to_console "source prod_venv/bin/activate"
-    #         send_input_to_console "pip install -r requirements.txt"
-        
-    #         # Step 3: Clean up zip file
-    #         send_input_to_console "rm ${zip_file_path}"
-    #     }    
-    #     perform_operations content.zip
-    
+    # Optionally, add steps for additional deployment actions like reloading web app
     # - name: Reload Web App
     #   env:
-    #     PA_BASE_URL: ${{ vars.PA_BASE_URL }}
+    #     PA_BASE_URL: ${{ secrets.PA_BASE_URL }}
     #     PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
     #     PA_USERNAME: ${{ secrets.PA_USERNAME }}
-
     #   run: |
     #     curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/webapps/vendorverse.eu.pythonanywhere.com/reload/" \
     #          -H "Authorization: Token ${PA_API_TOKEN}"
-       

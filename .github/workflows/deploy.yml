@@ -21,7 +21,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: app
-        path: /
+        path: app.zip
 
   deploy:
     name: Deploy Artifact to PythonAnywhere
@@ -38,7 +38,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: app
-        path: app.zip
+        path: .
 
     - name: Deploy Artifact
       env:

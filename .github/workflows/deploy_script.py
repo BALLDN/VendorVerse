@@ -42,27 +42,27 @@ def upload_artifact(username, api_token, artifact_path):
             raise Exception(msg)
 
 def setup_prod_env(username, api_token, console_id, artifact_path):
-    console_url = f"{API_BASE_URL}/user/{username}/consoles/{console_id}/send_input"
+    console_url = f"{API_BASE_URL}/user/{username}/consoles/{console_id}/send_input/"
     headers = {'Authorization': f'Token {api_token}'}
     
-    commands = f"""
-    cd ~/web_app
-    find . -type f ! -name '{artifact_path}' -delete
-    unzip {artifact_path}
-    source ~/.bashrc
-    workon prod_venv
-    pip install -r requirements.txt
-    """
+    commands = [
+        "cd ~/web_app",
+        f"find . -type f ! -name '{artifact_path}' -delete",
+        f"unzip {artifact_path}",
+        "source ~/.bashrc",
+        "workon prod_venv",
+        "pip install -r requirements.txt"
+    ]
 
-    data = {'input': commands}
-
-    try:
-        response = requests.post(console_url, headers=headers, json=data)
-        response.raise_for_status()
-        print(f"Environment setup successful. Status code: {response.status_code}")
-    except requests.exceptions.RequestException as e:
-        msg = f"Error setting up environment: {e}"
-        raise Exception(msg)
+    for command in commands:
+        try:
+            payload = {'input': command + '\n'}  # Adding \n to simulate pressing Enter
+            response = requests.post(console_url, headers=headers, data=payload)
+            response.raise_for_status()
+            print(f"Command '{command}' executed successfully. Status code: {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            msg = f"Error executing command '{command}': {e}"
+            raise Exception(msg)
 
 def reload_web_app(username, api_token):
     reload_url = f"{API_BASE_URL}/user/{username}/webapps/vendorverse.eu.pythonanywhere.com/reload/"

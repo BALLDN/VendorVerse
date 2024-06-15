@@ -49,17 +49,6 @@ jobs:
         name: app
         path: .
 
-    - name: Deploy Artifact
+    - name: Execute Deploy Script
       run: |
-        tree
-        python3 .github/workflows/upload_artifact.py "${PA_USERNAME}" "${PA_API_TOKEN}" "app.zip"
-
-    # Optionally, add steps for additional deployment actions like reloading web app
-    # - name: Reload Web App
-    #   env:
-    #     PA_BASE_URL: ${{ secrets.PA_BASE_URL }}
-    #     PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
-    #     PA_USERNAME: ${{ secrets.PA_USERNAME }}
-    #   run: |
-    #     curl -X POST "${PA_BASE_URL}/api/v0/user/${PA_USERNAME}/webapps/vendorverse.eu.pythonanywhere.com/reload/" \
-    #          -H "Authorization: Token ${PA_API_TOKEN}"
+        python3 .github/workflows/deploy_script.py "${PA_USERNAME}" "${PA_API_TOKEN}" "app.zip"

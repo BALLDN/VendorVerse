@@ -49,6 +49,7 @@ def setup_prod_env(username, api_token, console_id, artifact_path):
         "cd ~/web_app",
         f"find . -type f ! -name '{artifact_path}' -delete",
         f"unzip {artifact_path}",
+        f"rm {artifact_path}",
         "source ~/.bashrc",
         "mkvirtualenv prod_venv",
         "workon prod_venv",

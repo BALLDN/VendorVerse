@@ -70,4 +70,4 @@ jobs:
 
     # if: needs.get-coverage.outputs.coverage > 80.0
 
-    uses: BALLDN/VendorVerse/.github/workflows/deploy.yml@main
+    uses: ./.github/workflows/deploy.yml

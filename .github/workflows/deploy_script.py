@@ -50,6 +50,7 @@ def setup_prod_env(username, api_token, console_id, artifact_path):
         f"find . -type f ! -name '{artifact_path}' -delete",
         f"unzip {artifact_path}",
         "source ~/.bashrc",
+        "mkvirtualenv prod_venv",
         "workon prod_venv",
         "pip install -r requirements.txt"
     ]

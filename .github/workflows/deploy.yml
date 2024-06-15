@@ -2,6 +2,11 @@ name: Deploy to Production
 
 on:
   workflow_call:
+    secrets: 
+      PA_USERNAME: 
+        required: true
+      PA_API_TOKEN:
+        required: true
     
   workflow_dispatch:
 

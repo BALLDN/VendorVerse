@@ -32,7 +32,7 @@ jobs:
         path: app.zip
 
   deploy:
-    name: Deploy Artifact to PythonAnywhere
+    name: Deploy and Restart
     runs-on: ubuntu-latest
     environment: CI/CD
     env: 

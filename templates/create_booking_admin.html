@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
-    <title>Login to VendorVerse!</title>
+    <title>Booking Details</title>
 
     <link rel="stylesheet" href="./static/style.css">
 
@@ -14,7 +14,7 @@
         function addDiscountTextArea() {
 
             if (document.getElementById('discount_checkbox').checked) {
-                document.getElementById("Discount_Section").innerHTML=" <div data-mdb-input-init class='form-outline mb-4'><label class='form-label' for='discount'>Please enter the details of the discount</label><textarea type='text' id='discount' class='form-control form-control-md' required> </textarea></div>";
+                document.getElementById("Discount_Section").innerHTML=" <div data-mdb-input-init class='form-outline mb-4'><label class='form-label' for='discount'>Please enter the details of the discount</label><textarea type='text' maxlength='200' id='discount' class='form-control form-control-md' required> </textarea></div>";
             } else {
                 document.getElementById("Discount_Section").innerHTML="";
             }
@@ -37,7 +37,7 @@
 
                 <div data-mdb-input-init class="form-outline mb-2">
                     <label class="form-label" for="Email">Vendor Email Address</label>
-                    <input type="email" id="Email" name="Email" class="form-control form-control-md" required> 
+                    <input type="email" id="Email" name="Email" class="form-control form-control-md" maxlength="40" required> 
                   </div>
 
                 <label for="Date">Booking Date</label>
@@ -45,12 +45,12 @@
 
                 <div data-mdb-input-init class="form-outline mb-2">
                   <label class="form-label" for="Location">Location</label>
-                  <input type="text" id="Location" name="Location" class="form-control form-control-md" required> 
+                  <input type="text" id="Location" name="Location" class="form-control form-control-md" maxlength="20" required> 
                 </div>
 
                 <div data-mdb-input-init class="form-outline mb-2">
                   <label class="form-label" for="additional_info">Additional Information</label>
-                  <textarea type="text" id="additional_info" name="additional_info" class="form-control form-control-md" required> </textarea>
+                  <textarea type="text" id="additional_info" name="additional_info" class="form-control form-control-md" maxlength="200" required> </textarea>
                 </div>
 
                 <!-- An element to toggle between password visibility -->

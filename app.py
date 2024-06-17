@@ -119,11 +119,6 @@ def create_booking_admin():
     return render_template('create_booking_admin.html')
 
 
-@app.route('/manage_booking')
-def manage_bookings():
-    return render_template('manage_bookings_page.html')
-
-
 @app.route('/employee')
 def employee():
     return render_template('employee_home_page.html')

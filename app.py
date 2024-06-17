@@ -1,5 +1,6 @@
 import firebase_admin
 from user_model import users
+from booking_model import bookings
 from firebase_admin import credentials
 from firebase_admin import firestore
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response
@@ -92,7 +93,7 @@ def index():
 def vendor():
     return render_template('vendor_home_page.html')
 
-@app.route('/create_booking')
+@app.route('/create_booking', methods=['GET', 'POST'])
 def create_booking():
     '''
     Code to be implemented once sessions are introduced
@@ -101,6 +102,16 @@ def create_booking():
     else:
         return render_template('create_booking_admin.html')
     '''
+    if request.method == 'GET':
+        bookings.get_user_id(db, request.cookies.get('login_email'))
+    if request.method == "POST":
+        user_id = bookings.get_user_id(db, request.cookies.get('login_email'))
+        bookings.add_booking(db, user_id)
+        flash("Your Booking has been created and is pending approval")
+        return render_template('create_booking_vendor.html')
+        
+            
+        
     return render_template('create_booking_vendor.html')
 
 '''Only Temporary until sessions are introduced'''

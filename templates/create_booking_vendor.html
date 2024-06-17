@@ -14,7 +14,7 @@
         function addDiscountTextArea() {
 
             if (document.getElementById('discount_checkbox').checked) {
-                document.getElementById("Discount_Section").innerHTML=" <div data-mdb-input-init class='form-outline mb-4'><label class='form-label' for='discount'>Please enter the details of your discount</label><textarea type='text' maxlength='200' id='discount' class='form-control form-control-md' required> </textarea></div>";
+                document.getElementById("Discount_Section").innerHTML=" <div data-mdb-input-init class='form-outline mb-4'><label class='form-label' for='discount'>Please enter the details of your discount</label><textarea type='text' maxlength='200' name='discount' id='discount' class='form-control form-control-md' required> </textarea></div>";
             } else {
                 document.getElementById("Discount_Section").innerHTML="";
             }
@@ -30,16 +30,21 @@
           <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-6">
             <div class="card mb-5 mt-5">
               <div class="card-body p-5">
+                {% for mesg in get_flashed_messages() %}
+                <div class="alert alert-success">
+                  <strong >{{ mesg }}</strong>
+                </div>
+              {% endfor %}
               <h2 class="text-uppercase text-center mb-5">Please Enter the Details of your booking</h2>
 
               <form action="{{url_for("create_booking")}}" method="post">
 
                 <label for="Date">Booking Date</label>
-                <input id="Date" class="form-control mb-2" type="date" />
+                <input id="Date" name="Date" class="form-control mb-2" type="date" />
 
                 <div data-mdb-input-init class="form-outline mb-2">
                   <label class="form-label" for="Location">Location</label>
-                  <input type="text" id="Location" name="Location" class="form-control form-control-md" maxlength="10" required> 
+                  <input type="text" id="Location" name="Location" class="form-control form-control-md" maxlength="30" required> 
                 </div>
 
                 <div data-mdb-input-init class="form-outline mb-2">
@@ -49,7 +54,7 @@
 
                 <!-- An element to toggle between password visibility -->
                
-                <input id="discount_checkbox"type="checkbox" onclick="addDiscountTextArea()">Are you offering a discount?
+                <input id="discount_checkbox" name="discount_checkbox" type="checkbox" onclick="addDiscountTextArea()">Are you offering a discount?
 
                 <div id="Discount_Section"> </div>
 

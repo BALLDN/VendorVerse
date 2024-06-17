@@ -1,7 +1,12 @@
 <<<<<<< HEAD
 import firebase_admin
+<<<<<<< HEAD
 from models.user_model import User
 from models.booking_model import bookings
+=======
+from user_model import users
+from booking_model import bookings
+>>>>>>> 6943fd0 (Create Booking page is now functional for vendors)
 from firebase_admin import credentials
 from firebase_admin import firestore
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response
@@ -188,7 +193,10 @@ def index():
 def vendor():
     return render_template('vendor_home_page.html')
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6943fd0 (Create Booking page is now functional for vendors)
 @app.route('/create_booking', methods=['GET', 'POST'])
 def create_booking():
     if request.method == 'GET':
@@ -198,6 +206,22 @@ def create_booking():
         bookings.add_booking(db, user_id)
         flash("Your Booking has been created and is pending approval")
         return render_template('create_booking_vendor.html')
+<<<<<<< HEAD
+=======
+    else:
+        return render_template('create_booking_admin.html')
+    '''
+    if request.method == 'GET':
+        bookings.get_user_id(db, request.cookies.get('login_email'))
+    if request.method == "POST":
+        user_id = bookings.get_user_id(db, request.cookies.get('login_email'))
+        bookings.add_booking(db, user_id)
+        flash("Your Booking has been created and is pending approval")
+        return render_template('create_booking_vendor.html')
+        
+            
+        
+>>>>>>> 6943fd0 (Create Booking page is now functional for vendors)
     return render_template('create_booking_vendor.html')
 
 

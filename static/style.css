@@ -207,3 +207,10 @@ Select{
     font-size: 13px;
     margin-right: 4px;
 }
+
+.cookie_banner {
+    position: sticky;
+    width: 60%;
+    display: flex;
+    align-items: center;
+}

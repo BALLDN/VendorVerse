@@ -20,8 +20,12 @@ import firebase_admin
 from user_model import users
 from firebase_admin import credentials
 from firebase_admin import firestore
+<<<<<<< HEAD
 from flask import Flask, redirect, render_template, request, url_for
 >>>>>>> Stashed changes
+=======
+from flask import Flask, flash, redirect, render_template, request, url_for, make_response
+>>>>>>> bcbbbc5 (Cookies pull username from login from and user type from database connected to user.)
 
 app = Flask(__name__)
 
@@ -37,13 +41,20 @@ db = firestore.client()
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
+<<<<<<< HEAD
         User.get_users(db)
 
         # Get Cookies containing login info
+=======
+        users.get_users(db)
+
+        #Get Cookies containing login info
+>>>>>>> bcbbbc5 (Cookies pull username from login from and user type from database connected to user.)
         login_email = request.cookies.get('login_email')
 
         if login_email:
             return render_template('login.html', login_email=login_email)
+<<<<<<< HEAD
 
         return render_template('login.html')
 
@@ -58,15 +69,40 @@ def login():
         elif (User.validate_user(db) == "E"):
             url_response = make_response(redirect(url_for('employee')))
         elif (User.validate_user(db) == "A"):
+=======
+        
+        return render_template('login.html')
+        
+        
+    if request.method == 'POST':
+
+        #Get username used in login form
+        login_email = request.form['Email']
+
+
+        if(users.validate_user(db) == "V"):
+            url_response = make_response(redirect(url_for('vendor')))
+        elif(users.validate_user(db) == "E"):
+            url_response = make_response(redirect(url_for('employee')))
+        elif(users.validate_user(db) == "A"):
+>>>>>>> bcbbbc5 (Cookies pull username from login from and user type from database connected to user.)
             url_response = make_response(redirect(url_for('admin')))
         else:
             # Error Message displays as appropriate
             flash(User.validate_user(db))
             return render_template('login.html')
+<<<<<<< HEAD
 
         # Set cookies for login details + user type
         url_response.set_cookie('login_email', login_email)
         url_response.set_cookie('user_type', User.validate_user(db))
+=======
+        
+        
+        #Set cookies for login details + user type
+        url_response.set_cookie('login_email',login_email)
+        url_response.set_cookie('user_type',users.validate_user(db))
+>>>>>>> bcbbbc5 (Cookies pull username from login from and user type from database connected to user.)
 
         return url_response
     return render_template('login.html')
@@ -75,13 +111,20 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+<<<<<<< HEAD
         User.add_user(db)
 
         # Get username + user_type used in register form
+=======
+        users.add_user(db)
+
+        #Get username + user_type used in register form
+>>>>>>> bcbbbc5 (Cookies pull username from login from and user type from database connected to user.)
         login_email = request.form['Email']
         user_type = request.form['User_Type']
 
         if user_type == "Vendor":
+<<<<<<< HEAD
             url_response = make_response(
                 redirect(url_for('vendor_details_page')))
             flash("Your Account is Pending Approval")
@@ -116,6 +159,23 @@ def register():
         return redirect(url_for('home'))
         
 >>>>>>> 45527d8 (Registration Page now Functional)
+=======
+            url_response = make_response(redirect(url_for('vendor_details_page')))
+            flash("Your Account is Pending Approval")
+        
+        else:
+            url_response = make_response(redirect(url_for('register')))
+         
+
+        flash("Your Account is Pending Approval")
+        
+        #Set cookies for login details + user type
+        url_response.set_cookie('login_email',login_email)
+        url_response.set_cookie('user_type',users.validate_user(db))
+
+        return url_response
+        
+>>>>>>> bcbbbc5 (Cookies pull username from login from and user type from database connected to user.)
     return render_template('register.html')
 
 

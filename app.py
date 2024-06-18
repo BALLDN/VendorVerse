@@ -199,6 +199,7 @@ def vendor():
 >>>>>>> 6943fd0 (Create Booking page is now functional for vendors)
 @app.route('/create_booking', methods=['GET', 'POST'])
 def create_booking():
+<<<<<<< HEAD
     if request.method == 'GET':
         bookings.get_user_id(db, request.cookies.get('login_email'))
     if request.method == "POST":
@@ -211,6 +212,8 @@ def create_booking():
     else:
         return render_template('create_booking_admin.html')
     '''
+=======
+>>>>>>> 853b9f4 (Create_Booking_Admin Page Working)
     if request.method == 'GET':
         bookings.get_user_id(db, request.cookies.get('login_email'))
     if request.method == "POST":
@@ -218,16 +221,22 @@ def create_booking():
         bookings.add_booking(db, user_id)
         flash("Your Booking has been created and is pending approval")
         return render_template('create_booking_vendor.html')
+<<<<<<< HEAD
         
             
         
 >>>>>>> 6943fd0 (Create Booking page is now functional for vendors)
+=======
+>>>>>>> 853b9f4 (Create_Booking_Admin Page Working)
     return render_template('create_booking_vendor.html')
 
 
 '''Only Temporary until sessions are introduced'''
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 853b9f4 (Create_Booking_Admin Page Working)
 @app.route('/create_booking_admin', methods=['GET', 'POST'])
 def create_booking_admin():
     if request.method == 'GET':

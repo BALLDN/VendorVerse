@@ -24,7 +24,7 @@ class bookings:
         vendor_id = vendor_id
         
         '''In case discount checkbox isn't checked'''
-        if request.form.get('discount_checkbox') is None:
+        if request.form.get('discount_checkbox') is None or request.form('discount') is None:
             deal = "No Discount"
         else:
             deal= request.form['discount']
@@ -58,26 +58,6 @@ class bookings:
         else:
             return "No User Found!"
     
-    
-    #Change to return entire user credentials
-    def validate_user(database_connection):
-        users_ref = database_connection.collection('Users')
-        form_email = request.form['Email']
-        password = request.form['Password']
-
-        query = users_ref.where("Email", "==", form_email)
-        results = query.get()
-        
-        for doc in results:
-            found_user_type = doc.to_dict().get("User_Type")
-            found_password = doc.to_dict().get("Password")
-        
-        
-        if len(results) > 0 and found_password == password:
-            #Decides which Homepage to load based on user type
-            return found_user_type
-        else:
-            return "Invalid Email or Password!"
         
         
 

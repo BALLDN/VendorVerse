@@ -1,6 +1,6 @@
 import firebase_admin
 from models.user_model import User
-from models.booking_model import bookings
+from models.booking_model import Booking
 from firebase_admin import credentials
 from firebase_admin import firestore
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response
@@ -96,10 +96,10 @@ def vendor():
 @app.route('/create_booking', methods=['GET', 'POST'])
 def create_booking():
     if request.method == 'GET':
-        bookings.get_user_id(db, request.cookies.get('login_email'))
+        Booking.get_user_id(db, request.cookies.get('login_email'))
     if request.method == "POST":
-        user_id = bookings.get_user_id(db, request.cookies.get('login_email'))
-        bookings.add_booking(db, user_id)
+        user_id = Booking.get_user_id(db, request.cookies.get('login_email'))
+        Booking.add_booking(db, user_id)
         flash("Your Booking has been created and is pending approval")
         return render_template('create_booking_vendor.html')
     return render_template('create_booking_vendor.html')
@@ -111,10 +111,10 @@ def create_booking():
 @app.route('/create_booking_admin', methods=['GET', 'POST'])
 def create_booking_admin():
     if request.method == 'GET':
-        bookings.get_user_id(db, request.cookies.get('login_email'))
+        Booking.get_user_id(db, request.cookies.get('login_email'))
     if request.method == "POST":
-        user_id = bookings.get_user_id(db, request.form.get('Email'))
-        bookings.add_booking(db, user_id)
+        user_id = Booking.get_user_id(db, request.form.get('Email'))
+        Booking.add_booking(db, user_id)
         return redirect(url_for('create_booking_admin'))
     return render_template('create_booking_admin.html')
 

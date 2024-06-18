@@ -46,7 +46,7 @@ def setup_prod_env(username, api_token, console_id, artifact_path):
     headers = {'Authorization': f'Token {api_token}'}
     
     commands = [
-        "cd ~/web_app",
+        "cd web_app",
         f"find . -type f ! -name '{artifact_path}' -delete",
         f"unzip {artifact_path}",
         f"rm {artifact_path}",

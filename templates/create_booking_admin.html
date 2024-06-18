@@ -32,7 +32,7 @@
                 <div class="card-body p-5">
               <h2 class="text-uppercase text-center mb-5">Please Enter the Details of your booking</h2>
 
-              <form action="{{url_for("create_booking")}}" method="post">
+              <form action="{{url_for("create_booking_admin")}}" method="post">
 
 
                 <div data-mdb-input-init class="form-outline mb-2">
@@ -41,11 +41,11 @@
                   </div>
 
                 <label for="Date">Booking Date</label>
-                <input id="Date" class="form-control mb-2" type="date" />
+                <input id="Date" name="Date" class="form-control mb-2" type="date" />
 
                 <div data-mdb-input-init class="form-outline mb-2">
                   <label class="form-label" for="Location">Location</label>
-                  <input type="text" id="Location" name="Location" class="form-control form-control-md" maxlength="20" required> 
+                  <input type="text" id="Location" name="Location" class="form-control form-control-md" maxlength="40" required> 
                 </div>
 
                 <div data-mdb-input-init class="form-outline mb-2">

@@ -95,13 +95,6 @@ def vendor():
 
 @app.route('/create_booking', methods=['GET', 'POST'])
 def create_booking():
-    '''
-    Code to be implemented once sessions are introduced
-    if(session.get("User_Type") == "V"):
-        return render_template('create_booking_vendor.html')
-    else:
-        return render_template('create_booking_admin.html')
-    '''
     if request.method == 'GET':
         bookings.get_user_id(db, request.cookies.get('login_email'))
     if request.method == "POST":
@@ -109,14 +102,17 @@ def create_booking():
         bookings.add_booking(db, user_id)
         flash("Your Booking has been created and is pending approval")
         return render_template('create_booking_vendor.html')
-        
-            
-        
     return render_template('create_booking_vendor.html')
 
 '''Only Temporary until sessions are introduced'''
-@app.route('/create_booking_admin')
+@app.route('/create_booking_admin', methods=['GET', 'POST'])
 def create_booking_admin():
+    if request.method == 'GET':
+        bookings.get_user_id(db, request.cookies.get('login_email'))
+    if request.method == "POST":
+        user_id = bookings.get_user_id(db, request.form.get('Email'))
+        bookings.add_booking(db, user_id)
+        return redirect(url_for('create_booking_admin'))
     return render_template('create_booking_admin.html')
 
 @app.route('/manage_booking')

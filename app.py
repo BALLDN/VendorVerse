@@ -142,3 +142,18 @@ def reset():
 @app.route('/vendor_details')
 def vendor_details_page():
     return render_template('vendor_details_page.html')
+
+@app.route('/logout')
+def logout():
+    
+    login_email = request.cookies.get('login_email')
+    user_type = request.cookies.get('user_type')
+
+    if(login_email and user_type):
+        url_response = make_response(redirect(url_for("index")))
+        url_response.delete_cookie('login_email')
+        url_response.delete_cookie('user_type')
+    
+        return url_response
+    else:
+        return redirect(url_for("index"))

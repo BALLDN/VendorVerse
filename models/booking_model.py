@@ -17,11 +17,22 @@ class Booking:
 
     @staticmethod
     def add_booking(database_connection, vendor_id):
+<<<<<<< Updated upstream:models/booking_model.py
 
         # adds a user to db
         status = "P"
         date = request.form['Date']
         location = request.form['Location']
+=======
+        
+        #adds a user to db
+        if(request.cookies.get('user_type') == "V"):
+            status = "P"
+        else:
+            status = "A"
+        date= request.form['Date']
+        location= request.form['Location']
+>>>>>>> Stashed changes:booking_model.py
         additional_info = request.form['additional_info']
 
         '''In case discount checkbox isn't checked'''

@@ -1,0 +1,57 @@
+name: Deploy to Production
+
+on:
+  workflow_call:
+    secrets: 
+      PA_USERNAME: 
+        required: true
+      PA_API_TOKEN:
+        required: true
+      PA_CONSOLE_ID:
+        required: true
+    
+  workflow_dispatch:
+
+jobs:
+  create_and_upload_artifact:
+    name: Create and Upload Artifact
+    runs-on: ubuntu-latest
+    environment: CI/CD
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Create Artifact
+      run: find . -not -path '*/\.*' -not -name '.gitignore' -not -name 'sonar-project.properties' -type f -print | zip -r app.zip -@
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: app
+        path: app.zip
+
+  deploy:
+    name: Deploy and Restart
+    runs-on: ubuntu-latest
+    environment: CI/CD
+    env: 
+        PA_USERNAME: ${{ secrets.PA_USERNAME }}
+        PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
+        PA_CONSOLE_ID: ${{ secrets.PA_CONSOLE_ID }}
+
+    needs: [create_and_upload_artifact]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Download Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: app
+        path: .
+
+    - name: Execute Deploy Script
+      run: |
+        python3 .github/workflows/deploy_script.py "${PA_USERNAME}" "${PA_API_TOKEN}" "${PA_CONSOLE_ID}" "app.zip"

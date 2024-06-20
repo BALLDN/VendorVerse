@@ -38,6 +38,7 @@ const myEvents = JSON.parse(localStorage.getItem('events')) || [
           const submitButton = document.getElementById('submit-button');
           modalTitle.innerHTML = 'Add Event'
           submitButton.innerHTML = 'Add Event'
+          submitButton.setAttribute('id', "addEvent");
           submitButton.classList.remove('btn-primary');
           submitButton.classList.add('btn-success');
 
@@ -58,7 +59,8 @@ const myEvents = JSON.parse(localStorage.getItem('events')) || [
     editable: true,
     selectable: true,
     unselectAuto: false,
-    displayEventTime: false,
+    displayEventTime: true,
+    height: 450,
     events: myEvents,
     eventRender: function(info) {
       info.el.addEventListener('contextmenu', function(e) {
@@ -73,8 +75,8 @@ const myEvents = JSON.parse(localStorage.getItem('events')) || [
         </ul>`;
 
         const eventIndex = myEvents.findIndex(event => event.id === info.event.id);
-        
-        
+      
+
         document.body.appendChild(menu);
         menu.style.top = e.pageY + 'px';
         menu.style.left = e.pageX + 'px';

@@ -6,6 +6,8 @@ from models.user_model import User
 from models.booking_model import Booking
 from firebase_admin import credentials, firestore, auth
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
+from firebase_admin import credentials, firestore, auth
+from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
 
 load_dotenv()
 app = Flask(__name__)

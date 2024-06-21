@@ -17,7 +17,6 @@ class Booking:
 
     @staticmethod
     def add_booking(database_connection, vendor_id):
-
         
         #adds a user to db
         if(request.cookies.get('user_type') == "V"):

@@ -1,9 +1,8 @@
 import firebase_admin
 from models.user_model import User
 from models.booking_model import Booking
-from firebase_admin import credentials
-from firebase_admin import firestore
-from flask import Flask, flash, redirect, render_template, request, url_for, make_response
+from firebase_admin import credentials, firestore, auth
+from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
 
 app = Flask(__name__)
 
@@ -35,6 +34,29 @@ def login():
 
         # Get username used in login form
         login_email = request.form['Email']
+
+        print("!!!!Step 1 - Sending!!!!")
+        try:
+            id_token = request.json.get('idToken')
+        except:
+            print('Unable to get Token')
+
+        print("!!!!Step 2 - Token requested!!!!")
+        print(id_token)
+
+        try:
+            decoded_token = auth.verify_id_token(id_token)
+            print("!!!!Step 3 - Token decoded!!!!")
+            print(decoded_token)
+
+            uid = decoded_token['uid']
+            print("!!!!Step 4 - UID Found!!!!")
+
+            # Proceed with your application logic, e.g., creating a session
+            return jsonify({'status': 'success', 'uid': uid}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 401
+
 
         if (User.validate_user(db) == "V"):
             url_response = make_response(redirect(url_for('vendor')))

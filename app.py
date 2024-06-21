@@ -132,8 +132,11 @@ def create_booking_admin():
     return render_template('create_booking_admin.html')
 
 
-@app.route('/manage_booking')
+@app.route('/manage_booking', methods=['GET', 'POST'])
 def manage_bookings():
+    if request.method == 'GET':
+        Booking.get_bookings_by_vendor_id(db, "RkbGLrSwqjEov65l2N81")
+        
     return render_template('manage_bookings_page.html')
 
 
@@ -156,6 +159,7 @@ def reset():
 def vendor_details_page():
     return render_template('vendor_details_page.html')
 
+<<<<<<< HEAD
 
 @app.route('/logout')
 def logout():
@@ -168,6 +172,19 @@ def logout():
         url_response.delete_cookie('login_email')
         url_response.delete_cookie('user_type')
 
+=======
+@app.route('/logout')
+def logout():
+    
+    login_email = request.cookies.get('login_email')
+    user_type = request.cookies.get('user_type')
+
+    if(login_email and user_type):
+        url_response = make_response(redirect(url_for("index")))
+        url_response.delete_cookie('login_email')
+        url_response.delete_cookie('user_type')
+    
+>>>>>>> 9a1d41e (abc)
         return url_response
     else:
         return redirect(url_for("index"))

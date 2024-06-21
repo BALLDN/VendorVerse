@@ -17,14 +17,14 @@ class Booking:
 
     @staticmethod
     def add_booking(database_connection, vendor_id):
-        
-        #adds a user to db
-        if(request.cookies.get('user_type') == "V"):
+
+        # adds a user to db
+        if (request.cookies.get('user_type') == "V"):
             status = "P"
         else:
             status = "A"
-        date= request.form['Date']
-        location= request.form['Location']
+        date = request.form['Date']
+        location = request.form['Location']
         additional_info = request.form['additional_info']
 
         '''In case discount checkbox isn't checked'''
@@ -61,6 +61,30 @@ class Booking:
             user_id = doc.id
 
         if len(results) > 0:
+            return user_id
+        else:
+
+    def get_bookings_by_vendor_id(database_connection, vendor_id):
+        booking_ref = database_connection.collection('Bookings')
+        docs = booking_ref.get()
+        for doc in docs:
+            print('{} => {}'.format(doc.id, doc.to_dict()))
+            return ('{} => {}'.format(doc.id, doc.to_dict()))
+        return docs
+
+    def remove_booking(database_connection, booking_id):
+
+        booking_ref = database_connection.collection('Users')
+
+        query = booking_ref.where(__name__, "==", booking_id)
+        results = query.get()
+
+        for doc in results:
+            user_id = doc.id
+
+        if len(results) > 0:
+            print("found")
+            print(user_id)
             return user_id
         else:
             return "No User Found!"

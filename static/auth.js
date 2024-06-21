@@ -59,31 +59,27 @@ document.addEventListener('submit', (e) => {
 
   // Sign in with Firebase Authentication
   signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(function (userCredential) {
       return userCredential.user.getIdToken();
     })
-    .then((idToken) => {
+    .then(function(idToken) {
+      console.log(idToken)
+
       //Send ID token to your backend
       return fetch('/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ idToken })
+        body: JSON.stringify({
+          'idToken': idToken })
       });
     })
-    .then((response) => {
-      console.log(response)
-      if (response.ok) {
-        console.log('User authenticated successfully');
-        // Redirect or perform other actions
-      }
-      else {
-        throw new Error('Authentication failed');
-      }
+    .then(function(response) {
+      return response
     })
-    .catch((error) => {
-      console.error('Error signing in:', error);
+    .catch(function (error) {
+      console.error('Error:', error.code, error.message);
     });
 });
 

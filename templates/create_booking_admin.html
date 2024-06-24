@@ -20,6 +20,12 @@
             }
         }
 
+        document.addEventListener("DOMContentLoaded", function() {
+          const dateInput = document.getElementById('dateInput');
+          const today = new Date().toISOString().split('T')[0];
+          dateInput.setAttribute('min', today);
+      });
+
   </script>
 </head>
 
@@ -41,7 +47,7 @@
                   </div>
 
                 <label for="Date">Booking Date</label>
-                <input id="Date" name="Date" class="form-control mb-2" type="date" />
+                <input id="DateInput" name="Date" class="form-control mb-2" type="date" />
 
                 <div data-mdb-input-init class="form-outline mb-2">
                   <label class="form-label" for="Location">Location</label>

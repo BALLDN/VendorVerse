@@ -108,7 +108,7 @@ def create_booking():
 '''Only Temporary until sessions are introduced'''
 
 
-@app.route('/create_booking_admin', methods=['GET', 'POST'])
+@app.route('/create_booking_admin',methods=['GET', 'POST'])
 def create_booking_admin():
     if request.method == 'GET':
         Booking.get_user_id(db, request.cookies.get('login_email'))
@@ -121,11 +121,50 @@ def create_booking_admin():
 
 @app.route('/manage_booking', methods=['GET', 'POST'])
 def manage_bookings():
-    if request.method == 'GET':
-        Booking.get_bookings_by_vendor_id(db, "RkbGLrSwqjEov65l2N81")
+    if(request.cookies.get('user_type') == "V"):
+        bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
+    elif(request.cookies.get('user_type') == "A"):
+        bookings = Booking.get_approved_bookings(db)
         
-    return render_template('manage_bookings_page.html')
-
+    if request.method == 'GET':
+        if len(bookings) > 0:
+            return render_template('manage_bookings_page.html', bookings=bookings)
+        else:
+            return render_template('manage_bookings_page.html')
+    if request.method == 'POST':
+        
+        if request.form.get("remove_button") is not None:
+            
+            #Store Booking ID
+            booking_id = request.form.get("remove_button")
+            booking_ref = db.collection('Bookings').document(booking_id)
+            if booking_ref is not None:
+                print(booking_ref)
+                booking_ref.update({"Status": "D"})
+            else:
+                print("No User Found!")
+              
+            #Display Updated Bookings
+            if(request.cookies.get('user_type') == "V"):
+                bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
+            elif(request.cookies.get('user_type') == "A"):
+                bookings = Booking.get_approved_bookings(db)
+        
+        if request.form.get("modify_button") is not None:
+            #Store Booking ID
+            booking_id = request.form.get("modify_button")
+            print(booking_id)
+            Booking.modify_booking(db, booking_id)
+            
+            #Display Updated Bookings
+            if(request.cookies.get('user_type') == "V"):
+                bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
+            elif(request.cookies.get('user_type') == "A"):
+                bookings = Booking.get_approved_bookings(db)
+            
+        return render_template('manage_bookings_page.html', bookings=bookings)
+            
+    return render_template('manage_bookings_page.html', bookings=bookings)
 
 @app.route('/employee')
 def employee():

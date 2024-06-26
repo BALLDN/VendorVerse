@@ -208,9 +208,21 @@ Select{
     margin-right: 4px;
 }
 
-.cookie_banner {
-    position: sticky;
-    width: 60%;
+.cookie-banner{
+    font-weight: bold;
+    position: absolute;
+    padding: 5px;
+    bottom: 50px;
+    left: 25%;
+    width: 50%;
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    border: 2px solid black;
+    border-radius: 5px;
+    background-color: #007bff;
+}
+
+.cookie-banner input{
+    border-radius: 5px;
+    background-color: #84fab0;
 }

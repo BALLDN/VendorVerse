@@ -109,6 +109,29 @@
         </div>
     </div>
 
+    {% if cookiesAccepted %}
+    <div class="cookie-banner" id="cookieBanner" style="display: none;">
+        <label>
+            This website has optional cookies to enhance your user experience. Do you accept Cookies?
+        </label>
+        <div>
+            <input id='acceptCookies' type="button" value="Accept">
+            <input id='declineCookies' type="button" value="Decline">
+        </div>
+    </div>
+    {% else %}
+    <div class="cookie-banner" id="cookieBanner">
+        <label>
+            This website has optional cookies to enhance your user experience. Do you accept Cookies?
+        </label>
+        <div>
+            <input id='acceptCookies' type="button" value="Accept">
+            <input id='declineCookies' type="button" value="Decline">
+        </div>
+    </div>
+    {% endif %}
+    
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.js" integrity="sha384-K4Nk3M58Sssp/XurpWfEZ76LWjdoa+RP28r8FR6/pc9tKVXcu+r8Bo+Q49u1u0n1" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.2.0/main.js" integrity="sha384-HzsO7O03jzXNL71q5PoV/pyIOf38lLMWaZ2Gigw1XXKX7OGkJDgHk1mkABHkmw58" crossorigin="anonymous"></script>
@@ -117,6 +140,7 @@
             <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js" integrity="sha384-e2kr3z94YEVTtgf8bBbR3EHF3Oi1yLDp7GdxIRn6upe2VFHnSRQe0brjEOeRKCoj" crossorigin="anonymous"></script>
             <!-- Script JS -->
             <script src="./static/public_calendar.js"></script>
+            <script src="./static/cookies.js"></script>
         
     </body>
 </html>

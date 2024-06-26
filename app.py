@@ -21,7 +21,7 @@ db = firestore.client()
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        User.get_users(db)
+        #User.get_users(db)
 
         # Get Cookies containing login info
         login_email = request.cookies.get('login_email')
@@ -33,8 +33,7 @@ def login():
 
     if request.method == 'POST':
 
-        # Get username used in login form
-        login_email = request.form['Email']
+        user_type = User.validate_user(db)
 
         if (User.validate_user(db) == "V"):
             url_response = make_response(redirect(url_for('vendor')))
@@ -48,8 +47,14 @@ def login():
             return render_template('login.html')
 
         # Set cookies for login details + user type
-        url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
+        cookiesAccepted = request.cookies.get('cookieChoice')
+
+        if cookiesAccepted:
+            # Get username used in login form
+            login_email = request.form['Email']
+
+            url_response.set_cookie('login_email', login_email)
+            url_response.set_cookie('user_type', user_type)
 
         return url_response
     return render_template('login.html')
@@ -60,8 +65,6 @@ def register():
     if request.method == 'POST':
         User.add_user(db)
 
-        # Get username + user_type used in register form
-        login_email = request.form['Email']
         user_type = request.form['User_Type']
 
         if user_type == "Vendor":
@@ -75,8 +78,14 @@ def register():
         flash("Your Account is Pending Approval")
 
         # Set cookies for login details + user type
-        url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
+        cookiesAccepted = request.cookies.get('cookieChoice')
+
+        if cookiesAccepted:
+            # Get username + user_type used in register form
+            login_email = request.form['Email']
+
+            url_response.set_cookie('login_email', login_email)
+            url_response.set_cookie('user_type', user_type)
 
         return url_response
 
@@ -85,6 +94,11 @@ def register():
 
 @app.route('/')
 def index():
+    cookiesAccepted = request.cookies.get('cookieChoice')
+
+    if cookiesAccepted:
+            return render_template('public_home_page.html', cookiesAccepted=cookiesAccepted)
+
     return render_template('public_home_page.html')
 
 

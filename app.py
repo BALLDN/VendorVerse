@@ -62,9 +62,9 @@ class modifyForm(FlaskForm):
                 flash(User.validate_user(db))
                 return render_template('login.html')
 
-            # Set cookies for login details + user type
-            url_response.set_cookie('login_email', login_email)
-            url_response.set_cookie('user_type', User.validate_user(db))
+        # Set cookies for login details + user type
+        url_response.set_cookie('login_email', login_email)
+        url_response.set_cookie('user_type', User.validate_user(db))
 
             return url_response
         return render_template('login.html')

@@ -1,13 +1,12 @@
 import logging
 import firebase_admin
+from firebase_admin import credentials, firestore
+from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, DateField
 from wtforms.validators import InputRequired
 from models.user_model import User
 from models.booking_model import Booking
-from firebase_admin import credentials, firestore, auth
-from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
-
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -47,36 +46,24 @@ def login():
     if request.method == 'POST':
 
         # Get username used in login form
-        #login_email = request.form['Email']
+        login_email = request.form['Email']
 
-        id_token = request.json.get('idToken')
+        if (User.validate_user(db) == "V"):
+            url_response = make_response(redirect(url_for('vendor')))
+        elif (User.validate_user(db) == "E"):
+            url_response = make_response(redirect(url_for('employee')))
+        elif (User.validate_user(db) == "A"):
+            url_response = make_response(redirect(url_for('admin')))
+        else:
+            # Error Message displays as appropriate
+            flash(User.validate_user(db))
+            return render_template('login.html')
 
-        try:
-            decoded_token = auth.verify_id_token(id_token)
-            print(decoded_token)
+        # Set cookies for login details + user type
+        url_response.set_cookie('login_email', login_email)
+        url_response.set_cookie('user_type', User.validate_user(db))
 
-            uid = decoded_token['uid']
-
-            # Proceed with your application logic, e.g., creating a session
-            if (User.validate_user(db) == "V"):
-                url_response = make_response(redirect(url_for('vendor')))
-            elif (User.validate_user(db) == "E"):
-                url_response = make_response(redirect(url_for('employee')))
-            elif (User.validate_user(db) == "A"):
-                url_response = make_response(redirect(url_for('admin')))
-            else:
-                # Error Message displays as appropriate
-                flash(User.validate_user(db))
-                return render_template('login.html')
-
-            # Set cookies for login details + user type
-            url_response.set_cookie('login_email', login_email)
-            url_response.set_cookie('user_type', User.validate_user(db))
-
-            return url_response
-        except Exception as e:
-            return jsonify({'error': str(e)}), 401
-
+        return url_response
     return render_template('login.html')
 
 

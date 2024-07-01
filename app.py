@@ -172,3 +172,4 @@ def logout():
         return url_response
     else:
         return redirect(url_for("index"))
+

@@ -10,9 +10,12 @@ from models.booking_model import Booking
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 app = Flask(__name__)
-app.secret_key = "Secret Key"
+app.secret_key = os.environ.get('APP_SECRET_KEY')
 
 try:
     cred = credentials.Certificate("serviceAccount.json")
@@ -33,7 +36,6 @@ class modifyForm(FlaskForm):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        User.get_users(db)
 
         # Get Cookies containing login info
         login_email = request.cookies.get('login_email')
@@ -215,20 +217,19 @@ def reset():
 def vendor_details_page():
     return render_template('vendor_details_page.html')
 
+
 @app.route('/logout')
 def logout():
-    
+
     login_email = request.cookies.get('login_email')
     user_type = request.cookies.get('user_type')
 
-    if(login_email and user_type):
+    if (login_email and user_type):
         url_response = make_response(redirect(url_for("index")))
         url_response.delete_cookie('login_email')
         url_response.delete_cookie('user_type')
-    
+
         return url_response
     else:
         return redirect(url_for("index"))
 
-if __name__ == '__main__':
-    app.run(port=5000)

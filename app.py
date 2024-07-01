@@ -4,8 +4,20 @@ from models.booking_model import Booking
 from firebase_admin import credentials
 from firebase_admin import firestore
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
+
+# Mailing service
+app.config['MAIL_SERVER']='sandbox.smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = '4a5fd4ae529040'
+app.config['MAIL_PASSWORD'] = '1d028d73a0663c'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
+
+sender_address = 'vendorverse@mailtrap.io'
 
 # Put in to Flash Error Message, need to improve sessions later
 app.secret_key = "Secret Key"
@@ -131,6 +143,59 @@ def employee():
 
 @app.route('/admin')
 def admin():
+    #Pull email for user
+    user_email = "email@email.com"
+
+    #If Account Approved/Denied 
+    account_status = "Approved" #Or "Denied"
+    #Send email to vendor after account Approved/Denied
+    msg = Message(subject='VendorVerse Account ' + account_status, sender=sender_address, recipients=[user_email])
+    msg.body = "Your account has been " + account_status + "."
+    if (account_status == "Approved"):
+        msg.body += "<br><br>Have a great day!"
+    else:
+        msg.body += "<br>If you believe your account should have been Approved, please contact " + sender_address + ". <br><br>Have a great day!"
+    mail.send(msg)
+
+
+    #If Booking Approved/Denied
+    booking_status = "Approved" #Or "Denied"
+    #Send email to vendor after booking Approved/Denied
+    msg = Message(subject='VendorVerse Booking ' + booking_status, sender=sender_address, recipients=[user_email])
+    msg.body = "Your bookung has been " + booking_status + "."
+    if (booking_status == "Approved"):
+        msg.body += "<br><br>Have a great day!"
+    else:
+        msg.body += "<br>If you believe your booking should have been Approved, please contact " + sender_address + ". <br><br>Have a great day!"
+    mail.send(msg)
+
+
+    #If Booking Amendment Approved/Denied
+    amend_status = "Approved" #Or "Denied"
+    #Send email to vendor after booking amendment Approved/Denied
+    msg = Message(subject='VendorVerse Booking Amendment ' + amend_status, sender=sender_address, recipients=[user_email])
+    msg.body = "Your booking amendment has been " + amend_status + "."
+    if (amend_status == "Approved"):
+        msg.body += "<br><br>Have a great day!"
+    else:
+        msg.body += "<br>If you believe your booking amendment should have been Approved, please contact " + sender_address + ". <br><br>Have a great day!"
+    mail.send(msg)
+
+
+    #If Booking Amended by Admin
+    #Send email to vendor after booking has been amended by Admin
+    msg = Message(subject='VendorVerse Booking has been Amended', sender=sender_address, recipients=[user_email])
+    msg.body = "Your booking has been amended. <br>Your booking had to be altered by our Admins. If there is an issue with this, please contact " + sender_address + ". <br><br>Have a great day!"
+    mail.send(msg)
+
+
+    #If Booking Cancelled by Admin
+    #Send email to vendor after booking has been cancelled
+    msg = Message(subject='VendorVerse Booking has been Cancelled', sender=sender_address, recipients=[user_email])
+    msg.body = "Your booking has been cancelled. <br>Your booking had to be cancelled by our Admins. If there is an issue with this, please contact " + sender_address + ". <br><br>Have a great day!"
+    mail.send(msg)
+
+
     return render_template('admin_home_page.html')
 
 

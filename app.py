@@ -7,28 +7,16 @@ from flask import Flask, flash, redirect, render_template, request, url_for, mak
 import os
 from dotenv import load_dotenv
 
-load_dotenv
+load_dotenv()
 app = Flask(__name__)
 
 # Put in to Flash Error Message, need to improve sessions later
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 
-# Use the application default credentials.
-firebase_creds = {
-    "type": "service_account",
-    "project_id": "balldn",
-    "private_key_id": "bf5b714cd50ab8a9b9947d5c897e6a5621b84471",
-    "private_key": os.environ.get('FIREBASE_PRIVATE_KEY'),
-    "client_email": "firebase-adminsdk-o8cke@balldn.iam.gserviceaccount.com",
-    "client_id": "110934915845662067518",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-o8cke%40balldn.iam.gserviceaccount.com",
-    "universe_domain": "googleapis.com"
-}
-cred = credentials.Certificate("firebase_creds.json")
+cred = credentials.Certificate(os.environ.get('FIREBASE_PRIVATE_KEY'))
+
 firebase_admin.initialize_app(cred)
+
 
 db = firestore.client()
 

@@ -4,8 +4,20 @@ from models.booking_model import Booking
 from firebase_admin import credentials
 from firebase_admin import firestore
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
+
+# Mailing service
+app.config['MAIL_SERVER']='sandbox.smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = '4a5fd4ae529040'
+app.config['MAIL_PASSWORD'] = '1d028d73a0663c'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
+
+sender_address = 'vendorverse@mailtrap.io'
 
 # Put in to Flash Error Message, need to improve sessions later
 app.secret_key = "Secret Key"
@@ -76,7 +88,12 @@ def register():
 
         # Set cookies for login details + user type
         url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
+        url_response.set_cookie('user_type', user_type)
+
+        #Send email to admin after registration complete
+        msg = Message(subject='VendorVerse Registration', sender=sender_address, recipients=[login_email])
+        msg.body = "Thank you for registering with VendorVerse. <br>Your account is pending approval currently. You will be emailed once your account is approved. <br><br>Have a great day!"
+        mail.send(msg)
 
         return url_response
 
@@ -85,6 +102,11 @@ def register():
 
 @app.route('/')
 def index():
+    #Send test email
+    msg = Message(subject='VendorVerse Registration', sender=sender_address, recipients=['liamocc2003@gmail.com'])
+    msg.body = "Thank you for registering with VendorVerse. <br>Your account is pending approval currently. You will be emailed once your account is approved. <br><br>Have a great day!"
+    mail.send(msg)
+
     return render_template('public_home_page.html')
 
 
@@ -95,13 +117,24 @@ def vendor():
 
 @app.route('/create_booking', methods=['GET', 'POST'])
 def create_booking():
+    #Get login_email through email
+    login_email = request.cookies.get('login_email')
+
     if request.method == 'GET':
-        Booking.get_user_id(db, request.cookies.get('login_email'))
+        Booking.get_user_id(db, login_email)
+
     if request.method == "POST":
-        user_id = Booking.get_user_id(db, request.cookies.get('login_email'))
+        user_id = Booking.get_user_id(db, login_email)
         Booking.add_booking(db, user_id)
         flash("Your Booking has been created and is pending approval")
+
+        #Send email to admin after booking complete
+        msg = Message(subject='VendorVerse Create Booking', sender=sender_address, recipients=[login_email])
+        msg.body = "Thank you for creating a booking with VendorVerse. <br>Your booking is pending approval currently. You will be emailed once your booking is approved. <br><br>Have a great day!"
+        mail.send(msg)
+
         return render_template('create_booking_vendor.html')
+    
     return render_template('create_booking_vendor.html')
 
 
@@ -110,17 +143,37 @@ def create_booking():
 
 @app.route('/create_booking_admin', methods=['GET', 'POST'])
 def create_booking_admin():
+    #Get login_email through email
+    login_email = request.cookies.get('login_email')
+
     if request.method == 'GET':
-        Booking.get_user_id(db, request.cookies.get('login_email'))
+        Booking.get_user_id(db, login_email)
+
     if request.method == "POST":
-        user_id = Booking.get_user_id(db, request.form.get('Email'))
+        user_id = Booking.get_user_id(db, login_email)
         Booking.add_booking(db, user_id)
+
         return redirect(url_for('create_booking_admin'))
+    
     return render_template('create_booking_admin.html')
 
 
 @app.route('/manage_booking')
 def manage_bookings():
+    #Get login_email through email
+    login_email = request.cookies.get('login_email')
+
+    if request.method == 'GET':
+        Booking.get_user_id(db, login_email)
+
+    if request.method == "POST":
+        user_id = Booking.get_user_id(db, login_email)
+
+    #Send email to admin after booking complete
+    msg = Message(subject='VendorVerse Amend Booking', sender=sender_address, recipients=[login_email])
+    msg.body = "Your booking has been amended. <br>Your amended booking is pending approval currently. You will be emailed once your amended booking is approved. <br><br>Have a great day!"
+    mail.send(msg)
+
     return render_template('manage_bookings_page.html')
 
 
@@ -131,7 +184,7 @@ def employee():
 
 @app.route('/admin')
 def admin():
-    return render_template('admin_home_page.html')
+        return render_template('admin_home_page.html')
 
 
 @app.route('/reset')

@@ -1,25 +1,37 @@
+import logging
 import firebase_admin
+from firebase_admin import credentials, firestore
+from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, DateField
+from wtforms.validators import InputRequired
 from models.user_model import User
 from models.booking_model import Booking
-from firebase_admin import credentials
-from firebase_admin import firestore
-from flask import Flask, flash, redirect, render_template, request, url_for, make_response
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
-
-# Put in to Flash Error Message, need to improve sessions later
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 
-cred = credentials.Certificate(os.environ.get('FIREBASE_PRIVATE_KEY'))
-
-firebase_admin.initialize_app(cred)
-
+try:
+    cred = credentials.Certificate("serviceAccount.json")
+    firebase_admin.initialize_app(cred)
+    db = firestore.client()
+    logging.info("Firebase initialized successfully")
+except Exception as e:
+    logging.exception("Failed to initialize Firebase: %s", e)
 
 db = firestore.client()
 
+class modifyForm(FlaskForm):
+    date = DateField('Date', validators=[InputRequired()])
+    location = StringField('Location', validators=[InputRequired()])
+    discount = TextAreaField('Discount', validators=[InputRequired()])
+    additional_info = TextAreaField('Additional Information', validators=[InputRequired()])
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -107,10 +119,7 @@ def create_booking():
     return render_template('create_booking_vendor.html')
 
 
-'''Only Temporary until sessions are introduced'''
-
-
-@app.route('/create_booking_admin', methods=['GET', 'POST'])
+@app.route('/create_booking_admin',methods=['GET', 'POST'])
 def create_booking_admin():
     if request.method == 'GET':
         Booking.get_user_id(db, request.cookies.get('login_email'))
@@ -120,11 +129,74 @@ def create_booking_admin():
         return redirect(url_for('create_booking_admin'))
     return render_template('create_booking_admin.html')
 
-
-@app.route('/manage_booking')
+@app.route('/manage_booking', methods=['GET', 'POST'])
 def manage_bookings():
-    return render_template('manage_bookings_page.html')
+    
+    form = modifyForm()
+    
+    if request.cookies.get('user_type') == "V":
+        bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
+    elif request.cookies.get('user_type') == "A":
+        bookings = Booking.get_approved_bookings(db)
+    
+    if request.method == 'GET':
+        return render_template('manage_bookings_page.html', bookings=bookings, form=form)
 
+    if request.method == 'POST':
+        action = request.form.get('action')
+        booking_id = request.form.get('options')
+
+        if action == 'cancel':
+            if booking_id:
+                booking_ref = db.collection('Bookings').document(booking_id)
+                if booking_ref.get().exists:
+                    booking_ref.update({"Status": "D"})
+                    print(f"Booking {booking_id} status updated to D")
+                else:
+                    print("No booking found with the provided ID")
+            else:
+                print("No booking ID provided")
+
+        elif action == 'modify':
+            #Store Booking ID
+            booking_id = request.form['options']
+            print(booking_id)
+            Booking.modify_booking(db, booking_id)
+            
+            #Display Updated Bookings
+            if(request.cookies.get('user_type') == "V"):
+                bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
+            elif(request.cookies.get('user_type') == "A"):
+                bookings = Booking.get_approved_bookings(db)
+
+        # Reload the bookings after any action
+        if request.cookies.get('user_type') == "V":
+            bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
+        elif request.cookies.get('user_type') == "A":
+            bookings = Booking.get_approved_bookings(db)
+        
+        return render_template('manage_bookings_page.html', bookings=bookings, form=form)
+    
+    return render_template('manage_bookings_page.html', bookings=bookings, form=form)
+
+
+
+@app.route('/get_booking/<booking_id>', methods=['GET'])
+def get_booking(booking_id):
+    booking_ref = db.collection('Bookings').document(booking_id)
+    results = booking_ref.get()
+
+    if results.exists:
+        booking_data = results.to_dict()
+        response_data = {
+            "date": booking_data.get("Date"),
+            "location": booking_data.get("Location"),
+            "discount": booking_data.get("Deal"),
+            "additional_info": booking_data.get("Additional Info")
+        }
+        return jsonify(response_data)
+    else:
+        return jsonify({"error": "Booking not found"}), 404
 
 @app.route('/employee')
 def employee():

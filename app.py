@@ -4,15 +4,30 @@ from models.booking_model import Booking
 from firebase_admin import credentials
 from firebase_admin import firestore
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response
+import os
+from dotenv import load_dotenv
 
+load_dotenv
 app = Flask(__name__)
 
 # Put in to Flash Error Message, need to improve sessions later
-app.secret_key = "Secret Key"
+app.secret_key = os.environ.get('APP_SECRET_KEY')
 
 # Use the application default credentials.
-
-cred = credentials.Certificate("serviceAccount.json")
+firebase_creds = {
+    "type": "service_account",
+    "project_id": "balldn",
+    "private_key_id": "bf5b714cd50ab8a9b9947d5c897e6a5621b84471",
+    "private_key": os.environ.get('FIREBASE_PRIVATE_KEY'),
+    "client_email": "firebase-adminsdk-o8cke@balldn.iam.gserviceaccount.com",
+    "client_id": "110934915845662067518",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-o8cke%40balldn.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+}
+cred = credentials.Certificate("firebase_creds.json")
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
@@ -21,7 +36,6 @@ db = firestore.client()
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        User.get_users(db)
 
         # Get Cookies containing login info
         login_email = request.cookies.get('login_email')
@@ -143,17 +157,18 @@ def reset():
 def vendor_details_page():
     return render_template('vendor_details_page.html')
 
+
 @app.route('/logout')
 def logout():
-    
+
     login_email = request.cookies.get('login_email')
     user_type = request.cookies.get('user_type')
 
-    if(login_email and user_type):
+    if (login_email and user_type):
         url_response = make_response(redirect(url_for("index")))
         url_response.delete_cookie('login_email')
         url_response.delete_cookie('user_type')
-    
+
         return url_response
     else:
         return redirect(url_for("index"))

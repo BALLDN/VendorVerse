@@ -51,22 +51,24 @@
                 <h2 class="text-center">Manage Bookings</h2>
                 <form action="{{url_for("manage_bookings")}}" method="post" id="mainForm">
                     {% for booking in bookings %}
-                        {% if booking.get("Status") == "A" %}
-                            <div class="card mt-3" name="card">
-                                <div class="card-body">
-                                    <h6>Booking #{{ bookings.index(booking) + 1 }}</h6>
-                                    <h7>Date: {{ booking.get("Date") }}</h7>
-                                    <br>
-                                    <h7>Location: {{ booking.get("Location") }}</h7>
-                                    <br>
-                                    <h7>Discount: {{ booking.get("Deal") }}</h7>
-                                    <br>
-                                    <h7>Additional information: {{ booking.get("`Additional Info`") }}</h7>
-                                    <br>
-                                    <input type="radio" name="options" id="{{ booking.id }}" value="{{ booking.id }}" checked> Select this booking
-                                </div>
+                        <div class="card mt-3" name="card">
+                            <div class="card-body">
+                                <h6>Booking #{{ bookings.index(booking) + 1 }}</h6>
+                                <br>
+                                <h7>Status : {{ booking.get("Status") }}</h7>
+                                <br>
+                                <h7>Date: {{ booking.get("Date") }}</h7>
+                                <br>
+                                <h7>Location: {{ booking.get("Location") }}</h7>
+                                <br>
+                                <h7>Discount: {{ booking.get("Deal") }}</h7>
+                                <br>
+                                <h7>Additional information: {{ booking.get("`Additional Info`") }}</h7>
+                                <br>
+                                <br>
+                                <input type="radio" name="options" id="{{ booking.id }}" value="{{ booking.id }}" checked> Select this booking
                             </div>
-                        {% endif %}
+                        </div>
                     {% endfor %}
 
                     <div class="text-center m-5">

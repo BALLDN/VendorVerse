@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+import os
 import logging
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -10,15 +12,13 @@ from models.booking_model import Booking
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
-import os
-from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 
 try:
-    cred = credentials.Certificate("serviceAccount.json")
+    cred = credentials.Certificate(os.environ.get('FIREBASE_PRIVATE_KEY'))
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     logging.info("Firebase initialized successfully")
@@ -27,11 +27,14 @@ except Exception as e:
 
 db = firestore.client()
 
+
 class modifyForm(FlaskForm):
     date = DateField('Date', validators=[InputRequired()])
     location = StringField('Location', validators=[InputRequired()])
     discount = TextAreaField('Discount', validators=[InputRequired()])
-    additional_info = TextAreaField('Additional Information', validators=[InputRequired()])
+    additional_info = TextAreaField(
+        'Additional Information', validators=[InputRequired()])
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -119,7 +122,7 @@ def create_booking():
     return render_template('create_booking_vendor.html')
 
 
-@app.route('/create_booking_admin',methods=['GET', 'POST'])
+@app.route('/create_booking_admin', methods=['GET', 'POST'])
 def create_booking_admin():
     if request.method == 'GET':
         Booking.get_user_id(db, request.cookies.get('login_email'))
@@ -129,16 +132,18 @@ def create_booking_admin():
         return redirect(url_for('create_booking_admin'))
     return render_template('create_booking_admin.html')
 
+
 @app.route('/manage_booking', methods=['GET', 'POST'])
 def manage_bookings():
-    
+
     form = modifyForm()
-    
+
     if request.cookies.get('user_type') == "V":
-        bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
+        bookings = Booking.get_bookings_by_vendor_id(
+            db, Booking.get_user_id(db, request.cookies.get('login_email')))
     elif request.cookies.get('user_type') == "A":
         bookings = Booking.get_approved_bookings(db)
-    
+
     if request.method == 'GET':
         return render_template('manage_bookings_page.html', bookings=bookings, form=form)
 
@@ -158,27 +163,28 @@ def manage_bookings():
                 print("No booking ID provided")
 
         elif action == 'modify':
-            #Store Booking ID
+            # Store Booking ID
             booking_id = request.form['options']
             print(booking_id)
             Booking.modify_booking(db, booking_id)
-            
-            #Display Updated Bookings
-            if(request.cookies.get('user_type') == "V"):
-                bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
-            elif(request.cookies.get('user_type') == "A"):
+
+            # Display Updated Bookings
+            if (request.cookies.get('user_type') == "V"):
+                bookings = Booking.get_bookings_by_vendor_id(
+                    db, Booking.get_user_id(db, request.cookies.get('login_email')))
+            elif (request.cookies.get('user_type') == "A"):
                 bookings = Booking.get_approved_bookings(db)
 
         # Reload the bookings after any action
         if request.cookies.get('user_type') == "V":
-            bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
+            bookings = Booking.get_bookings_by_vendor_id(
+                db, Booking.get_user_id(db, request.cookies.get('login_email')))
         elif request.cookies.get('user_type') == "A":
             bookings = Booking.get_approved_bookings(db)
-        
-        return render_template('manage_bookings_page.html', bookings=bookings, form=form)
-    
-    return render_template('manage_bookings_page.html', bookings=bookings, form=form)
 
+        return render_template('manage_bookings_page.html', bookings=bookings, form=form)
+
+    return render_template('manage_bookings_page.html', bookings=bookings, form=form)
 
 
 @app.route('/get_booking/<booking_id>', methods=['GET'])
@@ -197,6 +203,7 @@ def get_booking(booking_id):
         return jsonify(response_data)
     else:
         return jsonify({"error": "Booking not found"}), 404
+
 
 @app.route('/employee')
 def employee():
@@ -232,4 +239,3 @@ def logout():
         return url_response
     else:
         return redirect(url_for("index"))
-

@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+import os
 import logging
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -9,8 +11,6 @@ from models.user_model import User
 from models.booking_model import Booking
 from firebase_admin import credentials, firestore, auth
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
-import os
-from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 
 try:
-    cred = credentials.Certificate("serviceAccount.json")
+    cred = credentials.Certificate(os.environ.get('FIREBASE_PRIVATE_KEY'))
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     logging.info("Firebase initialized successfully")
@@ -34,6 +34,7 @@ class modifyForm(FlaskForm):
     location = StringField('Location', validators=[InputRequired()])
     discount = TextAreaField('Discount', validators=[InputRequired()])
     additional_info = TextAreaField(
+
         'Additional Information', validators=[InputRequired()])
 
 

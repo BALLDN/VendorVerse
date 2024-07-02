@@ -87,6 +87,12 @@ class Booking:
         query = booking_ref.where("Status", "==", "A")
         results = query.get()
         return results
+    
+    def get_pending_bookings(database_connection):
+        booking_ref = database_connection.collection('Bookings')
+        query = booking_ref.where("Status", "==", "P")
+        results = query.get()
+        return results
 
     def remove_booking(database_connection, booking_id):
 

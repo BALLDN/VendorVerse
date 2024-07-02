@@ -212,8 +212,12 @@ def employee():
     return render_template('employee_home_page.html')
 
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET'])
 def admin():
+    bookings = Booking.get_pending_bookings(db)
+    if request.method == 'GET':
+        return render_template('admin_home_page.html', bookings=bookings)
+
     return render_template('admin_home_page.html')
 
 

@@ -1,3 +1,6 @@
+import {firestore} from './firebase.js';
+import { initializeApp } from firestore/app;
+
 document.addEventListener('DOMContentLoaded', function () {
   const calendarEl = document.getElementById('calendar');
   const myModal = new bootstrap.Modal(document.getElementById('form'));

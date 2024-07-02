@@ -32,9 +32,31 @@ class modifyForm(FlaskForm):
     date = DateField('Date', validators=[InputRequired()])
     location = StringField('Location', validators=[InputRequired()])
     discount = TextAreaField('Discount', validators=[InputRequired()])
-    additional_info = TextAreaField(
-        'Additional Information', validators=[InputRequired()])
+    additional_info = TextAreaField('Additional Information', validators=[InputRequired()])
+    
+    
+@app.route('/get_bookings_for_calendar', methods=['GET'])
+def get_bookings():
+    try:
+        # Determine user type and get appropriate bookings
+        if request.cookies.get('user_type') == "V":
+            bookings_ref = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
+        elif request.cookies.get('user_type') == "A":
+            bookings_ref = Booking.get_approved_bookings(db)
+        else:
+            return jsonify({'error': 'Invalid user type'}), 400
 
+        bookings = []
+        # Iterate over the list of booking documents
+        for doc in bookings_ref:
+            booking = doc.to_dict()
+            booking['id'] = doc.id  # Add the document ID to the booking dictionary
+            bookings.append(booking)
+        
+        # Return the bookings as a JSON response
+        return jsonify(bookings)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -210,8 +232,12 @@ def employee():
     return render_template('employee_home_page.html')
 
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET'])
 def admin():
+    bookings = Booking.get_pending_bookings(db)
+    if request.method == 'GET':
+        return render_template('admin_home_page.html', bookings=bookings)
+         
     return render_template('admin_home_page.html')
 
 

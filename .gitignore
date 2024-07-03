@@ -1,4 +1,5 @@
 .vscode/
+<<<<<<< Updated upstream
 .venv/
 .sonarlint/
 .github/
@@ -7,3 +8,11 @@ __pycache__/
 sonar-project.properties
 .env
 firebase_creds.json
+=======
+.vscode/*
+.venv
+.sonarlint
+.github
+__pycache__
+sonar-project.properties
+>>>>>>> Stashed changes

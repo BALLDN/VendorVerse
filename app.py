@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import firebase_admin
 from models.user_model import User
 from models.booking_model import Booking
@@ -6,9 +7,28 @@ from firebase_admin import firestore
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response
 import os
 from dotenv import load_dotenv
+=======
+import logging
+import firebase_admin
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, DateField
+from wtforms.validators import InputRequired
+from models.user_model import User
+from models.booking_model import Booking
+from firebase_admin import credentials, firestore, auth
+from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
+
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+>>>>>>> Stashed changes
 
 load_dotenv()
 app = Flask(__name__)
+<<<<<<< Updated upstream
+=======
+app.secret_key = "Secret Key"
+>>>>>>> Stashed changes
 
 # Put in to Flash Error Message, need to improve sessions later
 app.secret_key = os.environ.get('APP_SECRET_KEY')
@@ -20,6 +40,14 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
+<<<<<<< Updated upstream
+=======
+class modifyForm(FlaskForm):
+    date = DateField('Date', validators=[InputRequired()])
+    location = StringField('Location', validators=[InputRequired()])
+    discount = TextAreaField('Discount', validators=[InputRequired()])
+    additional_info = TextAreaField('Additional Information', validators=[InputRequired()])
+>>>>>>> Stashed changes
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -36,24 +64,36 @@ def login():
     if request.method == 'POST':
 
         # Get username used in login form
-        login_email = request.form['Email']
+        #login_email = request.form['Email']
 
-        if (User.validate_user(db) == "V"):
-            url_response = make_response(redirect(url_for('vendor')))
-        elif (User.validate_user(db) == "E"):
-            url_response = make_response(redirect(url_for('employee')))
-        elif (User.validate_user(db) == "A"):
-            url_response = make_response(redirect(url_for('admin')))
-        else:
-            # Error Message displays as appropriate
-            flash(User.validate_user(db))
-            return render_template('login.html')
+        id_token = request.json.get('idToken')
 
-        # Set cookies for login details + user type
-        url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
+        try:
+            decoded_token = auth.verify_id_token(id_token)
+            print(decoded_token)
 
-        return url_response
+            uid = decoded_token['uid']
+
+            # Proceed with your application logic, e.g., creating a session
+            if (User.validate_user(db) == "V"):
+                url_response = make_response(redirect(url_for('vendor')))
+            elif (User.validate_user(db) == "E"):
+                url_response = make_response(redirect(url_for('employee')))
+            elif (User.validate_user(db) == "A"):
+                url_response = make_response(redirect(url_for('admin')))
+            else:
+                # Error Message displays as appropriate
+                flash(User.validate_user(db))
+                return render_template('login.html')
+
+            # Set cookies for login details + user type
+            url_response.set_cookie('login_email', login_email)
+            url_response.set_cookie('user_type', User.validate_user(db))
+
+            return url_response
+        except Exception as e:
+            return jsonify({'error': str(e)}), 401
+
     return render_template('login.html')
 
 
@@ -161,3 +201,8 @@ def logout():
     else:
         return redirect(url_for("index"))
 
+<<<<<<< Updated upstream
+=======
+if __name__ == '__main__':
+    app.run(port=5000)
+>>>>>>> Stashed changes

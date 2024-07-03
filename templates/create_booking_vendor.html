@@ -20,10 +20,55 @@
             }
         }
 
+<<<<<<< Updated upstream
+=======
+        document.addEventListener("DOMContentLoaded", function() {
+          const dateInput = document.getElementById('dateInput');
+          const today = new Date().toISOString().split('T')[0];
+          dateInput.setAttribute('min', today);
+      });
+
+>>>>>>> Stashed changes
   </script>
 </head>
 
 <body>
+<<<<<<< Updated upstream
+=======
+
+  <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
+    <div class="container-fluid"> 
+    <a class="navbar-brand" href="#">VendorVerse</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <ul class="nav navbar-nav">
+        <li class="nav-item">
+        <a class="nav-link" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{url_for("create_booking")}}">Create Booking</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" aria-current="page" href="{{url_for("manage_bookings")}}">Manage Bookings</a>
+        </li>
+
+    </ul>
+    
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarResponsive">
+        <ul class="nav navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="#">Account</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{url_for("logout")}}">Logout</a>
+        </li>
+        </ul>
+    </div>
+    </div>
+  </nav>
+>>>>>>> Stashed changes
     <div class="mask d-flex align-items-center vh-100 gradient-custom-4">
       <div class="container">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -40,7 +85,11 @@
               <form action="{{url_for("create_booking")}}" method="post">
 
                 <label for="Date">Booking Date</label>
+<<<<<<< Updated upstream
                 <input id="Date" name="Date" class="form-control mb-2" type="date" />
+=======
+                <input id="dateInput" name="Date" class="form-control mb-2" type="date" />
+>>>>>>> Stashed changes
 
                 <div data-mdb-input-init class="form-outline mb-2">
                   <label class="form-label" for="Location">Location</label>

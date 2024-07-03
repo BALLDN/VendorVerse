@@ -2,7 +2,11 @@
 body {
     font-family: "Montserrat", sans-serif;
     width: 100vw;
+<<<<<<< Updated upstream
     height: 100%;
+=======
+    min-height: 100%;
+>>>>>>> Stashed changes
 }
 
 html{

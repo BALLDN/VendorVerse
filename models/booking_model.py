@@ -64,8 +64,6 @@ class Booking:
             return user_id
         else:
             return "No User Found!"
-<<<<<<< Updated upstream
-=======
         
     def get_bookings_by_vendor_id(database_connection, vendor_id):
         booking_ref = database_connection.collection('Bookings')
@@ -114,4 +112,3 @@ class Booking:
         
         else:
             return "No User Found!"
->>>>>>> Stashed changes

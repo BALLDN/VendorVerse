@@ -20,21 +20,16 @@
             }
         }
 
-<<<<<<< Updated upstream
-=======
         document.addEventListener("DOMContentLoaded", function() {
           const dateInput = document.getElementById('dateInput');
           const today = new Date().toISOString().split('T')[0];
           dateInput.setAttribute('min', today);
       });
 
->>>>>>> Stashed changes
   </script>
 </head>
 
 <body>
-<<<<<<< Updated upstream
-=======
 
   <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
     <div class="container-fluid"> 
@@ -68,7 +63,6 @@
     </div>
     </div>
   </nav>
->>>>>>> Stashed changes
     <div class="mask d-flex align-items-center vh-100 gradient-custom-4">
       <div class="container">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -85,11 +79,7 @@
               <form action="{{url_for("create_booking")}}" method="post">
 
                 <label for="Date">Booking Date</label>
-<<<<<<< Updated upstream
-                <input id="Date" name="Date" class="form-control mb-2" type="date" />
-=======
                 <input id="dateInput" name="Date" class="form-control mb-2" type="date" />
->>>>>>> Stashed changes
 
                 <div data-mdb-input-init class="form-outline mb-2">
                   <label class="form-label" for="Location">Location</label>

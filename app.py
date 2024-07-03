@@ -1,34 +1,13 @@
-<<<<<<< Updated upstream
 import firebase_admin
-from models.user_model import User
-from models.booking_model import Booking
-from firebase_admin import credentials
-from firebase_admin import firestore
-from flask import Flask, flash, redirect, render_template, request, url_for, make_response
-import os
-from dotenv import load_dotenv
-=======
-import logging
-import firebase_admin
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField
-from wtforms.validators import InputRequired
 from models.user_model import User
 from models.booking_model import Booking
 from firebase_admin import credentials, firestore, auth
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
-
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
->>>>>>> Stashed changes
+import os
+from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
-<<<<<<< Updated upstream
-=======
-app.secret_key = "Secret Key"
->>>>>>> Stashed changes
 
 # Put in to Flash Error Message, need to improve sessions later
 app.secret_key = os.environ.get('APP_SECRET_KEY')
@@ -40,14 +19,11 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-<<<<<<< Updated upstream
-=======
 class modifyForm(FlaskForm):
     date = DateField('Date', validators=[InputRequired()])
     location = StringField('Location', validators=[InputRequired()])
     discount = TextAreaField('Discount', validators=[InputRequired()])
     additional_info = TextAreaField('Additional Information', validators=[InputRequired()])
->>>>>>> Stashed changes
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -201,8 +177,5 @@ def logout():
     else:
         return redirect(url_for("index"))
 
-<<<<<<< Updated upstream
-=======
 if __name__ == '__main__':
     app.run(port=5000)
->>>>>>> Stashed changes

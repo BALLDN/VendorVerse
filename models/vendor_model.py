@@ -23,7 +23,16 @@ class Vendor:
 
         for result in results:
             return result
-        return result
+        else:
+            dictionary = {
+            "About_Us": "None",
+            "Address": "None",
+            "Phone_Number": "None",
+            "User_ID": "None",
+            "Vendor_Name": "None"
+            }
+            
+            return dictionary
 
     @staticmethod
     def get_vendor_by_user_id(database_connection, user_id):

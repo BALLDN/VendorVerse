@@ -45,7 +45,7 @@ def get_bookings():
         elif request.cookies.get('user_type') == "A":
             bookings_ref = Booking.get_approved_bookings(db)
         else:
-            return jsonify({'error': 'Invalid user type'}), 400
+            bookings_ref = Booking.get_approved_bookings(db)
 
         bookings = []
         # Iterate over the list of booking documents
@@ -233,13 +233,68 @@ def employee():
     return render_template('employee_home_page.html')
 
 
-@app.route('/admin', methods=['GET'])
+@app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    bookings = Booking.get_pending_bookings(db)
     if request.method == 'GET':
-        return render_template('admin_home_page.html', bookings=bookings)
-         
-    return render_template('admin_home_page.html')
+        bookings = Booking.get_pending_bookings(db)
+        detailed_bookings = []
+        for booking_snapshot in bookings:
+            booking = booking_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
+            booking['id'] = booking_snapshot.id
+            
+            vendor_id = booking.get("Vendor_ID")
+            vendor_details = Vendor.get_vendor_by_user_id(db, vendor_id)
+            
+            # Log vendor details fetched
+            app.logger.info(f"Fetched vendor details for Vendor_ID {vendor_id}: {vendor_details}")
+            
+            # Ensure vendor_details is a dictionary and log any potential issues
+            if vendor_details:
+                booking['vendor_name'] = vendor_details.get('Vendor_Name')
+                booking['vendor_phone'] = vendor_details.get('Phone_Number')
+                booking['vendor_address'] = vendor_details.get('Address')
+                app.logger.info(f"Vendor details added to booking: {vendor_details}")
+            else:
+                app.logger.warning(f"No vendor details found for Vendor_ID: {vendor_id}")
+            
+            detailed_bookings.append(booking)
+        
+        # Log the detailed bookings list
+        app.logger.info(f"Detailed bookings: {detailed_bookings}")
+        
+        return render_template('admin_home_page.html', bookings=detailed_bookings)
+    
+    elif request.method == 'POST':
+        # Handle POST request to process form submission
+        action = request.form.get('action')
+        booking_id = request.form.get('bookingIdField')
+        
+        print(action)
+        print(booking_id)
+
+        if not booking_id or not action:
+            return jsonify({'error': 'Missing parameters'}), 400
+        
+        try:
+            booking_ref = db.collection('Bookings').document(booking_id)
+            booking = booking_ref.get()
+            
+            if not booking.exists:
+                return jsonify({'error': 'Booking not found'}), 404
+
+            if action == 'approve':
+                booking_ref.update({'Status': 'A'})
+                print(jsonify({'message': 'Booking approved successfully'}), 200)
+                return redirect(url_for('admin'))
+            elif action == 'cancel':
+                booking_ref.update({'Status': 'D'})
+                print(jsonify({'message': 'Booking cancelled successfully'}), 200)
+                return redirect(url_for('admin'))
+            else:
+                return jsonify({'error': 'Invalid action'}), 400
+
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
 
 
 @app.route('/reset')

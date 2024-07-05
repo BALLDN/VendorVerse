@@ -3,6 +3,7 @@ from flask import request
 
 class Vendor:
 
+
     def __init__(self,vendor_name, phone_number, address, about_us, user_id):
         self.about_us = about_us
         self.address = address
@@ -12,7 +13,7 @@ class Vendor:
 
     def display(self):
         print("")
-        
+
     def add_vendor_details(database_connection, user_id):
         # adds a vendors details to db
         vendor_name = request.form['vendor_name']
@@ -26,5 +27,4 @@ class Vendor:
                 "Address": vendor_details.address, "About_Us": vendor_details.about_us, "User_ID": user_id}
         database_connection.collection("Vendors").add(details)
         return details
-        
-    
+   

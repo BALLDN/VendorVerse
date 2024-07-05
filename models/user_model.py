@@ -33,14 +33,14 @@ class User:
         users_ref = database_connection.collection('Users')
         query = users_ref.where("Email", "==", email)
         results = query.get()
-        
+
         for doc in results:
             user_id = doc.id
 
         if len(results) > 0:
             return user_id
         else:
-            return "No User Found!"       
+            return "No User Found!"
 
     @staticmethod
     def get_users(database_connection):
@@ -50,7 +50,7 @@ class User:
         for doc in docs:
             return ('{} => {}'.format(doc.id, doc.to_dict()))
         return docs
-    
+
     @staticmethod
     def get_pending_users(database_connection):
         users_ref = database_connection.collection('Users')
@@ -58,7 +58,6 @@ class User:
         results = query.get()
         return results
 
-    
     @staticmethod
     def get_user_by_user_id(database_connection, user_id):
         users_ref = database_connection.collection('Users')

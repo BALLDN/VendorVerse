@@ -237,7 +237,9 @@ def employee():
 def admin():
     if request.method == 'GET':
         bookings = Booking.get_pending_bookings(db)
+        users = User.get_pending_users(db)
         detailed_bookings = []
+        vendor_users = []
         for booking_snapshot in bookings:
             booking = booking_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
             booking['id'] = booking_snapshot.id
@@ -259,42 +261,87 @@ def admin():
             
             detailed_bookings.append(booking)
         
+        for user_snapshot in users:
+            if(user_snapshot.get("User_Type") == "V"):
+                user = user_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
+                user['id'] = user_snapshot.id
+                
+                user_id = user_snapshot.id
+                vendor_details = Vendor.get_vendor_by_user_id(db, user_id)
+                
+                # Log vendor details fetched
+                app.logger.info(f"Fetched vendor details for Vendor_ID {user_id}: {vendor_details}")
+                
+                # Ensure vendor_details is a dictionary and log any potential issues
+                if vendor_details:
+                    user['vendor_name'] = vendor_details.get('Vendor_Name')
+                    user['vendor_phone'] = vendor_details.get('Phone_Number')
+                    user['vendor_address'] = vendor_details.get('Address')
+                    app.logger.info(f"Vendor details added to User: {vendor_details}")
+                else:
+                    app.logger.warning(f"No vendor details found for Vendor_ID: {user_id}")
+            
+                vendor_users.append(user)
+        
         # Log the detailed bookings list
         app.logger.info(f"Detailed bookings: {detailed_bookings}")
+        app.logger.info(f"Vendors: {vendor_users}")
         
-        return render_template('admin_home_page.html', bookings=detailed_bookings)
+        return render_template('admin_home_page.html', bookings=detailed_bookings, users=users, vendor_users=vendor_users)
     
     elif request.method == 'POST':
         # Handle POST request to process form submission
         action = request.form.get('action')
         booking_id = request.form.get('bookingIdField')
+        user_id = request.form.get('userIdField')
+
+        print(user_id)
+
+        if not action:
+            return jsonify({'error': 'Action Undefined'}), 400
         
-        print(action)
-        print(booking_id)
+        if(booking_id):
+            try:
+                booking_ref = db.collection('Bookings').document(booking_id)
+                booking = booking_ref.get()
+                
+                if not booking.exists:
+                    return jsonify({'error': 'Booking not found'}), 404
 
-        if not booking_id or not action:
-            return jsonify({'error': 'Missing parameters'}), 400
-        
-        try:
-            booking_ref = db.collection('Bookings').document(booking_id)
-            booking = booking_ref.get()
-            
-            if not booking.exists:
-                return jsonify({'error': 'Booking not found'}), 404
+                if action == 'approve':
+                    booking_ref.update({'Status': 'A'})
+                    print(jsonify({'message': 'Booking approved successfully'}), 200)
+                    return redirect(url_for('admin'))
+                elif action == 'cancel':
+                    booking_ref.update({'Status': 'D'})
+                    print(jsonify({'message': 'Booking cancelled successfully'}), 200)
+                    return redirect(url_for('admin'))
+                else:
+                    return jsonify({'error': 'Invalid action'}), 400
 
-            if action == 'approve':
-                booking_ref.update({'Status': 'A'})
-                print(jsonify({'message': 'Booking approved successfully'}), 200)
-                return redirect(url_for('admin'))
-            elif action == 'cancel':
-                booking_ref.update({'Status': 'D'})
-                print(jsonify({'message': 'Booking cancelled successfully'}), 200)
-                return redirect(url_for('admin'))
-            else:
-                return jsonify({'error': 'Invalid action'}), 400
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+        elif(user_id):
+            try:
+                users_ref = db.collection('Users').document(user_id)
+                user = users_ref.get()
+                
+                if not user.exists:
+                    return jsonify({'error': 'Booking not found'}), 404
 
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
+                if action == 'approve':
+                    users_ref.update({'Status': 'A'})
+                    print(jsonify({'message': 'User approved successfully'}), 200)
+                    return redirect(url_for('admin'))
+                elif action == 'cancel':
+                    users_ref.update({'Status': 'D'})
+                    print(jsonify({'message': 'User Denied successfully'}), 200)
+                    return redirect(url_for('admin'))
+                else:
+                    return jsonify({'error': 'Invalid action'}), 400
+
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
 
 
 @app.route('/reset')

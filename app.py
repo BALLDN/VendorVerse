@@ -302,8 +302,15 @@ def reset():
     return render_template('forgot_password.html')
 
 
-@app.route('/vendor_details')
+@app.route('/vendor_details', methods=['GET','POST'])
 def vendor_details_page():
+    email = request.cookies.get('login_email')
+    user_id = User.get_user_id_from_email(db, email)
+    if request.method == 'POST':
+        Vendor.add_vendor_details(db, user_id)
+        flash("Your Details have been saved and your account is pending approval")
+        return redirect(url_for('index'))
+        
     return render_template('vendor_details_page.html')
 
 

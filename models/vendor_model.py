@@ -3,7 +3,8 @@ from flask import request
 
 class Vendor:
 
-    def __init__(self, about_us, address, phone_number, user_id, vendor_name):
+
+    def __init__(self,vendor_name, phone_number, address, about_us, user_id):
         self.about_us = about_us
         self.address = address
         self.phone_number = phone_number
@@ -11,36 +12,19 @@ class Vendor:
         self.vendor_name = vendor_name
 
     def display(self):
-        print(self.email, self.password, self.user_type, self.status)
-    
-    @staticmethod
-    def get_vendor_by_user_id(database_connection, user_id):
-        
-        vendors_ref = database_connection.collection('Vendors')
-        
-        query = vendors_ref.where("User_ID", "==", user_id)
-        results = query.get()
-        
-        for result in results:
-            return result
-        return result
+        print("")
 
-    # Change to return entire user credentials
-    @staticmethod
-    def validate_user(database_connection):
-        users_ref = database_connection.collection('Users')
-        form_email = request.form['Email']
-        password = request.form['Password']
+    def add_vendor_details(database_connection, user_id):
+        # adds a vendors details to db
+        vendor_name = request.form['vendor_name']
+        phone_number = request.form['phone_number']
+        address = request.form['address']
+        about_us = request.form['about_us']
 
-        query = users_ref.where("Email", "==", form_email)
-        results = query.get()
+        vendor_details = Vendor(vendor_name, phone_number, address, about_us, user_id)
 
-        for doc in results:
-            found_user_type = doc.to_dict().get("User_Type")
-            found_password = doc.to_dict().get("Password")
-
-        if len(results) > 0 and found_password == password:
-            # Decides which Homepage to load based on user type
-            return found_user_type
-        else:
-            return "Invalid Email or Password!"
+        details = {"Vendor_Name": vendor_details.vendor_name, "Phone_Number": vendor_details.phone_number,
+                "Address": vendor_details.address, "About_Us": vendor_details.about_us, "User_ID": user_id}
+        database_connection.collection("Vendors").add(details)
+        return details
+   

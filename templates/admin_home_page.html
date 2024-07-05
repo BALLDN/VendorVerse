@@ -131,8 +131,8 @@
                                                 data-bs-target="#approveModal"
                                                 onclick="setBookingId('{{ booking.id }}')">Approve</button>
                                             <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
-                                                data-bs-target="#denyModal"
-                                                onclick="setBookingId('{{ booking.id }}')">Deny</button>
+                                                data-bs-target="#cancelModal"
+                                                onclick="setBookingId('{{ booking.id }}')">Cancel</button>
                                         </div>
                                     </div>
                                 </div>
@@ -156,8 +156,8 @@
                                                 data-bs-target="#approveModal"
                                                 onclick="setUserId('{{ vendor.id }}')">Approve</button>
                                             <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
-                                                data-bs-target="#denyModal"
-                                                onclick="setUserId('{{ vendor.id }}')">Deny</button>
+                                                data-bs-target="#cancelModal"
+                                                onclick="setUserId('{{ vendor.id }}')">Cancel</button>
                                         </div>
                                     </div>
                                 </div>
@@ -179,8 +179,8 @@
                                                 data-bs-target="#approveModal"
                                                 onclick="setUserId('{{ user.id }}')">Approve</button>
                                             <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
-                                                data-bs-target="#denyModal"
-                                                onclick="setUserId('{{ user.id }}')">Deny</button>
+                                                data-bs-target="#cancelModal"
+                                                onclick="setUserId('{{ user.id }}')">Cancel</button>
                                         </div>
                                     </div>
                                 </div>
@@ -189,6 +189,7 @@
                             </div>
                         </div>
                         <input type="hidden" name="bookingIdField" id="bookingIdField">
+                        <input type="hidden" name="userIdField" id="userIdField">
                         <input type="hidden" name="userIdField" id="userIdField">
                         <!-- Hidden input to identify the action -->
                         <input type="hidden" name="action" id="action">
@@ -206,7 +207,7 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Are you sure you want to Approve the Booking request?</p>
+                                <p>Are you sure you want to approve?</p>
                                 <!-- Additional content if needed -->
                             </div>
                             <div class="modal-footer">
@@ -229,7 +230,7 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Are you sure you want to DENY the Booking request?</p>
+                                <p>Are you sure you want to cancel?</p>
                                 <!-- Additional content if needed -->
                             </div>
                             <div class="modal-footer">
@@ -274,8 +275,8 @@
                     }
 
 
-                    function submitDenyForm() {
-                        document.getElementById('action').value = 'DENY';
+                    function submitCancelForm() {
+                        document.getElementById('action').value = 'cancel';
                         document.getElementById('mainForm').submit();
                     }
 

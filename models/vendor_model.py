@@ -73,4 +73,27 @@ class Vendor:
             # Decides which Homepage to load based on user type
             return found_user_type
         else:
-            return "Invalid Email or Password!"
+            dictionary = {
+                "About_Us": "None",
+                "Address": "None",
+                "Phone_Number": "None",
+                "User_ID": "None",
+                "Vendor_Name": "None"
+            }
+
+            return dictionary
+
+    def add_vendor_details(database_connection, user_id):
+        # adds a vendors details to db
+        vendor_name = request.form['vendor_name']
+        phone_number = request.form['phone_number']
+        address = request.form['address']
+        about_us = request.form['about_us']
+
+        vendor_details = Vendor(vendor_name, phone_number,
+                                address, about_us, user_id)
+
+        details = {"Vendor_Name": vendor_details.vendor_name, "Phone_Number": vendor_details.phone_number,
+                   "Address": vendor_details.address, "About_Us": vendor_details.about_us, "User_ID": user_id}
+        database_connection.collection("Vendors").add(details)
+        return details

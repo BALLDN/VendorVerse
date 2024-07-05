@@ -43,6 +43,20 @@ class User:
             return "No User Found!"
 
     @staticmethod
+    def get_user_id_from_email(database_connection, email):
+        users_ref = database_connection.collection('Users')
+        query = users_ref.where("Email", "==", email)
+        results = query.get()
+
+        for doc in results:
+            user_id = doc.id
+
+        if len(results) > 0:
+            return user_id
+        else:
+            return "No User Found!"
+
+    @staticmethod
     def get_users(database_connection):
         # gets all users from db
         users_ref = database_connection.collection('Users')

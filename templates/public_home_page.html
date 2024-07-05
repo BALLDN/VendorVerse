@@ -34,8 +34,14 @@
     <div class="gradient-custom-3">
         <div class="container">
 
+
             <div class="row">
                 <div class="col-8">
+                    {% for mesg in get_flashed_messages() %}
+                    <div class="alert alert-success">
+                        <strong>{{ mesg }}</strong>
+                    </div>
+                    {% endfor %}
                     {% for mesg in get_flashed_messages() %}
                     <div class="alert alert-success">
                         <strong>{{ mesg }}</strong>

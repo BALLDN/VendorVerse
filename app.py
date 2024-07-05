@@ -9,8 +9,7 @@ from flask import Flask, flash, redirect, render_template, request, url_for, mak
 
 from models.user_model import User
 from models.booking_model import Booking
-from firebase_admin import credentials, firestore, auth
-from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
+from models.vendor_model import Vendor
 from firebase_admin import credentials, firestore, auth
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
 
@@ -217,8 +216,15 @@ def admin():
         return render_template('forgot_password.html')
 
 
-@app.route('/vendor_details', methods=['GET', 'POST'])
+@app.route('/vendor_details', methods=['GET', 'POST'], methods=['GET', 'POST'])
 def vendor_details_page():
+    email = request.cookies.get('login_email')
+    user_id = User.get_user_id_from_email(db, email)
+    if request.method == 'POST':
+        Vendor.add_vendor_details(db, user_id)
+        flash("Your Details have been saved and your account is pending approval")
+        return redirect(url_for('index'))
+
     email = request.cookies.get('login_email')
     user_id = User.get_user_id_from_email(db, email)
     if request.method == 'POST':

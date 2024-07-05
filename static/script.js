@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
             plugins: ['dayGrid', 'interaction'],
             events: events.map(event => ({
                 id: event.id,
-                title: event.Location,
+                title: event['Additional Info'],
                 start: event.Date,
                 backgroundColor: 'blue',
                 allDay: true,
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             calendar.addEvent({
                 id: updatedEvent.id,
-                title: updatedEvent.Location,
+                title: updatedEvent['Additional Info'],
                 start: updatedEvent.Date,
                 backgroundColor: 'blue',
                 allDay: true

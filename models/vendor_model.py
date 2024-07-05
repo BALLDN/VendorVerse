@@ -12,15 +12,15 @@ class Vendor:
 
     def display(self):
         print(self.email, self.password, self.user_type, self.status)
-    
+
     @staticmethod
     def get_vendor_by_user_id(database_connection, user_id):
-        
+
         vendors_ref = database_connection.collection('Vendors')
-        
+
         query = vendors_ref.where("User_ID", "==", user_id)
         results = query.get()
-        
+
         for result in results:
             return result
         return result

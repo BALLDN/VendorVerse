@@ -24,16 +24,7 @@ class Vendor:
         
         for result in results:
             return result
-        else:
-            dictionary = {
-            "About_Us": "None",
-            "Address": "None",
-            "Phone_Number": "None",
-            "User_ID": "None",
-            "Vendor_Name": "None"
-            }
-            
-            return dictionary
+        return result
 
     def add_vendor_details(database_connection, user_id):
         # adds a vendors details to db

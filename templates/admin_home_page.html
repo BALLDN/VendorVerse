@@ -112,50 +112,9 @@
                                         </div>
                                     {% endif %}
                                 {% endfor %}
-
-                                {% for vendor in vendor_users %}
-                                {% if vendor.get('Status') == 'P' %}
-                                    <div class="card mt-5 ml-3">
-                                        <div class="card-body">
-                                            <h6>Vendor Registration Request #{{ loop.index }}</h6>
-                                            {% if vendor.vendor_name %}
-                                                    <p>Vendor Name: {{ vendor.vendor_name }}</p>
-                                                    <p>Phone Number: {{ vendor.vendor_phone }}</p>
-                                                    <p>Address: {{ vendor.vendor_address }}</p>
-                                                {% else %}
-                                                <p>No User details available.</p>
-                                            {% endif %}
-                                            <div class="text-center">
-                                                <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#approveModal" onclick="setUserId('{{ vendor.id }}')">Approve</button>
-                                                <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal" data-bs-target="#cancelModal" onclick="setUserId('{{ vendor.id }}')">Cancel</button>                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-
-                                {% for user in users %}
-                                {% if user.get('Status') == 'P' %}
-                                    <div class="card mt-5 ml-3">
-                                        <div class="card-body">
-                                            <h6>Employee Registration Request #{{ loop.index }}</h6>
-                                            {% if user.get("Email") %}
-                                                <p>Email: {{ user.get("Email") }}</p>   
-                                            {% else %}
-                                                <p>No User details available.</p>
-                                            {% endif %}
-                                            <div class="text-center">
-                                                <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#approveModal" onclick="setUserId('{{ user.id }}')">Approve</button>
-                                                <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal" data-bs-target="#cancelModal" onclick="setUserId('{{ user.id }}')">Cancel</button>                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
                             </div>
                         </div>
                         <input type="hidden" name="bookingIdField" id="bookingIdField">
-                        <input type="hidden" name="userIdField" id="userIdField">
                         <!-- Hidden input to identify the action -->
                         <input type="hidden" name="action" id="action">
                     </form>
@@ -166,11 +125,11 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="approveModalLabel">Approve</h5>
+                                <h5 class="modal-title" id="approveModalLabel">Approve Booking</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Are you sure you want to approve?</p>
+                                <p>Are you sure you want to approve this booking?</p>
                                 <!-- Additional content if needed -->
                             </div>
                             <div class="modal-footer">
@@ -190,7 +149,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Are you sure you want to cancel?</p>
+                                <p>Are you sure you want to cancel this booking?</p>
                                 <!-- Additional content if needed -->
                             </div>
                             <div class="modal-footer">
@@ -216,11 +175,6 @@
                     function setBookingId(bookingId) {
                         document.getElementById('bookingIdField').value = bookingId;
                     }
-
-                    function setUserId(userId) {
-                        document.getElementById('userIdField').value = userId;
-                    }
-                    
 
                     function submitCancelForm() {
                         document.getElementById('action').value = 'cancel';

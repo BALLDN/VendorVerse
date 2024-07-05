@@ -25,13 +25,13 @@ class Vendor:
             return result
         else:
             dictionary = {
-            "About_Us": "None",
-            "Address": "None",
-            "Phone_Number": "None",
-            "User_ID": "None",
-            "Vendor_Name": "None"
+                "About_Us": "None",
+                "Address": "None",
+                "Phone_Number": "None",
+                "User_ID": "None",
+                "Vendor_Name": "None"
             }
-            
+
             return dictionary
 
     @staticmethod

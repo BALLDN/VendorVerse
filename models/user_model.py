@@ -36,6 +36,13 @@ class User:
         for doc in docs:
             return ('{} => {}'.format(doc.id, doc.to_dict()))
         return docs
+    
+    @staticmethod
+    def get_user_by_user_id(database_connection, user_id):
+        users_ref = database_connection.collection('Users')
+        query = users_ref.where("User_ID", "==", user_id)
+        results = query.get()
+        return results
 
     # Change to return entire user credentials
     @staticmethod

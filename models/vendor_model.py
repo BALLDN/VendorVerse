@@ -13,6 +13,18 @@ class Vendor:
 
     def display(self):
         print("")
+        
+    @staticmethod
+    def get_vendor_by_user_id(database_connection, user_id):
+        
+        vendors_ref = database_connection.collection('Vendors')
+        
+        query = vendors_ref.where("User_ID", "==", user_id)
+        results = query.get()
+        
+        for result in results:
+            return result
+        return result
 
     def add_vendor_details(database_connection, user_id):
         # adds a vendors details to db

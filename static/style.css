@@ -208,9 +208,29 @@ Select{
     margin-right: 4px;
 }
 
-.cookie_banner {
-    position: sticky;
-    width: 60%;
+
+.home_page_boxes{
+    border: 3px solid #333;
+    padding-top: 1%;
+    margin-bottom: 1%;
+}
+.home_page_boxes h3, h4{
+    border-bottom: 2px solid #000000;
+    margin-right: 50%;
+    margin-bottom: 2px;
+}
+.image_boxes{
+    border: 2px solid #585858;
     display: flex;
-    align-items: center;
+    margin-bottom: 2%;
+}
+.fix_text{
+    margin-left: 2%;
+    text-align: center;
+}
+.home_page_boxes a:link, a:visited, a:active{
+    text-decoration: none;
+}
+.home_page_boxes a:hover{
+    text-decoration: underline;
 }

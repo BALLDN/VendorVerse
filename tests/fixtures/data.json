@@ -1,0 +1,69 @@
+{
+  "approved_booking": {
+    "additional_info": "Local Art and Crafts",
+    "date": "2024-07-24",
+    "deal": "No Discount",
+    "location": "Side of Building",
+    "status": "A",
+    "vendor_id": "Rs2hAKNjHxywOQSn4Pn6"
+  },
+  "invalid_crendentials": {
+    "email": "invalid@gmail.com",
+    "password": "invalid"
+  },
+  "valid_vendor_credentials": {
+    "email": "iamvendor@gmail.com",
+    "password": "123456"
+  },
+  "vendor_details": {
+    "address": "10 Downing Street",
+    "description": "John Doe's Juicy Gooey Donuts",
+    "phone_number": "0123456789",
+    "vendor_name": "John Doe's"
+  },
+  "pending_vendor_registration": {
+    "user_id": "U9012ghij3456klmn7890",
+    "status": "P",
+    "user_type": "V"
+  },
+  "pending_employee_registration": {
+    "user_id": "U7890yzab1234cdef5678",
+    "status": "P",
+    "user_type": "E"
+  },
+  "pending_booking": {
+    "additional_info": "Sells Fresh Baked Goods",
+    "date": "2024-07-24",
+    "deal": "20% Off",
+    "location": "Near Parking Lot",
+    "status": "P",
+    "vendor_id": "Uv3iBLNkJyzxPRSg5Qp7"
+  },
+  "pending_booking_amendment": {
+    "additional_info": "Sells Fresh Baked Goods",
+    "date": "2024-07-24",
+    "deal": "20% Off",
+    "location": "Near Parking Lot",
+    "status": "P",
+    "vendor_id": "Uv3iBLNkJyzxPRSg5Qp7",
+    "last_updated": "2024-07-26"
+  },
+  "valid_booking_details": {
+    "additional_info": "Sells Fresh Baked Goods",
+    "date": "2024-07-24",
+    "deal": "20% Off",
+    "location": "Near Parking Lot",
+    "vendor_id": "Uv3iBLNkJyzxPRSg5Qp7"
+  },
+  "invalid_booking_details": {
+    "additional_info": "Local Art and Crafts",
+    "date": "2000-01-01",
+    "deal": "No Discount",
+    "location": "Side of Building",
+    "vendor_id": "Rs2hAKNjHxywOQSn4Pn6"
+  },
+  "valid_employee_credentials": {
+    "email": "iamemployee@gmail.com",
+    "password": "123456"
+  }
+}

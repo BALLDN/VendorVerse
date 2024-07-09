@@ -28,72 +28,75 @@
             </ul>
             </div>
         </nav>
-        <div class="gradient-custom-4">
+        <div class="gradient-custom-3">
          <div class="container">
+            
             <div class="row">
                 <div class="col-8">
+                    {% for mesg in get_flashed_messages() %}
+                        <div class="alert alert-success">
+                            <strong >{{ mesg }}</strong>
+                        </div>
+                    {% endfor %}
                     <h2>Calendar</h2>
                     <div id='calendar'></div>
 
-                    <!-- Add modal -->
-  
-      <div class="modal fade edit-form" id="form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header border-bottom-0">
-                    <h5 class="modal-title" id="modal-title">Add Event</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="myForm">
-                    <div class="modal-body">
-                        <div class="alert alert-danger " role="alert" id="danger-alert" style="display: none;">
-                            End date should be greater than start date.
-                          </div>
-                        <div class="form-group">
-                            <label for="event-title">Event name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="event-title" placeholder="Enter event name" required>
+                    <!-- Modal for adding/editing bookings -->
+                    <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modal-title">View Booking</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="booking-form">
+                                        <div class="mb-3">
+                                            <label for="date" class="form-label">Date</label>
+                                            <input type="date" class="form-control" id="date" disabled required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="location" class="form-label">Location</label>
+                                            <input type="text" class="form-control" id="location" disabled required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="deal" class="form-label">Deal</label>
+                                            <input type="text" class="form-control" id="deal" disabled required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="additional-info" class="form-label">Additional Info</label>
+                                            <textarea class="form-control" id="additional-info" disabled required></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="start-date">Start date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="start-date" placeholder="start-date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="end-date">End date - <small class="text-muted">Optional</small></label>
-                            <input type="date" class="form-control" id="end-date" placeholder="end-date">
-                        </div>
-                        <div class="form-group">
-                            <label for="event-color">Color</label>
-                            <input type="color" class="form-control" id="event-color" value="#3788d8">
-                          </div>
                     </div>
-                    <div class="modal-footer border-top-0 d-flex justify-content-center">
-                        <button type="submit" class="btn btn-success" id="submit-button">Submit</button>
+                    
+                    
+                    
+                    
+                      <!-- Modal for Deleting Events -->
+                      <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="delete-modal-title" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="delete-modal-title">Delete Event</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                      </button>
+                                  </div>
+                                  <div class="modal-body" id="delete-modal-body">
+                                      Are you sure you want to delete this event?
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-delete-button">Cancel</button>
+                                      <button type="button" class="btn btn-danger" id="delete-button">Delete</button>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
-                </form>
-            </div>
-        </div>
-      </div>
-
-    <!-- Delete Modal -->
-    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="delete-modal-title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="delete-modal-title">Confirm Deletion</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center" id="delete-modal-body">
-              Are you sure you want to delete the event?
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary rounded-sm" data-dismiss="modal" id="cancel-button">Cancel</button>
-              <button type="button" class="btn btn-danger rounded-lg" id="delete-button">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      </main>
-                </div>
+                    </div>
                 
                 <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
                     <h2>About Us</h2>
@@ -115,8 +118,8 @@
             <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.2.0/main.js" integrity="sha384-v0JEKw0y8RBe98KpDRzj2XKsds7Ab6Qfuwa6RZFOcbWWOJKvLwIFUyxs2kYXLP9w" crossorigin="anonymous"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha384-Uz1UHyakAAz121kPY0Nx6ZGzYeUTy9zAtcpdwVmFCEwiTGPA2K6zSGgkKJEQfMhK" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js" integrity="sha384-e2kr3z94YEVTtgf8bBbR3EHF3Oi1yLDp7GdxIRn6upe2VFHnSRQe0brjEOeRKCoj" crossorigin="anonymous"></script>
-            <!-- Script JS -->
-            <script src="./static/public_calendar.js"></script>
+           <!-- Script JS -->
+           <script type="module" src="./static/public_calendar.js"></script>
         
     </body>
 </html>

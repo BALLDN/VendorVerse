@@ -49,62 +49,70 @@
             <div class="row">
                 <div class="col-8">
                     <h2>Calendar</h2>
-                    <div id="calendar"></div>
-<!-- Modal for adding/editing bookings -->
-<div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-title">Edit Booking</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="booking-form">
-                    <div class="mb-3">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="date" class="form-control" id="date" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="location" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="location" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="deal" class="form-label">Deal</label>
-                        <input type="text" class="form-control" id="deal" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="additional-info" class="form-label">Additional Info</label>
-                        <textarea class="form-control" id="additional-info" required></textarea>
-                    </div>
-                    <input type="hidden" id="event-id">
-                    <button type="submit" class="btn btn-primary" id="submit-button">Save changes</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="danger-alert" class="alert alert-danger" style="display:none;">End date must be after start date.</div>
+                    <div id='calendar'></div>
 
+                    <!-- Modal for adding/editing bookings -->
+                    <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modal-title">Modify Booking</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{url_for('vendor')}}" method="post" id="booking-form">
+                                        <div class="mb-3">
+                                            <label for="date" class="form-label">Date</label>
+                                            <input type="date" class="form-control" name="date" id="date" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="location" class="form-label">Location</label>
+                                            <select class="form-select form-select-sm mb-3" aria-label=".form-select" name="location" id="location" required>
+                                                <option value="" disabled selected hidden>Select Location</option>
+                                                <option value="Front Car park">Front Car Park</option>
+                                                <option value="Back Car Park">Back Car Park</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="discount" class="form-label">Discount</label>
+                                            <input type="text" class="form-control" name="deal" id="deal" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="additional-info" class="form-label">Additional Info</label>
+                                            <textarea class="form-control"name="additional-info" id="additional-info" required></textarea>
+                                        </div>
+                                        <input type="hidden" name="event-id" id="event-id">
+                                        <input type="hidden" name="booking-action" id="booking-action">
+                                        <div class="text-center">
+                                        <button type="submit" class="btn btn-primary" id="submit-button">Save Changes</button>
+                                        <button type="submit" class="btn btn-danger" id="cancel-button">Cancel Booking</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Delete Modal -->
-    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="delete-modal-title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="delete-modal-title">Confirm Deletion</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center" id="delete-modal-body">
-              Are you sure you want to delete the event?
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary rounded-sm" data-dismiss="modal" id="cancel-button">Cancel</button>
-              <button type="button" class="btn btn-danger rounded-lg" id="delete-button">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      </main>
+                    <div id="danger-alert" class="alert alert-danger" style="display:none;">End date must be after start date.</div>
+
+                    <!-- Modal for Deleting Events -->
+                    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="delete-modal-title" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="delete-modal-title">Delete Event</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" id="delete-modal-body">
+                                    Are you sure you want to delete this event?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel-delete-button">Cancel</button>
+                                    <button type="button" class="btn btn-danger" id="delete-button">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
@@ -129,6 +137,22 @@
             <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js" integrity="sha384-e2kr3z94YEVTtgf8bBbR3EHF3Oi1yLDp7GdxIRn6upe2VFHnSRQe0brjEOeRKCoj" crossorigin="anonymous"></script>
             <!-- Script JS -->
             <script type="module" src="./static/script.js"></script>
+
+            <script>
+                function submitBookingCancelForm() {
+                    document.getElementById('booking-action').value = 'cancel';
+                    document.getElementById('booking-form').submit();
+                }
+
+                function submitBookingModifyForm() {
+                    document.getElementById('booking-action').value = 'modify';
+                    document.getElementById('booking-form').submit();
+                    console.log( document.getElementById('event-id').value)
+                }
+                
+                document.getElementById('cancel-button').addEventListener('click', submitBookingCancelForm);
+                document.getElementById('submit-button').addEventListener('click', submitBookingModifyForm);
+            </script>
         
     </body>
 </html>

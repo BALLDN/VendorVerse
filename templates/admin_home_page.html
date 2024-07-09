@@ -44,7 +44,11 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="location" class="form-label">Location</label>
-                                            <input type="text" class="form-control" name="location" id="location" required>
+                                            <select class="form-select form-select-sm mb-3" aria-label=".form-select-sm" name="location" id="location" required>
+                                                <option value="" disabled selected>Select Location</option>
+                                                <option value="Front Car park">Front Car Park</option>
+                                                <option value="Back Car Park">Back Car Park</option>
+                                            </select>
                                         </div>
                                         <div class="mb-3">
                                             <label for="discount" class="form-label">Discount</label>

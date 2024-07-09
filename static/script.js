@@ -59,15 +59,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 const dealInput = document.getElementById('deal');
                 const additionalInfoInput = document.getElementById('additional-info');
                 const submitButton = document.getElementById('submit-button');
+                const cancelButton = document.getElementById('cancel-button');
                 const eventIdInput = document.getElementById('event-id');
 
-                modalTitle.innerHTML = 'Edit Booking';
+                modalTitle.innerHTML = 'Modify Booking';
                 dateInput.value = event.Date;
                 locationInput.value = event.Location;
                 dealInput.value = event.Deal;
                 additionalInfoInput.value = event['Additional Info'];
                 eventIdInput.value = event.id;
-                submitButton.innerHTML = 'Save changes';
+                submitButton.innerHTML = 'Save Changes';
+                cancelButton.innerHTML = 'Cancel Booking';
 
                 myModal.show();
             }

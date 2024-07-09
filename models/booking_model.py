@@ -108,13 +108,13 @@ class Booking:
                 status = "A"
             date= request.form['date']
             location= request.form['location']
-            additional_info = request.form['additional_info']
+            additional_info = request.form['additional-info']
 
             '''In case discount checkbox isn't checked'''
-            if request.form['discount'] is None:
+            if request.form['deal'] is None:
                 discount = "No Discount"
             else:
-                discount = request.form['discount']
+                discount = request.form['deal']
                 
             print(booking_ref)
             booking_ref.update({"Status": status, "Date": date, "Location": location, "Deal": discount, "`Additional Info`": additional_info})

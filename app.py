@@ -292,15 +292,57 @@ def admin():
     elif request.method == 'POST':
         # Handle POST request to process form submission
         action = request.form.get('action')
+        booking_action = request.form.get('booking-action')
         booking_id = request.form.get('bookingIdField')
+        event_id = request.form.get('event-id')
         user_id = request.form.get('userIdField')
 
-        print(user_id)
+        print(event_id)
 
-        if not action:
+        if not action and not booking_action:
             return jsonify({'error': 'Action Undefined'}), 400
         
-        if(booking_id):
+        if(event_id and booking_action):
+            try:
+                booking_ref = db.collection('Bookings').document(event_id)
+                booking = booking_ref.get()
+                
+                if not booking.exists:
+                    return jsonify({'error': 'Booking not found'}), 404
+                
+                if booking_action == 'cancel':
+                    booking_ref.update({'Status': 'D'})
+                    print(jsonify({'message': 'Booking cancelled successfully'}), 200)
+                    return redirect(url_for('admin'))
+                elif booking_action == 'modify':
+                    
+                    print(event_id)
+                    print("Form Data: ", request.form)  # Add this line to print the form data
+                    
+                    if booking_ref.get().exists:
+                        user_type = request.cookies.get('user_type')
+                        status = "P" if user_type == "V" else "A"
+
+                        date = request.form.get('date')
+                        location = request.form.get('location')
+                        additional_info = request.form.get('additional-info')
+
+                        discount = request.form.get('deal', "No Discount")
+
+                        booking_ref.update({
+                            "Status": status, 
+                            "Date": date, 
+                            "Location": location, 
+                            "Deal": discount, 
+                            "`Additional Info`": additional_info
+                        })
+                        return redirect(url_for('admin'))  # Redirect to the admin page after modification
+                    else:
+                        return "No Booking Found!"
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+            
+        if(booking_id and action):
             try:
                 booking_ref = db.collection('Bookings').document(booking_id)
                 booking = booking_ref.get()

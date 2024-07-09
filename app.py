@@ -52,7 +52,8 @@ def get_bookings():
         for doc in bookings_ref:
             booking = doc.to_dict()
             booking['id'] = doc.id  # Add the document ID to the booking dictionary
-            bookings.append(booking)
+            if(booking.get("Status") != "D"):
+                bookings.append(booking)
         
         # Return the bookings as a JSON response
         return jsonify(bookings)
@@ -128,8 +129,64 @@ def index():
     return render_template('public_home_page.html')
 
 
-@app.route('/vendor')
+@app.route('/vendor',methods=['GET', 'POST'])
 def vendor():
+    if request.method == 'POST':
+         # Handle POST request to process form submission
+        booking_action = request.form.get('booking-action')
+        event_id = request.form.get('event-id')
+
+
+        print(event_id)
+
+        if not booking_action:
+            return jsonify({'error': 'Action Undefined'}), 400
+        
+        if(event_id and booking_action):
+            try:
+                booking_ref = db.collection('Bookings').document(event_id)
+                booking = booking_ref.get()
+                
+                if not booking.exists:
+                    return jsonify({'error': 'Booking not found'}), 404
+                
+                if booking_action == 'cancel':
+                    booking_ref.update({'Status': 'D'})
+                    print(jsonify({'message': 'Booking cancelled successfully'}), 200)
+                    return redirect(url_for('vendor'))
+                elif booking_action == 'modify':
+                    
+                    print(event_id)
+                    print("Form Data: ", request.form)  # Add this line to print the form data
+                    
+                    if booking_ref.get().exists:
+                        user_type = request.cookies.get('user_type')
+                        if user_type == "V":
+                            status = "P"
+                        else:
+                            status = "A"
+
+                        date = request.form.get('date')
+                        location = request.form.get('location')
+                        additional_info = request.form.get('additional-info')
+
+                        discount = request.form.get('deal', "No Discount")
+
+                        booking_ref.update({
+                            "Status": status, 
+                            "Date": date, 
+                            "Location": location, 
+                            "Deal": discount, 
+                            "`Additional Info`": additional_info
+                        })
+                        return redirect(url_for('vendor'))  # Redirect to the admin page after modification
+                    else:
+                        return "No Booking Found!"
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+            
+    
+    
     return render_template('vendor_home_page.html')
 
 
@@ -217,15 +274,18 @@ def get_booking(booking_id):
 
     if results.exists:
         booking_data = results.to_dict()
-        response_data = {
-            "date": booking_data.get("Date"),
-            "location": booking_data.get("Location"),
-            "discount": booking_data.get("Deal"),
-            "additional_info": booking_data.get("Additional Info")
-        }
-        return jsonify(response_data)
-    else:
-        return jsonify({"error": "Booking not found"}), 404
+        if booking_data.get("Status") != "D":
+            
+
+            response_data = {
+                "date": booking_data.get("Date"),
+                "location": booking_data.get("Location"),
+                "discount": booking_data.get("Deal"),
+                "additional_info": booking_data.get("Additional Info")
+            }
+            return jsonify(response_data)
+        else:
+            return jsonify({"error": "Booking not found"}), 404
 
 
 @app.route('/employee')

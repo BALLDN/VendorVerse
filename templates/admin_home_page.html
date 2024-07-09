@@ -21,15 +21,30 @@
 <body>
     {% include 'admin_navbar.html' %}
 
+    
     <div class="gradient-custom-3">
+        {% for mesg in get_flashed_messages() %}
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                <div class="toast fade text-white bg-dark" id="myToast">
+                    <div class="toast-header">
+                        <strong class="me-auto">Booking Created</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        {{ mesg }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
                     <h2 class="text-center">Calendar</h2>
-                    <div id='calendar'></div>
+                    
+                    <div id='calendar' style="border-radius: 15px;"></div>
 
                     <!-- Modal for adding/editing bookings -->
-                    <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+                    <div id="form" class="modal fade" tabindex="-1"  style="border-radius: 15px;" aria-labelledby="modal-title" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -73,7 +88,7 @@
                     <div id="danger-alert" class="alert alert-danger" style="display:none;">End date must be after start date.</div>
 
                     <!-- Modal for Deleting Events -->
-                    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="delete-modal-title" aria-hidden="true">
+                    <div  style="border-radius: 15px;" class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="delete-modal-title" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -96,11 +111,11 @@
                 <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
                     <form action="{{url_for('admin')}}" method="post" id="mainForm">
                         <h2 class="text-center">Pending Approvals</h2>
-                        <div id="approvals_section">
+                        <div id="approvals_section" style="padding: 30px;">
                             <div class="row">
                                 {% for booking in bookings %}
                                     {% if booking.get('Status') == 'P' %}
-                                        <div class="card mt-5 ml-3">
+                                        <div  class="card mt-5" style="border-radius: 15px;" >
                                             <div class="card-body">
                                                 <h6>Booking Request #{{ loop.index }}</h6>
                                                 {% if booking.vendor_name %}
@@ -123,7 +138,7 @@
 
                                 {% for vendor in vendor_users %}
                                 {% if vendor.get('Status') == 'P' %}
-                                    <div class="card mt-5 ml-3">
+                                    <div class="card mt-5" style="border-radius: 15px;" >
                                         <div class="card-body">
                                             <h6>Vendor Registration Request #{{ loop.index }}</h6>
                                             {% if vendor.vendor_name %}
@@ -144,7 +159,7 @@
 
                                 {% for user in users %}
                                 {% if user.get('Status') == 'P' %}
-                                    <div class="card mt-5 ml-3">
+                                    <div class="card mt-5" style="border-radius: 15px;" >
                                         <div class="card-body">
                                             <h6>Employee Registration Request #{{ loop.index }}</h6>
                                             {% if user.get("Email") %}
@@ -170,7 +185,7 @@
                 </div>
 
                 <!-- Approve Modal -->
-                <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
+                <div class="modal fade" id="approveModal"  style="border-radius: 15px;" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -190,7 +205,7 @@
                 </div>
 
                 <!-- Cancel Modal -->
-                <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+                <div class="modal fade" id="cancelModal"  style="border-radius: 15px;" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -221,6 +236,31 @@
                 <script type="module" src="./static/script.js"></script>
 
                 <script>
+
+                    // Function to format the date to YYYY-MM-DD
+                    function getCurrentDate() {
+                        const today = new Date();
+                        const year = today.getFullYear();
+                        const month = String(today.getMonth() + 1).padStart(2, '0');
+                        const day = String(today.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    }
+
+                    // Set the min attribute of the date input field
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const dateInput = document.getElementById('date');
+                        dateInput.setAttribute('min', getCurrentDate());
+                    });
+
+                    document.addEventListener('DOMContentLoaded', (event) => {
+                        var toastEl = document.getElementById('myToast');
+                        var toast = new bootstrap.Toast(toastEl, {
+                            autohide: true,
+                            delay: 7000
+                        });
+                        toast.show();
+                    });
+
                     function setBookingId(bookingId) {
                         document.getElementById('bookingIdField').value = bookingId;
                     }

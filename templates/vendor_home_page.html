@@ -45,14 +45,27 @@
             </div>
         </nav>
         <div class="gradient-custom-3">
+            {% for mesg in get_flashed_messages() %}
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                    <div class="toast fade text-white bg-dark" id="myToast">
+                        <div class="toast-header">
+                            <strong class="me-auto">Booking Created</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            {{ mesg }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
          <div class="container">
             <div class="row">
                 <div class="col-8">
                     <h2>Calendar</h2>
-                    <div id='calendar'></div>
+                    <div id='calendar'  style="border-radius: 15px;"></div>
 
                     <!-- Modal for adding/editing bookings -->
-                    <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+                    <div id="form" class="modal fade" tabindex="-1"  style="border-radius: 15px;" aria-labelledby="modal-title" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -152,6 +165,30 @@
                 
                 document.getElementById('cancel-button').addEventListener('click', submitBookingCancelForm);
                 document.getElementById('submit-button').addEventListener('click', submitBookingModifyForm);
+
+                document.addEventListener('DOMContentLoaded', (event) => {
+                    var toastEl = document.getElementById('myToast');
+                    var toast = new bootstrap.Toast(toastEl, {
+                        autohide: true,
+                        delay: 7000
+                    });
+                    toast.show();
+                });
+
+                // Function to format the date to YYYY-MM-DD
+                function getCurrentDate() {
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                }
+
+                // Set the min attribute of the date input field
+                document.addEventListener('DOMContentLoaded', () => {
+                    const dateInput = document.getElementById('date');
+                    dateInput.setAttribute('min', getCurrentDate());
+                });
             </script>
         
     </body>

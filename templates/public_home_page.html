@@ -29,17 +29,24 @@
             </div>
         </nav>
         <div class="gradient-custom-3">
+            {% for mesg in get_flashed_messages() %}
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                <div class="toast fade text-white bg-dark" id="myToast">
+                    <div class="toast-header">
+                        <strong class="me-auto">Account Created</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        {{ mesg }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
          <div class="container">
-            
             <div class="row">
                 <div class="col-8">
-                    {% for mesg in get_flashed_messages() %}
-                        <div class="alert alert-success">
-                            <strong >{{ mesg }}</strong>
-                        </div>
-                    {% endfor %}
                     <h2>Calendar</h2>
-                    <div id='calendar'></div>
+                    <div id='calendar'  style="border-radius: 15px;"></div>
 
                     <!-- Modal for adding/editing bookings -->
                     <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
@@ -121,5 +128,16 @@
            <!-- Script JS -->
            <script type="module" src="./static/public_calendar.js"></script>
         
+            <script>
+                document.addEventListener('DOMContentLoaded', (event) => {
+                    var toastEl = document.getElementById('myToast');
+                    var toast = new bootstrap.Toast(toastEl, {
+                        autohide: true,
+                        delay: 7000
+                    });
+                    toast.show();
+                });
+            </script>
+
     </body>
 </html>

@@ -108,12 +108,9 @@ def register():
         if user_type == "Vendor":
             url_response = make_response(
                 redirect(url_for('vendor_details_page')))
-            flash("Your Account is Pending Approval")
-
         else:
-            url_response = make_response(redirect(url_for('register')))
-
-        flash("Your Account is Pending Approval")
+            flash("Your Account is Pending Approval")
+            url_response = make_response(redirect(url_for('index')))
 
         # Set cookies for login details + user type
         url_response.set_cookie('login_email', login_email)
@@ -197,8 +194,8 @@ def create_booking():
     if request.method == "POST":
         user_id = Booking.get_user_id(db, request.cookies.get('login_email'))
         Booking.add_booking(db, user_id)
-        flash("Your Booking has been created and is pending approval")
-        return render_template('create_booking_vendor.html')
+        flash("Your Booking has been created and is pending Admin approval")
+        return redirect(url_for('vendor'))
     return render_template('create_booking_vendor.html')
 
 
@@ -209,7 +206,8 @@ def create_booking_admin():
     if request.method == "POST":
         user_id = Booking.get_user_id(db, request.form.get('Email'))
         Booking.add_booking(db, user_id)
-        return redirect(url_for('create_booking_admin'))
+        flash("A Booking has been created. Navigate to Manage Bookings to Edit/Delete this booking")
+        return redirect(url_for('admin'))
     return render_template('create_booking_admin.html')
 
 

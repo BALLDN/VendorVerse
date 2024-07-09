@@ -27,7 +27,7 @@
                 <h2 class="text-center">Manage Bookings</h2>
                 <form action="{{url_for("manage_bookings")}}" method="post" id="mainForm">
                     {% for booking in bookings %}
-                        <div class="card mt-3" name="card">
+                        <div style="border-radius: 15px;" class="card mt-3" name="card">
                             <div class="card-body">
                                 <h6>Booking #{{ bookings.index(booking) + 1 }}</h6>
                                 <br>
@@ -149,6 +149,21 @@
       document.getElementById('modify_button').addEventListener('click', function() {
           document.getElementById('action').value = 'modify';
       });
+
+      // Function to format the date to YYYY-MM-DD
+      function getCurrentDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Set the min attribute of the date input field
+    document.addEventListener('DOMContentLoaded', () => {
+        const dateInput = document.getElementById('date');
+        dateInput.setAttribute('min', getCurrentDate());
+    });
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

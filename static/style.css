@@ -238,6 +238,12 @@ Select{
     margin-bottom: 2px;
 }
 
+.navbar-logo {
+    width: 40px; /* Adjust the width as per your requirement */
+    height: auto; /* Ensures the height scales proportionally */
+    padding-bottom: 2px; /* Optional: Adjust margin for spacing */
+}
+
 .image_boxes {
     display: flex;
     align-items: center;

@@ -7,3 +7,4 @@ __pycache__/
 sonar-project.properties
 .env
 firebase_creds.json
+logs/

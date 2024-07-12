@@ -1,3 +1,4 @@
+import datetime
 from dotenv import load_dotenv
 import os
 import logging
@@ -10,6 +11,7 @@ from wtforms.validators import InputRequired
 from models.user_model import User
 from models.booking_model import Booking
 from models.vendor_model import Vendor
+from models.polls_model import Polls
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -96,6 +98,70 @@ def login():
     return render_template('login.html')
 
 
+def create_poll(database_connection):
+    # Ensure we're handling form data
+    data = request.form
+    title = data.get('PollTitle')
+    vendor_id = data.get('VendorName')
+    amount = int(data.get('Amount'))
+    vendor_ref = database_connection.collection('Vendors').document(vendor_id)
+    vendor = vendor_ref.get()
+    name = vendor.get("Vendor_Name")
+    
+    choices = []
+    for i in range(1, amount + 1):
+        choice = data.get(f'choice{i}')
+        if choice:
+            choices.append(choice)
+
+    if not title or not choices:
+        flash('Missing fields')
+        return redirect(url_for('admin_polls'))
+
+    poll_ref = database_connection.collection('Polls').add({
+        'Title': title,
+        'Vendor_ID': vendor_id,
+        'options': choices,
+        'createdAt': datetime.datetime.now(),
+        'Vendor_Name': name
+    })
+    
+      # Get the ID of the newly created poll
+    poll_id = poll_ref[1].id
+
+    # Create a subcollection for responses under the poll document
+    db.collection('Polls').document(poll_id).collection('Responses').document('summary').set({
+        'total_responses': 0,
+        'choices': {f'choice{i}': 0 for i in range(1, amount + 1)}
+    })
+    
+    flash("A poll has been created. To view the poll, navigate to the View/Create Polls Page")
+    return redirect(url_for('admin_polls'))
+
+
+@app.route('/admin_polls', methods=['GET', 'POST'])
+def admin_polls():
+    
+    if request.method == 'GET':
+        vendors = Vendor.get_users(db)
+        polls = Polls.get_polls(db)
+        return render_template('admin_polls_page.html', vendors = vendors, polls=polls)
+    if request.method == 'POST':
+        create_poll(db)
+        return redirect(url_for('admin'))
+    return render_template('admin_polls_page.html')
+
+
+@app.route('/employee_polls', methods=['GET', 'POST'])
+def employee_polls():
+    polls = Polls.get_polls(db)
+    if request.method == 'GET':
+        return render_template('employee_polls_page.html', polls=polls)
+    if request.method == 'POST':
+        Polls.submit_response(db)
+                
+    return render_template('employee_polls_page.html', polls=polls)
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -106,11 +172,10 @@ def register():
         user_type = request.form['User_Type']
 
         if user_type == "Vendor":
-            url_response = make_response(
-                redirect(url_for('vendor_details_page')))
+            url_response = make_response(redirect(url_for('vendor_details_page')))
         else:
-            flash("Your Account is Pending Approval")
             url_response = make_response(redirect(url_for('index')))
+            flash("Your Account is Pending Approval")
 
         # Set cookies for login details + user type
         url_response.set_cookie('login_email', login_email)

@@ -34,6 +34,15 @@ class Vendor:
             }
             
             return dictionary
+        
+        
+    @staticmethod
+    def get_users(database_connection):
+        # gets all users from db
+        users_ref = database_connection.collection('Vendors')
+        docs = users_ref.get()
+        return docs
+
 
     def add_vendor_details(database_connection, user_id):
         # adds a vendors details to db

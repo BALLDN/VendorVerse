@@ -213,6 +213,7 @@ Select{
     border: 3px solid #333;
     padding-top: 1%;
     margin-bottom: 1%;
+    background-color: #ffffff;
 }
 .home_page_boxes h3, h4{
     border-bottom: 2px solid #000000;
@@ -226,7 +227,7 @@ Select{
 }
 .fix_text{
     margin-left: 2%;
-    text-align: center;
+    margin-top: 2%;
 }
 .home_page_boxes a:link, a:visited, a:active{
     text-decoration: none;

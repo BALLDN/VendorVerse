@@ -38,6 +38,13 @@ class Polls:
         
         return docs
     
+    @staticmethod
+    def get_polls_by_vendor_id(database_connection, vendor_id):
+        polls_ref = database_connection.collection('Polls').where('Vendor_ID', '==', vendor_id)
+        docs = polls_ref.get()
+        
+        return docs
+    
     def submit_response(database_connection):
         poll_id = request.form.get('poll_id')
         selected_option = request.form.get('selected_option')
@@ -70,3 +77,34 @@ class Polls:
 
         flash('Your response has been recorded')
         return redirect(url_for('employee_polls'))
+    
+    def get_poll_results(database_connection, poll_id):
+        poll_ref = database_connection.collection('Polls').document(poll_id)
+        responses_ref = poll_ref.collection('Responses')
+        
+        # Retrieve all responses
+        responses = responses_ref.get()
+        
+        # If there are no responses, return empty results
+        if not responses:
+            return {}, 0
+        
+        # Count the total number of responses and responses for each option
+        total_responses = len(responses)
+        option_counts = {}
+
+        for response in responses:
+            selected_option = response.get('selected_option')
+            if selected_option:
+                if selected_option in option_counts:
+                    option_counts[selected_option] += 1
+                else:
+                    option_counts[selected_option] = 1
+
+        # Calculate the percentage for each option
+        option_percentages = {
+            option: (count / total_responses) * 100
+            for option, count in option_counts.items()
+        }
+
+        return option_percentages, total_responses

@@ -4,7 +4,7 @@ import os
 import logging
 import firebase_admin
 from firebase_admin import credentials, firestore
-from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
+from flask import Flask, flash, redirect, render_template, request, send_from_directory, url_for, make_response, jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, DateField
 from wtforms.validators import InputRequired
@@ -130,10 +130,11 @@ def create_poll(database_connection):
     poll_id = poll_ref[1].id
 
     # Create a subcollection for responses under the poll document
-    db.collection('Polls').document(poll_id).collection('Responses').document('summary').set({
-        'total_responses': 0,
-        'choices': {f'choice{i}': 0 for i in range(1, amount + 1)}
-    })
+    '''db.collection('Polls').document(poll_id).collection('Responses').add({
+        'user_id': 0,
+        'selected_option': 0,
+        'createdAt': datetime.datetime.now()
+    })'''
     
     flash("A poll has been created. To view the poll, navigate to the View/Create Polls Page")
     return redirect(url_for('admin_polls'))
@@ -142,10 +143,27 @@ def create_poll(database_connection):
 @app.route('/admin_polls', methods=['GET', 'POST'])
 def admin_polls():
     
+      
+    polls = Polls.get_polls(db)
+    
+    poll_results = []
+    
     if request.method == 'GET':
         vendors = Vendor.get_users(db)
-        polls = Polls.get_polls(db)
-        return render_template('admin_polls_page.html', vendors = vendors, polls=polls)
+        for poll in polls:
+            poll_info = poll.to_dict()
+            option_percentages, total_responses = Polls.get_poll_results(db, poll.id)
+            
+            poll_result = {
+                'poll_id': poll.id,
+                'poll_data': poll_info,
+                'option_percentages': option_percentages,
+                'total_responses': total_responses
+            }
+            poll_results.append(poll_result)
+            print(poll_results)
+            
+        return render_template('admin_polls_page.html', vendors=vendors, poll_results=poll_results)
     if request.method == 'POST':
         create_poll(db)
         return redirect(url_for('admin'))
@@ -162,6 +180,36 @@ def employee_polls():
                 
     return render_template('employee_polls_page.html', polls=polls)
 
+@app.route('/vendor_polls', methods=['GET', 'POST'])
+def vendor_polls():
+    
+    polls = Polls.get_polls()
+    
+    poll_results = []
+    
+    if request.method == 'GET':
+        for poll in polls:
+            poll_info = poll.to_dict()
+            option_percentages, total_responses = Polls.get_poll_results(db, poll.id)
+            
+            poll_result = {
+                'poll_id': poll.id,
+                'poll_data': poll_info,
+                'option_percentages': option_percentages,
+                'total_responses': total_responses
+            }
+            poll_results.append(poll_result)
+            print(poll_results)
+            
+        return render_template('vendor_polls_page.html', poll_results=poll_results)
+    
+    return render_template('vendor_polls_page.html')
+
+
+    
+    #if request.method == 'POST':
+     #   Polls.submit_response(db)
+                
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':

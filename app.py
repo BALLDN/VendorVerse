@@ -216,8 +216,6 @@ def vendor():
          # Handle POST request to process form submission
         booking_action = request.form.get('booking-action')
         event_id = request.form.get('event-id')
-
-
         print(event_id)
 
         if not booking_action:
@@ -528,8 +526,25 @@ def admin():
                 return jsonify({'error': str(e)}), 500
 
 
-@app.route('/reset')
+@app.route('/reset', methods=['GET', 'POST'])
 def reset():
+    if request.method == 'POST':
+        email = request.form.get('Email')
+        current_password = request.form.get('Current_Password')
+        new_password = request.form.get('Password')
+        confirmed_password = request.form.get('Confirm_Password')
+
+        # Call the reset_user_password method
+        result = User.reset_user_password(db, email, current_password, new_password, confirmed_password)
+
+        # Check the result and flash the appropriate message
+        flash(result['message'])
+
+        if result['status'] == 'success':
+            return redirect(url_for('login'))
+        else:
+            return redirect(url_for('reset'))
+
     return render_template('forgot_password.html')
 
 

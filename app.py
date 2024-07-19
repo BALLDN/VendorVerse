@@ -180,36 +180,6 @@ def employee_polls():
         Polls.submit_response(db)
                 
     return render_template('employee_polls_page.html', polls=polls)
-
-@app.route('/vendor_polls', methods=['GET', 'POST'])
-def vendor_polls():
-    
-    polls = Polls.get_polls()
-    
-    poll_results = []
-    
-    if request.method == 'GET':
-        for poll in polls:
-            poll_info = poll.to_dict()
-            option_percentages, total_responses = Polls.get_poll_results(db, poll.id)
-            
-            poll_result = {
-                'poll_id': poll.id,
-                'poll_data': poll_info,
-                'option_percentages': option_percentages,
-                'total_responses': total_responses
-            }
-            poll_results.append(poll_result)
-            print(poll_results)
-            
-        return render_template('vendor_polls_page.html', poll_results=poll_results)
-    
-    return render_template('vendor_polls_page.html')
-
-
-    
-    #if request.method == 'POST':
-     #   Polls.submit_response(db)
                 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

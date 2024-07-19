@@ -1,4 +1,5 @@
 import datetime
+from datetime import timedelta
 from dotenv import load_dotenv
 import os
 import logging
@@ -91,8 +92,11 @@ def login():
             return render_template('login.html')
 
         # Set cookies for login details + user type
-        url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
+        if 'cookie_accepted' in request.cookies:
+            cookie_expiry = timedelta(days=14)
+
+            url_response.set_cookie('login_email', login_email, max_age=cookie_expiry)
+            url_response.set_cookie('user_type', User.validate_user(db), max_age=cookie_expiry)
 
         return url_response
     return render_template('login.html')
@@ -178,8 +182,11 @@ def register():
             flash("Your Account is Pending Approval")
 
         # Set cookies for login details + user type
-        url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
+        if 'cookie_accepted' in request.cookies:
+            cookie_expiry = timedelta(days=14)
+
+            url_response.set_cookie('login_email', login_email, max_age=cookie_expiry)
+            url_response.set_cookie('user_type', User.validate_user(db), max_age=cookie_expiry)
 
         return url_response
 
@@ -188,6 +195,9 @@ def register():
 
 @app.route('/')
 def index():
+    if 'cookie_accepted' in request.cookies:
+        return render_template('public_home_page.html', cookies=request.cookies)
+
     return render_template('public_home_page.html')
 
 

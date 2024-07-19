@@ -15,6 +15,17 @@
             height: 100%;
         }
     </style>
+
+    <script>
+        function addVendorInput() {
+
+            if (document.getElementById('vendor_checkbox').checked) {
+                document.getElementById("Vendor_Section").innerHTML=" <label class='form-label' for='VendorName'>Vendor Name</label> <select class='form-select form-select-sm mb-2' aria-label=''.form-select-sm' name='VendorName' id='VendorName' required> <option value='' disabled selected>Please select a Vendor</option>{% for vendor in vendors %} <option value='{{ vendor.id }}'>{{ vendor.get('Vendor_Name') }}</option>{% endfor %}</select>";
+            } else {
+                document.getElementById("Vendor_Section").innerHTML="";
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -23,7 +34,7 @@
         <div class="container mt-5 mb-5">
             <div class="row justify-content-center">
                 <div class="col-md-7"> <!-- Center the column -->
-                    <div class="card mt-3 mb-3" style="border-radius: 15px;">
+                    <div class="card mt-5 mb-3" style="border-radius: 15px;">
                         <div class="card-body p-5">
                             <h2 class="text-uppercase text-center mb-5">Create a Poll</h2>
 
@@ -35,13 +46,9 @@
 
                             <form action="{{ url_for('admin_polls') }}" method="post">
                                 <div data-mdb-input-init class="form-outline mb-2">
-                                    <label class="form-label" for="VendorName">Vendor Name</label>
-                                    <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="VendorName" id="VendorName" required>
-                                        <option value="" disabled selected>Please select a Vendor</option>
-                                        {% for vendor in vendors %}
-                                            <option value="{{ vendor.id }}">{{ vendor.get('Vendor_Name') }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    
+                                    <div id="Vendor_Section"> </div>
+                                
                                 </div>
 
                                 <div data-mdb-input-init class="form-outline mb-2">
@@ -61,6 +68,9 @@
 
                                 <div id="pollChoices"></div> <!-- Container for dynamically generated input fields -->
 
+
+                                <input id="vendor_checkbox" name="vendor_checkbox" type="checkbox" onclick="addVendorInput()">Is this poll on behalf of a Vendor?
+                
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Submit</button>
                                 </div>
@@ -70,15 +80,15 @@
                 </div>
 
                 <div class="col-md-5"> <!-- Center the column -->
-                    <div class="card mb-3" style="border-radius: 15px; margin-left: 50px">
-                        <div class="card-body p-3">
                             <h2 class="text-uppercase text-center mb-4">Polls</h2>
-
+                            <div class="addScroll" style="padding: 30px;">
                             {% for poll_result in poll_results %}
                         <div class="card mb-4">
                         <div class="card-body">
                         <h4>{{ poll_result.poll_data.Title }}</h4>
+                        {% if poll_result.poll_data.Vendor_Name != "No Vendor"%}
                         <p><strong>Vendor Name:</strong> {{ poll_result.poll_data.Vendor_Name }}</p>
+                        {% endif%}
                         <p><strong>Total Responses:</strong> {{ poll_result.total_responses }}</p>
                         <ul class="list-group mt-3">
                         {% for option, percentage in poll_result.option_percentages.items() %}
@@ -90,9 +100,8 @@
                 </div>
             </div>
         {% endfor %}
+        </div>
                         </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

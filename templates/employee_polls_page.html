@@ -42,7 +42,9 @@
                         <div class="card mb-4">
                             <div class="card-body">
                                 <h5 class="card-title">{{ poll.get('Title') }}</h5>
-                                <p class="card-text"><strong>Vendor Name:</strong> {{ poll.get('Vendor_Name') }}</p>
+                                {% if poll.get('Vendor_Name') != "No Vendor" %}
+                                    <p class="card-text"><strong>Vendor Name:</strong> {{ poll.get('Vendor_Name') }}</p>
+                                {% endif %}
                                 <form action="{{ url_for('employee_polls') }}" method="post">
                                     <input type="hidden" name="poll_id" value="{{ poll.id }}">
                                     {% for option in poll.get('options') %}

@@ -103,10 +103,17 @@ def create_poll(database_connection):
     data = request.form
     title = data.get('PollTitle')
     vendor_id = data.get('VendorName')
+    
+    # Set vendor information based on availability
+    if vendor_id:
+        vendor_ref = database_connection.collection('Vendors').document(vendor_id)
+        vendor = vendor_ref.get()
+        name = vendor.get("Vendor_Name") if vendor.exists else "No Vendor"
+    else:
+        vendor_id = "No Vendor"
+        name = "No Vendor"
+    
     amount = int(data.get('Amount'))
-    vendor_ref = database_connection.collection('Vendors').document(vendor_id)
-    vendor = vendor_ref.get()
-    name = vendor.get("Vendor_Name")
     
     choices = []
     for i in range(1, amount + 1):
@@ -126,18 +133,12 @@ def create_poll(database_connection):
         'Vendor_Name': name
     })
     
-      # Get the ID of the newly created poll
+    # Get the ID of the newly created poll
     poll_id = poll_ref[1].id
-
-    # Create a subcollection for responses under the poll document
-    '''db.collection('Polls').document(poll_id).collection('Responses').add({
-        'user_id': 0,
-        'selected_option': 0,
-        'createdAt': datetime.datetime.now()
-    })'''
     
     flash("A poll has been created. To view the poll, navigate to the View/Create Polls Page")
     return redirect(url_for('admin_polls'))
+
 
 
 @app.route('/admin_polls', methods=['GET', 'POST'])
@@ -572,6 +573,22 @@ def vendor_details_page():
         return redirect(url_for('index'))
         
     return render_template('vendor_details_page.html')
+
+@app.route('/account', methods=['GET','POST'])
+def account():
+    email = request.cookies.get('login_email')
+    user_id = User.get_user_id_from_email(db, email)
+    vendor = Vendor.get_vendor_by_user_id(db,user_id)
+    
+    if request.method == 'GET':
+        return render_template('account_details.html', vendor=vendor)
+    
+    if request.method == 'POST':
+        Vendor.edit_vendor_details(db, user_id)
+        flash("Your Details have been edited")
+        return redirect(url_for('vendor'))
+    
+    return render_template('account_details.html',vendor=vendor)
 
 
 @app.route('/logout')

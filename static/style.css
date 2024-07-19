@@ -66,6 +66,7 @@ html{
 .addScroll{
     overflow-y:auto;
     height: 700px;
+    overflow-x: hidden;
   }
 
 Select{

@@ -293,14 +293,16 @@ def create_booking():
 
 @app.route('/create_booking_admin', methods=['GET', 'POST'])
 def create_booking_admin():
+    vendors = Vendor.get_users(db)
     if request.method == 'GET':
         Booking.get_user_id(db, request.cookies.get('login_email'))
     if request.method == "POST":
-        user_id = Booking.get_user_id(db, request.form.get('Email'))
+        user_id = request.form.get('VendorName')
         Booking.add_booking(db, user_id)
         flash("A Booking has been created. Navigate to Manage Bookings to Edit/Delete this booking")
         return redirect(url_for('admin'))
-    return render_template('create_booking_admin.html')
+    return render_template('create_booking_admin.html', vendors=vendors)
+
 
 
 @app.route('/manage_booking', methods=['GET', 'POST'])

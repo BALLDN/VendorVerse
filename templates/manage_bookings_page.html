@@ -16,7 +16,7 @@
 </head>
 <body>
 
-    {% if session["user_type"] == "V" %}
+    {% if request.cookies.get('user_type') == "V" %}
     {% include 'vendor_navbar.html' %}
     {% else %}
     {% include 'admin_navbar.html' %}

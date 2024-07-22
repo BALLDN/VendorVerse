@@ -42,11 +42,11 @@
 
               <form action="{{url_for("create_booking_admin")}}" method="post">
 
-
-                <div data-mdb-input-init class="form-outline mb-2">
-                    <label class="form-label" for="Email">Vendor Email Address</label>
-                    <input type="email" id="Email" name="Email" class="form-control form-control-md" maxlength="40" required> 
-                  </div>
+                  <label class='form-label' for='VendorName'>Vendor Name</label>
+                  <select class='form-select form-select-sm mb-2' aria-label='' name='VendorName' id='VendorName' required>
+                  <option value='' disabled selected>Please select a Vendor</option>
+                  {% for vendor in vendors %} <option value="{{ vendor.get('User_ID') }}">{{ vendor.get('Vendor_Name') }}</option>{% endfor %}
+                  </select>
 
                 <label for="Date">Booking Date</label>
                 <input id="DateInput" name="Date" class="form-control mb-2" type="date" />

@@ -5,7 +5,7 @@ import os
 import logging
 import firebase_admin
 from firebase_admin import credentials, firestore
-from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
+from flask import Flask, flash, redirect, render_template, request, send_from_directory, url_for, make_response, jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, DateField
 from wtforms.validators import InputRequired
@@ -107,10 +107,17 @@ def create_poll(database_connection):
     data = request.form
     title = data.get('PollTitle')
     vendor_id = data.get('VendorName')
+    
+    # Set vendor information based on availability
+    if vendor_id:
+        vendor_ref = database_connection.collection('Vendors').document(vendor_id)
+        vendor = vendor_ref.get()
+        name = vendor.get("Vendor_Name") if vendor.exists else "No Vendor"
+    else:
+        vendor_id = "No Vendor"
+        name = "No Vendor"
+    
     amount = int(data.get('Amount'))
-    vendor_ref = database_connection.collection('Vendors').document(vendor_id)
-    vendor = vendor_ref.get()
-    name = vendor.get("Vendor_Name")
     
     choices = []
     for i in range(1, amount + 1):
@@ -130,26 +137,38 @@ def create_poll(database_connection):
         'Vendor_Name': name
     })
     
-      # Get the ID of the newly created poll
+    # Get the ID of the newly created poll
     poll_id = poll_ref[1].id
-
-    # Create a subcollection for responses under the poll document
-    db.collection('Polls').document(poll_id).collection('Responses').document('summary').set({
-        'total_responses': 0,
-        'choices': {f'choice{i}': 0 for i in range(1, amount + 1)}
-    })
     
     flash("A poll has been created. To view the poll, navigate to the View/Create Polls Page")
     return redirect(url_for('admin_polls'))
 
 
+
 @app.route('/admin_polls', methods=['GET', 'POST'])
 def admin_polls():
     
+      
+    polls = Polls.get_polls(db)
+    
+    poll_results = []
+    
     if request.method == 'GET':
         vendors = Vendor.get_users(db)
-        polls = Polls.get_polls(db)
-        return render_template('admin_polls_page.html', vendors = vendors, polls=polls)
+        for poll in polls:
+            poll_info = poll.to_dict()
+            option_percentages, total_responses = Polls.get_poll_results(db, poll.id)
+            
+            poll_result = {
+                'poll_id': poll.id,
+                'poll_data': poll_info,
+                'option_percentages': option_percentages,
+                'total_responses': total_responses
+            }
+            poll_results.append(poll_result)
+            print(poll_results)
+            
+        return render_template('admin_polls_page.html', vendors=vendors, poll_results=poll_results)
     if request.method == 'POST':
         create_poll(db)
         return redirect(url_for('admin'))
@@ -165,7 +184,7 @@ def employee_polls():
         Polls.submit_response(db)
                 
     return render_template('employee_polls_page.html', polls=polls)
-
+                
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -207,8 +226,6 @@ def vendor():
          # Handle POST request to process form submission
         booking_action = request.form.get('booking-action')
         event_id = request.form.get('event-id')
-
-
         print(event_id)
 
         if not booking_action:
@@ -519,8 +536,25 @@ def admin():
                 return jsonify({'error': str(e)}), 500
 
 
-@app.route('/reset')
+@app.route('/reset', methods=['GET', 'POST'])
 def reset():
+    if request.method == 'POST':
+        email = request.form.get('Email')
+        current_password = request.form.get('Current_Password')
+        new_password = request.form.get('Password')
+        confirmed_password = request.form.get('Confirm_Password')
+
+        # Call the reset_user_password method
+        result = User.reset_user_password(db, email, current_password, new_password, confirmed_password)
+
+        # Check the result and flash the appropriate message
+        flash(result['message'])
+
+        if result['status'] == 'success':
+            return redirect(url_for('login'))
+        else:
+            return redirect(url_for('reset'))
+
     return render_template('forgot_password.html')
 
 
@@ -534,6 +568,22 @@ def vendor_details_page():
         return redirect(url_for('index'))
         
     return render_template('vendor_details_page.html')
+
+@app.route('/account', methods=['GET','POST'])
+def account():
+    email = request.cookies.get('login_email')
+    user_id = User.get_user_id_from_email(db, email)
+    vendor = Vendor.get_vendor_by_user_id(db,user_id)
+    
+    if request.method == 'GET':
+        return render_template('account_details.html', vendor=vendor)
+    
+    if request.method == 'POST':
+        Vendor.edit_vendor_details(db, user_id)
+        flash("Your Details have been edited")
+        return redirect(url_for('vendor'))
+    
+    return render_template('account_details.html',vendor=vendor)
 
 
 @app.route('/logout')
@@ -550,3 +600,8 @@ def logout():
         return url_response
     else:
         return redirect(url_for("index"))
+    
+
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')

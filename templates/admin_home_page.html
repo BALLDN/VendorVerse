@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.3.0/main.min.css">
-
+    {% include 'favicon.html' %}
     <style>
         #approvals_section {
             height: 700px; /* Adjust height as needed */
@@ -39,7 +39,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
-                    <h2 class="text-center">Calendar</h2>
+                    <h3 class="text-center">Calendar</h3>
                     
                     <div id='calendar' style="border-radius: 15px;"></div>
 
@@ -111,7 +111,7 @@
                 <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
                     <form action="{{url_for('admin')}}" method="post" id="mainForm">
                         <h2 class="text-center">Pending Approvals</h2>
-                        <div id="approvals_section" style="padding: 30px;">
+                        <div class="addScroll" style="padding: 30px;">
                             <div class="row">
                                 {% for booking in bookings %}
                                     {% if booking.get('Status') == 'P' %}

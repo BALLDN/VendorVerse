@@ -1,51 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1"/>
-    <title>Public Home Page</title>
+    <title>Home</title>
 
     <link rel="stylesheet" href="./static/style.css">
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css'>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'>
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.css'>
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.3.0/main.min.css'>
+    {% include 'favicon.html' %}
     </head>
     <body>
         <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
             <div class="container-fluid"> 
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <img src="../static/logo.png" alt="Logo" class="navbar-logo">
-                VendorVerse
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <ul class="nav navbar-nav">
-                <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{{url_for("login")}}">Login</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{{url_for("register")}}">Sign Up</a>
-                </li>
-            </ul>
+                <div class="navbar_About_Us">
+                    <a class="navbar-brand" href="{{ url_for('index') }}">
+                        <img src="../static/logo.png" alt="Logo" class="navbar-logo">
+                        VendorVerse
+                    </a>
+                    <a class="nav navbar-nav nav-item nav-link navbar_About_Us_realign" aria-current="page" href="{{url_for("about_us")}}">About Us</a>
+                </div>
+            
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <ul class="nav navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{url_for("login")}}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{url_for("register")}}">Sign Up</a>
+                    </li>
+                </ul>
             </div>
         </nav>
         <div class="gradient-custom-4">
          <div class="container">
             {% for mesg in get_flashed_messages() %}
-            <div class="position-fixed top-50 end-0 p-3" style="z-index: 1000">
-                <div class="toast fade text-white bg-dark" id="myToast">
-                    <div class="toast-header">
-                        <strong class="me-auto">Booking Created</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    <div class="toast-body">
-                        {{ mesg }}
+                <div class="position-fixed top-50 end-0 p-3" style="z-index: 1000">
+                    <div class="toast fade text-white bg-dark" id="myToast">
+                        <div class="toast-header">
+                            <strong class="me-auto">Booking Created</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            {{ mesg }}
+                        </div>
                     </div>
                 </div>
+
             </div>
             {% endfor %}
+
 
             <div class="row">
                 <h1>VendorVerse</h1>
@@ -54,22 +62,12 @@
                 <p>Hello/Konnichiwa, and Welcome to VendorVerse.</p>
 
                 <div class="home_page_boxes">
-                    <!--What is VendorVerse? Association to JRIA and SMBC. How to use the service? -->
-                    <h3>What is VendorVerse?</h3>
 
-                    <div>
-                        <p>VendorVerse is a web service that allows local Vendors in the Tralee area to book available times to sell their Goods or Services to the employees of JRIA.</p>
-                        <p>JRI America, Inc., located at <a href="https://www.google.com/maps/place/JRI-America/@52.2880559,-9.6700093,17z/data=!3m1!4b1!4m6!3m5!1s0x4845359cceab6b4f:0xe89504fbc015f259!8m2!3d52.2880528!4d-9.6675299!16s%2Fg%2F11gzq3d1nq?entry=ttu">Innovation Works 2, Kerry Technology Park, Tralee, Co. Kerry, V92 C6DD</a>, is a subsidiary of the Japanese IT financial services company, Japan Research Institute Ltd(JRI), which is the specialist IT subsidiary of Sumitomo Mitsui Financial Group(SMFG).</p>
-                        <h4>How to use our site?</h4>
-                        <p>
-                            Vendors may sign up and offer their availability to the company through booking forms. Vendors must input their information, such as 'Business Name', 'Contact Number' and 'Description of Business', when regstering their account.
-                            <br>Once accepted by our Admin team, they are able to view their available days on the Calendar. Once a suitable day has been selected, they must fill out a Booking Form, which includes information such as 'Location', 'Requirements for Vendor' and 'Discount Availability'.
-                            <br>Once accepted by our Admin team, this booking is available to be viewed by all Employees and the Vendor has a date to gain customers.
-                        </p>
-                    </div>
-                </div>
 
-                <div class="home_page_boxes">
+                    <h3>Our Mission</h3>
+                    <p>We're committed to supporting local businesses, fostering community engagement, and helping small enterprises thrive through our employee network.</p>
+
+
                     <!--Say why we have the service(Help local businesses gain customers). Picture, then text speaking about past vendors. -->
                     <h3>Why do we provide this Service?</h3>
 

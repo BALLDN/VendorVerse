@@ -235,14 +235,27 @@ Select{
 }
 .home_page_boxes h3, h4{
     border-bottom: 2px solid #000000;
-    margin-right: 50%;
+    margin-right: 66%;
     margin-bottom: 2px;
+}
+
+.home_page_boxes h5{
+    font-weight: bold;
 }
 
 .navbar-logo {
     width: 40px; /* Adjust the width as per your requirement */
     height: auto; /* Ensures the height scales proportionally */
     padding-bottom: 2px; /* Optional: Adjust margin for spacing */
+}
+
+.navbar_About_Us{
+    display: flex;
+}
+
+.navbar_About_Us_realign{
+    padding-left: 10px !important;
+    padding-top: 5% !important;
 }
 
 .image_boxes {

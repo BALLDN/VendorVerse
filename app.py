@@ -575,3 +575,8 @@ def logout():
         return url_response
     else:
         return redirect(url_for("index"))
+    
+
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')

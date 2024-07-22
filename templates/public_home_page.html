@@ -50,7 +50,11 @@
                         </div>
                     </div>
                 </div>
+
+            </div>
             {% endfor %}
+
+
             <div class="row">
                 <h1>VendorVerse</h1>
 
@@ -86,6 +90,22 @@
                     </div>
                 </div>
             </div>
+
+            {% if 'cookie_accepted' not in cookies %}
+                <div id="cookie_box">
+                    This website uses optional cookies to improve your user experience on our webservice. If you reject optional, necessary cookies will still be used. 
+
+                    <div>
+                        <input type="button" id="cookies_accepted" value="Accept">
+                        <input type="button" id="decline_cookies" value="Decline">
+                    </div>
+                </div>
+            {% else %}
+                <div>
+                    <p id="cookies_accepted"></p>
+                    <p id="decline_cookies"></p>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -95,6 +115,7 @@
         <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.2.0/main.js" integrity="sha384-v0JEKw0y8RBe98KpDRzj2XKsds7Ab6Qfuwa6RZFOcbWWOJKvLwIFUyxs2kYXLP9w" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha384-Uz1UHyakAAz121kPY0Nx6ZGzYeUTy9zAtcpdwVmFCEwiTGPA2K6zSGgkKJEQfMhK" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js" integrity="sha384-e2kr3z94YEVTtgf8bBbR3EHF3Oi1yLDp7GdxIRn6upe2VFHnSRQe0brjEOeRKCoj" crossorigin="anonymous"></script>
+        <script src="../static/cookies.js"></script>
         
     </body>
 </html>

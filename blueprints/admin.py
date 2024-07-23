@@ -7,7 +7,6 @@ import logging
 from models.booking_model import Booking
 from models.user_model import User
 from models.vendor_model import Vendor
-from util import get_db
 from firebase_admin import firestore
 
 
@@ -68,7 +67,7 @@ def _approve_entity(collection_name, entity_id, action):
 
 
 def _get_data():
-    db = get_db()
+    db = firestore.client()
     bookings = Booking.get_pending_bookings(db)
     users = User.get_pending_users(db)
     detailed_bookings = []

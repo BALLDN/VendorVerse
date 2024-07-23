@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response
 import logging
+from firebase_admin import firestore
 
 from models.user_model import User
-from util import get_db
 
 
 # For Auth Audit only
@@ -11,11 +11,10 @@ auth_logger = logging.getLogger('auth_audit')
 
 auth_bp = Blueprint('auth', __name__)
 
-db = get_db()
-
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    db = firestore.client()
     if request.method == 'GET':
         # Get Cookies containing login info
         login_email = request.cookies.get('login_email')
@@ -50,6 +49,8 @@ def login():
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
+    db = firestore.client()
+
     if request.method == 'POST':
         User.add_user(db)
 

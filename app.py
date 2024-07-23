@@ -8,6 +8,7 @@ from models.vendor_model import Vendor
 from blueprints.auth import auth_bp
 from blueprints.admin import admin_bp
 from util import *
+from firebase_config import init_firebase_admin
 
 
 load_dotenv()
@@ -16,6 +17,11 @@ load_dotenv()
 def create_app(test_config=None):
     app = Flask(__name__)
     app.secret_key = os.environ.get('APP_SECRET_KEY')
+    if test_config:
+        app.config.from_object(test_config)
+
+    init_firebase_admin()
+    db = firestore.client()
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)

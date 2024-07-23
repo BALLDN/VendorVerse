@@ -7,16 +7,6 @@ from firebase_admin import firestore
 import logging
 import os
 
-from firebase_config import init_firebase_admin
-
-init_firebase_admin()
-
-
-def get_db():
-    if 'FIREBASE_ENV' in os.environ:
-        return firestore.client()
-    return None
-
 
 def setup_logging():
     # Configure logging for general messages (e.g., debug, info, error)

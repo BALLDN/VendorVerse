@@ -1,5 +1,4 @@
 import os
-import logging
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
 

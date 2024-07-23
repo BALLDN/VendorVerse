@@ -1,10 +1,6 @@
 import os
-import logging
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField
-from wtforms.validators import InputRequired
 
 from models.user_model import User
 from models.booking_model import Booking
@@ -80,27 +76,23 @@ class modifyForm(FlaskForm):
             login_email = request.form['Email']
             user_type = request.form['User_Type']
 
-            if user_type == "Vendor":
-                url_response = make_response(
-                    redirect(url_for('vendor_details_page')))
-                flash("Your Account is Pending Approval")
+    #         if user_type == "Vendor":
+    #             url_response = make_response(
+    #                 redirect(url_for('vendor_details_page')))
+    #             flash("Your Account is Pending Approval")
 
-            else:
-                url_response = make_response(redirect(url_for('register')))
+    #         else:
+    #             url_response = make_response(redirect(url_for('register')))
 
-            flash("Your Account is Pending Approval")
+    #         flash("Your Account is Pending Approval")
 
-            # Set cookies for login details + user type
-            url_response.set_cookie('login_email', login_email)
-            url_response.set_cookie('user_type', User.validate_user(db))
+    #         # Set cookies for login details + user type
+    #         url_response.set_cookie('login_email', login_email)
+    #         url_response.set_cookie('user_type', User.validate_user(db))
 
-            return url_response
+    #         return url_response
 
-        return render_template('register.html')
-
-    @app.route('/')
-    def index():
-        return render_template('public_home_page.html')
+    #     return render_template('register.html')
 
     @app.route('/vendor')
     def vendor():
@@ -131,7 +123,7 @@ class modifyForm(FlaskForm):
     @app.route('/manage_booking', methods=['GET', 'POST'])
     def manage_bookings():
 
-        form = modifyForm()
+        form = BookingForm()
 
         if request.cookies.get('user_type') == "V":
             bookings = Booking.get_bookings_by_vendor_id(

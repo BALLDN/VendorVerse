@@ -1,10 +1,21 @@
-from firebase_admin import credentials, firestore, App, initialize_app
-from google.cloud.firestore import Client
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, DateField
+from wtforms.validators import InputRequired
+from firebase_admin import firestore
+
 import logging
 import os
 
+from firebase_config import init_firebase_admin
 
-import logging
+init_firebase_admin()
+
+
+def get_db():
+    if 'FIREBASE_ENV' in os.environ:
+        return firestore.client()
+    return None
 
 
 def setup_logging():
@@ -32,21 +43,16 @@ def setup_logging():
     auth_logger.addHandler(auth_handler)
 
 
-def init_firebase_admin() -> App:
-    try:
-        cred = credentials.Certificate(os.environ.get('FIREBASE_PRIVATE_KEY'))
-        admin = initialize_app(cred)
-        logging.info("Firebase Admin initialized successfully")
-        return admin
-    except Exception as e:
-        logging.exception("Failed to initialize Firebase Admin: %s", e)
+class BookingForm(FlaskForm):
+    date = DateField('Date', validators=[InputRequired()])
+    location = StringField('Location', validators=[InputRequired()])
+    discount = TextAreaField('Discount', validators=[InputRequired()])
+    additional_info = TextAreaField(
+        'Additional Information', validators=[InputRequired()])
 
 
-def init_firestore() -> Client:
-    try:
-        db = firestore.client(init_firebase_admin())
-        logging.info("Cloud Firestore initialized successfully")
-    except Exception as e:
-        logging.exception("Failed to initialize Cloud Firestore: %s", e)
-
-    return db
+# config.py
+class TestConfig:
+    TESTING = True
+    DEBUG = True
+    FIRESTORE_PROJECT_ID = 'test-project'

@@ -162,3 +162,5 @@ cython_debug/
 venv
 .vscode
 __pycache__
+.env
+firebase_creds.json

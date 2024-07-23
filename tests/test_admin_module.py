@@ -1,57 +1,89 @@
-import pytest
-import requests
-import pytest
-from app import create_app
-from subprocess import Popen
-import time
-import os
+def test_handle_approvals_approve_user(test_client, mock_firestore):
+    """
+    A3-1 Approve Vendor Account Registration
+    A4-1 Approve Employee Account Registration
+    """
+    mock_db, mock_doc_ref = mock_firestore
+    mock_doc_ref.get.return_value.exists = True
+
+    response = test_client.post(
+        '/admin/', data={'action': 'approve', 'userIdField': 'test_user_id'})
+
+    assert response.status_code == 302
+    mock_doc_ref.update.assert_called_with({'Status': 'A'})
 
 
-@pytest.fixture(scope="session")
-def app():
-    os.environ['FLASK_ENV'] = 'testing'
-    app = create_app()
-    with app.app_context():
-        yield app
+def test_handle_approvals_deny_user(test_client, mock_firestore):
+    """
+    A3-2 Deny Vendor Account Registration
+    A4-2 Deny Employee Account Registration
+    """
+    mock_db, mock_doc_ref = mock_firestore
+    mock_doc_ref.get.return_value.exists = True
+
+    response = test_client.post(
+        '/admin/', data={'action': 'deny', 'userIdField': 'test_user_id'})
+
+    assert response.status_code == 302
+    mock_doc_ref.update.assert_called_with({'Status': 'D'})
 
 
-@pytest.fixture(scope="session")
-def live_server(app):
-    port = 5001
-    process = Popen(["flask", "run", "--port", str(port)])
-    time.sleep(2)  # Give the server some time to start
+def test_handle_approvals_approve_booking(test_client, mock_firestore):
+    """
+    A5-1 Approve Vendor Booking
+    """
 
-    yield f"http://localhost:{port}"
+    mock_db, mock_doc_ref = mock_firestore
+    mock_doc_ref.get.return_value.exists = True
 
-    process.terminate()
+    response = test_client.post(
+        '/admin/', data={'action': 'approve', 'bookingIdField': 'test_booking_id'})
 
-
-def test_approve_vendor(live_server):
-    """A3-1 Approve Vendor Account Registration"""
-    requests.post(live_server+'/admin')
-    return
+    assert response.status_code == 302
+    mock_doc_ref.update.assert_called_with({'Status': 'A'})
 
 
-def test_deny_vendor():
-    """A3-2 Deny Vendor Account Registration"""
-    return
+def test_handle_approvals_deny_booking(test_client, mock_firestore):
+    """
+    A5-2 Deny Vendor Booking
+    """
+    mock_db, mock_doc_ref = mock_firestore
+    mock_doc_ref.get.return_value.exists = True
+
+    response = test_client.post(
+        '/admin/', data={'action': 'deny', 'bookingIdField': 'test_booking_id'})
+
+    assert response.status_code == 302
+    mock_doc_ref.update.assert_called_with({'Status': 'D'})
 
 
-def test_approve_employee():
-    """A4-1 Approve Employee Account Registration"""
-    return
+def test_handle_approvals_entity_not_found(test_client, mock_firestore):
+    """
+    Test that a request for a non-existing entity returns a not found message.
+    """
+    mock_db, mock_doc_ref = mock_firestore
+    mock_doc_ref.get.return_value.exists = False
+
+    response = test_client.post(
+        '/admin/', data={'action': 'approve', 'bookingIdField': 'non_existing_booking_id'})
+
+    assert response.status_code == 302  # Expecting a redirect
+    with test_client.session_transaction() as sess:
+        flashes = sess.get('_flashes', [])
+        assert any(f[1] == 'Bookings not found' for f in flashes)
 
 
-def test_deny_employee():
-    """A4-2 Deny Employee Account Registration"""
-    return
+def test_handle_approvals_invalid_action(test_client, mock_firestore):
+    """
+    Test that a request with an invalid action returns an error.
+    """
+    mock_db, mock_doc_ref = mock_firestore
+    mock_doc_ref.get.return_value.exists = True
 
+    response = test_client.post(
+        '/admin/', data={'action': 'invalid_action', 'bookingIdField': 'test_booking_id'})
 
-def test_approve_booking():
-    """A5-1 Approve Vendor Booking"""
-    return
-
-
-def test_deny_booking():
-    """A5-2 Deny Vendor Booking"""
-    return
+    assert response.status_code == 302  # Expecting a redirect
+    with test_client.session_transaction() as sess:
+        flashes = sess.get('_flashes', [])
+        assert any(f[1] == 'Invalid action' for f in flashes)

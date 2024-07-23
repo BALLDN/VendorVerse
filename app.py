@@ -1,37 +1,32 @@
 import os
-import logging
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for, make_response, jsonify
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField
-from wtforms.validators import InputRequired
 
 from models.user_model import User
 from models.booking_model import Booking
 from models.vendor_model import Vendor
-import controllers.admin_controller as admin_controller
-from util import init_firestore, setup_logging
+from blueprints.auth import auth_bp
+from blueprints.admin import admin_bp
+from util import *
 
 
 load_dotenv()
-setup_logging()
-
-# For Auth Audit only
-auth_logger = logging.getLogger('auth_audit')
 
 
-class modifyForm(FlaskForm):
-    date = DateField('Date', validators=[InputRequired()])
-    location = StringField('Location', validators=[InputRequired()])
-    discount = TextAreaField('Discount', validators=[InputRequired()])
-    additional_info = TextAreaField(
-        'Additional Information', validators=[InputRequired()])
-
-
-def create_app():
+def create_app(test_config=None):
     app = Flask(__name__)
     app.secret_key = os.environ.get('APP_SECRET_KEY')
-    db = init_firestore()
+
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(admin_bp)
+
+    db = get_db()
+    if test_config:
+        app.config.from_object(test_config)
+
+    @app.route('/')
+    def index():
+        return render_template('public_home_page.html')
 
     @app.route('/get_bookings_for_calendar', methods=['GET'])
     def get_bookings():
@@ -57,72 +52,30 @@ def create_app():
             return jsonify(bookings)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
+    #     if request.method == 'POST':
+    #         User.add_user(db)
 
-    @app.route('/login', methods=['GET', 'POST'])
-    def login():
-        if request.method == 'GET':
+    #         # Get username + user_type used in register form
+    #         login_email = request.form['Email']
+    #         user_type = request.form['User_Type']
 
-            # Get Cookies containing login info
-            login_email = request.cookies.get('login_email')
+    #         if user_type == "Vendor":
+    #             url_response = make_response(
+    #                 redirect(url_for('vendor_details_page')))
+    #             flash("Your Account is Pending Approval")
 
-            if login_email:
-                return render_template('login.html', login_email=login_email)
+    #         else:
+    #             url_response = make_response(redirect(url_for('register')))
 
-            return render_template('login.html')
+    #         flash("Your Account is Pending Approval")
 
-        if request.method == 'POST':
+    #         # Set cookies for login details + user type
+    #         url_response.set_cookie('login_email', login_email)
+    #         url_response.set_cookie('user_type', User.validate_user(db))
 
-            # Get username used in login form
-            login_email = request.form['Email']
+    #         return url_response
 
-            if (User.validate_user(db) == "V"):
-                url_response = make_response(redirect(url_for('vendor')))
-            elif (User.validate_user(db) == "E"):
-                url_response = make_response(redirect(url_for('employee')))
-            elif (User.validate_user(db) == "A"):
-                url_response = make_response(redirect(url_for('admin')))
-            else:
-                # Error Message displays as appropriate
-                flash(User.validate_user(db))
-                return render_template('login.html')
-
-            # Set cookies for login details + user type
-            url_response.set_cookie('login_email', login_email)
-            url_response.set_cookie('user_type', User.validate_user(db))
-
-            return url_response
-        return render_template('login.html')
-
-    @app.route('/register', methods=['GET', 'POST'])
-    def register():
-        if request.method == 'POST':
-            User.add_user(db)
-
-            # Get username + user_type used in register form
-            login_email = request.form['Email']
-            user_type = request.form['User_Type']
-
-            if user_type == "Vendor":
-                url_response = make_response(
-                    redirect(url_for('vendor_details_page')))
-                flash("Your Account is Pending Approval")
-
-            else:
-                url_response = make_response(redirect(url_for('register')))
-
-            flash("Your Account is Pending Approval")
-
-            # Set cookies for login details + user type
-            url_response.set_cookie('login_email', login_email)
-            url_response.set_cookie('user_type', User.validate_user(db))
-
-            return url_response
-
-        return render_template('register.html')
-
-    @app.route('/')
-    def index():
-        return render_template('public_home_page.html')
+    #     return render_template('register.html')
 
     @app.route('/vendor')
     def vendor():
@@ -153,7 +106,7 @@ def create_app():
     @app.route('/manage_booking', methods=['GET', 'POST'])
     def manage_bookings():
 
-        form = modifyForm()
+        form = BookingForm()
 
         if request.cookies.get('user_type') == "V":
             bookings = Booking.get_bookings_by_vendor_id(
@@ -225,73 +178,6 @@ def create_app():
     def employee():
         return render_template('employee_home_page.html')
 
-    @app.route('/admin', methods=['GET', 'POST'])
-    def admin():
-        if request.method == 'GET':
-            bookings = Booking.get_pending_bookings(db)
-            users = User.get_pending_users(db)
-            detailed_bookings = []
-            vendor_users = []
-            for booking_snapshot in bookings:
-                booking = booking_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
-                booking['id'] = booking_snapshot.id
-
-                vendor_id = booking.get("Vendor_ID")
-                vendor_details = Vendor.get_vendor_by_user_id(db, vendor_id)
-
-                # Log vendor details fetched
-                app.logger.info(f"Fetched vendor details for Vendor_ID {
-                                vendor_id}: {vendor_details}")
-
-                # Ensure vendor_details is a dictionary and log any potential issues
-                if vendor_details:
-                    booking['vendor_name'] = vendor_details.get('Vendor_Name')
-                    booking['vendor_phone'] = vendor_details.get(
-                        'Phone_Number')
-                    booking['vendor_address'] = vendor_details.get('Address')
-                    app.logger.info(f"Vendor details added to booking: {
-                                    vendor_details}")
-                else:
-                    app.logger.warning(
-                        f"No vendor details found for Vendor_ID: {vendor_id}")
-
-                detailed_bookings.append(booking)
-
-            for user_snapshot in users:
-                if (user_snapshot.get("User_Type") == "V"):
-                    user = user_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
-                    user['id'] = user_snapshot.id
-
-                    user_id = user_snapshot.id
-                    vendor_details = Vendor.get_vendor_by_user_id(db, user_id)
-
-                    # Log vendor details fetched
-                    app.logger.info(f"Fetched vendor details for Vendor_ID {
-                                    user_id}: {vendor_details}")
-
-                    # Ensure vendor_details is a dictionary and log any potential issues
-                    if vendor_details:
-                        user['vendor_name'] = vendor_details.get('Vendor_Name')
-                        user['vendor_phone'] = vendor_details.get(
-                            'Phone_Number')
-                        user['vendor_address'] = vendor_details.get('Address')
-                        app.logger.info(f"Vendor details added to User: {
-                                        vendor_details}")
-                    else:
-                        app.logger.warning(
-                            f"No vendor details found for Vendor_ID: {user_id}")
-
-                    vendor_users.append(user)
-
-            # Log the detailed bookings list
-            app.logger.info(f"Detailed bookings: {detailed_bookings}")
-            app.logger.info(f"Vendors: {vendor_users}")
-
-            return render_template('admin_home_page.html', bookings=detailed_bookings, users=users, vendor_users=vendor_users)
-
-        elif request.method == 'POST':
-            return admin_controller.handle_approvals(db, request)
-
     @app.route('/reset')
     def reset():
         return render_template('forgot_password.html')
@@ -302,7 +188,8 @@ def create_app():
         user_id = User.get_user_id_from_email(db, email)
         if request.method == 'POST':
             Vendor.add_vendor_details(db, user_id)
-            flash("Your Details have been saved and your account is pending approval")
+            flash(
+                "Your Details have been saved and your account is pending approval")
             return redirect(url_for('index'))
 
         return render_template('vendor_details_page.html')

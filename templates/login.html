@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
 
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
   <title>Login to VendorVerse!</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+  <title>Login to VendorVerse!</title>
 
+  <link rel="stylesheet" href="./static/style.css">
   <link rel="stylesheet" href="./static/style.css">
 
   <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css'>
@@ -23,6 +28,21 @@
         password_field.type = "password";
       }
     }
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css'>
+      <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'>
+
+        <script>
+          function showPassword() {
+      var password_field = document.getElementById("Password");
+          //Show password as text
+          if (password_field.type === "password") {
+            password_field.type = "text";
+      }
+          //Hide Password again
+          else {
+            password_field.type = "password";
+      }
+    }
   </script>
 </head>
 
@@ -35,47 +55,77 @@
             <div class="card" style="border-radius: 15px; min-height: 80vh;">
               <div class="card-body p-5">
                 <h2 class="text-uppercase text-center mb-5">Login to VendorVerse</h2>
+                <h2 class="text-uppercase text-center mb-5">Login to VendorVerse</h2>
 
+                {% for mesg in get_flashed_messages() %}
                 {% for mesg in get_flashed_messages() %}
                 <div class="alert alert-danger">
                   <strong>{{ mesg }}</strong>
+                  <strong>{{ mesg }}</strong>
                 </div>
+                {% endfor %}
                 {% endfor %}
 
                 <form action="{{url_for('auth.login')}}" method="post">
+                  <form action="{{url_for('auth.login')}}" method="post">
 
-                  <div data-mdb-input-init class="form-outline mb-4">
-                    <label class="form-label" for="Email">Email Address</label>
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <label class="form-label" for="Email">Email Address</label>
+                      <div data-mdb-input-init class="form-outline mb-4">
+                        <label class="form-label" for="Email">Email Address</label>
 
-                    {% if login_email %}
-                    <input type="email" id="Email" name="Email" class="form-control form-control-md"
-                      value={{login_email}} required>
-                    {% else %}
-                    <input type="email" id="Email" name="Email" class="form-control form-control-md" required>
-                    {% endif %}
+                        {% if login_email %}
+                        <input type="email" id="Email" name="Email" class="form-control form-control-md"
+                          value={{login_email}} required>
+                        {% else %}
+                        {% if login_email %}
+                        <input type="email" id="Email" name="Email" class="form-control form-control-md"
+                          value={{login_email}} required>
+                        {% else %}
+                        <input type="email" id="Email" name="Email" class="form-control form-control-md" required>
+                        {% endif %}
+                        {% endif %}
 
-                  </div>
+                      </div>
+                    </div>
 
-                  <div data-mdb-input-init class="form-outline mb-4">
-                    <label class="form-label" for="Password">Password</label>
-                    <input type="password" id="Password" name="Password" class="form-control form-control-md" required>
-                  </div>
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <label class="form-label" for="Password">Password</label>
+                      <input type="password" id="Password" name="Password" class="form-control form-control-md"
+                        required>
+                    </div>
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <label class="form-label" for="Password">Password</label>
+                      <input type="password" id="Password" name="Password" class="form-control form-control-md"
+                        required>
+                    </div>
 
-                  <!-- An element to toggle between password visibility -->
-                  <input type="checkbox" onclick="showPassword()">Show Password
+                    <!-- An element to toggle between password visibility -->
+                    <input type="checkbox" onclick="showPassword()">Show Password
+                    <!-- An element to toggle between password visibility -->
+                    <input type="checkbox" onclick="showPassword()">Show Password
 
 
-                  <div class="d-flex justify-content-center">
-                    <button type="submit" data-mdb-button-init data-mdb-ripple-init
-                      class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Login</button>
-                  </div>
+                    <div class="d-flex justify-content-center">
+                      <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                        class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Login</button>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                      <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                        class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Login</button>
+                    </div>
 
-                  <p class="text-center text-muted mt-2 mb-0">Don't have an account? <a
-                      href="{{url_for('auth.register')}}" class="fw-bold text-body">Register</a></p>
+                    <p class="text-center text-muted mt-2 mb-0">Don't have an account? <a
+                        href="{{url_for('auth.register')}}" class="fw-bold text-body">Register</a></p>
+                    <p class="text-center text-muted mt-2 mb-0">Don't have an account? <a
+                        href="{{url_for('auth.register')}}" class="fw-bold text-body">Register</a></p>
 
-                  <p class="text-center text-muted mt-2 mb-0">Forgot you Password? <a href="{{url_for('reset')}}"
-                      class="fw-bold text-body">Reset Password</a></p>
+                    <p class="text-center text-muted mt-2 mb-0">Forgot you Password? <a href="{{url_for('reset')}}"
+                        class="fw-bold text-body">Reset Password</a></p>
+                    <p class="text-center text-muted mt-2 mb-0">Forgot you Password? <a href="{{url_for('reset')}}"
+                        class="fw-bold text-body">Reset Password</a></p>
 
+                  </form>
                 </form>
 
               </div>
@@ -85,7 +135,6 @@
       </div>
     </div>
   </section>
-  <script type="module" src="./static/auth.js"></script>
   <script type="module" src="./static/firebase.js"></script> <!-- Auth functions -->
 </body>
 

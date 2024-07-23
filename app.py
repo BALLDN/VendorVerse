@@ -20,129 +20,102 @@ def create_app(test_config=None):
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
 
-    db = get_db()
     if test_config:
-        app.config.from_object(test_config) << << << < Updated upstream
+        app.config.from_object(test_config)
 
-
-== == == =
-app.secret_key = "Secret Key"
-
-try:
-    cred = credentials.Certificate("serviceAccount.json")
-    firebase_admin.initialize_app(cred)
     db = firestore.client()
-    logging.info("Firebase initialized successfully")
-except Exception as e:
-    logging.exception("Failed to initialize Firebase: %s", e)
 
-db = firestore.client()
+    @app.route('/')
+    def index():
+        return render_template('public_home_page.html')
 
+    @app.route('/get_bookings_for_calendar', methods=['GET'])
+    def get_bookings():
+        try:
+            # Determine user type and get appropriate bookings
+            if request.cookies.get('user_type') == "V":
+                bookings_ref = Booking.get_bookings_by_vendor_id(
+                    db, Booking.get_user_id(db, request.cookies.get('login_email')))
+            elif request.cookies.get('user_type') == "A":
+                bookings_ref = Booking.get_approved_bookings(db)
+            else:
+                return jsonify({'error': 'Invalid user type'}), 400
 
-class modifyForm(FlaskForm):
-    date = DateField('Date', validators=[InputRequired()])
-    location = StringField('Location', validators=[InputRequired()])
-    discount = TextAreaField('Discount', validators=[InputRequired()])
-    additional_info = TextAreaField(
-        'Additional Information', validators=[InputRequired()])
+            bookings = []
+            # Iterate over the list of booking documents
+            for doc in bookings_ref:
+                booking = doc.to_dict()
+                # Add the document ID to the booking dictionary
+                booking['id'] = doc.id
+                bookings.append(booking)
 
+            # Return the bookings as a JSON response
+            return jsonify(bookings)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
 
-@app.route('/get_bookings_for_calendar', methods=['GET'])
-def get_bookings():
-    try:
-        # Determine user type and get appropriate bookings
-        if request.cookies.get('user_type') == "V":
-            bookings_ref = Booking.get_bookings_by_vendor_id(
-                db, Booking.get_user_id(db, request.cookies.get('login_email')))
-        elif request.cookies.get('user_type') == "A":
-            bookings_ref = Booking.get_approved_bookings(db)
-        else:
-            return jsonify({'error': 'Invalid user type'}), 400
+    @app.route('/login', methods=['GET', 'POST'])
+    def login():
+        if request.method == 'GET':
+            User.get_users(db)
 
-        bookings = []
-        # Iterate over the list of booking documents
-        for doc in bookings_ref:
-            booking = doc.to_dict()
-            # Add the document ID to the booking dictionary
-            booking['id'] = doc.id
-            bookings.append(booking)
+            # Get Cookies containing login info
+            login_email = request.cookies.get('login_email')
 
-        # Return the bookings as a JSON response
-        return jsonify(bookings)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+            if login_email:
+                return render_template('login.html', login_email=login_email)
 
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'GET':
-        User.get_users(db)
-
-        # Get Cookies containing login info
-        login_email = request.cookies.get('login_email')
-
-        if login_email:
-            return render_template('login.html', login_email=login_email)
-
-        return render_template('login.html')
-
-    if request.method == 'POST':
-
-        # Get username used in login form
-        login_email = request.form['Email']
-
-        if (User.validate_user(db) == "V"):
-            url_response = make_response(redirect(url_for('vendor')))
-        elif (User.validate_user(db) == "E"):
-            url_response = make_response(redirect(url_for('employee')))
-        elif (User.validate_user(db) == "A"):
-            url_response = make_response(redirect(url_for('admin')))
-        else:
-            # Error Message displays as appropriate
-            flash(User.validate_user(db))
             return render_template('login.html')
 
-        # Set cookies for login details + user type
-        url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
+        if request.method == 'POST':
 
-        return url_response
-    return render_template('login.html')
+            # Get username used in login form
+            login_email = request.form['Email']
 
+            if (User.validate_user(db) == "V"):
+                url_response = make_response(redirect(url_for('vendor')))
+            elif (User.validate_user(db) == "E"):
+                url_response = make_response(redirect(url_for('employee')))
+            elif (User.validate_user(db) == "A"):
+                url_response = make_response(redirect(url_for('admin')))
+            else:
+                # Error Message displays as appropriate
+                flash(User.validate_user(db))
+                return render_template('login.html')
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        User.add_user(db)
+            # Set cookies for login details + user type
+            url_response.set_cookie('login_email', login_email)
+            url_response.set_cookie('user_type', User.validate_user(db))
 
-        # Get username + user_type used in register form
-        login_email = request.form['Email']
-        user_type = request.form['User_Type']
+            return url_response
+        return render_template('login.html')
 
-        if user_type == "Vendor":
-            url_response = make_response(
-                redirect(url_for('vendor_details_page')))
+    @app.route('/register', methods=['GET', 'POST'])
+    def register():
+        if request.method == 'POST':
+            User.add_user(db)
+
+            # Get username + user_type used in register form
+            login_email = request.form['Email']
+            user_type = request.form['User_Type']
+
+            if user_type == "Vendor":
+                url_response = make_response(
+                    redirect(url_for('vendor_details_page')))
+                flash("Your Account is Pending Approval")
+
+            else:
+                url_response = make_response(redirect(url_for('register')))
+
             flash("Your Account is Pending Approval")
 
-        else:
-            url_response = make_response(redirect(url_for('register')))
+            # Set cookies for login details + user type
+            url_response.set_cookie('login_email', login_email)
+            url_response.set_cookie('user_type', User.validate_user(db))
 
-        flash("Your Account is Pending Approval")
+            return url_response
 
-        # Set cookies for login details + user type
-        url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
-
-        return url_response
-
-    return render_template('register.html')
-
-
->>>>>> > Stashed changes
-
-  @app.route('/')
-   def index():
-        return render_template('public_home_page.html')
+        return render_template('register.html')
 
     @app.route('/get_bookings_for_calendar', methods=['GET'])
     def get_bookings():
@@ -168,30 +141,6 @@ def register():
             return jsonify(bookings)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-    #     if request.method == 'POST':
-    #         User.add_user(db)
-
-    #         # Get username + user_type used in register form
-    #         login_email = request.form['Email']
-    #         user_type = request.form['User_Type']
-
-    #         if user_type == "Vendor":
-    #             url_response = make_response(
-    #                 redirect(url_for('vendor_details_page')))
-    #             flash("Your Account is Pending Approval")
-
-    #         else:
-    #             url_response = make_response(redirect(url_for('register')))
-
-    #         flash("Your Account is Pending Approval")
-
-    #         # Set cookies for login details + user type
-    #         url_response.set_cookie('login_email', login_email)
-    #         url_response.set_cookie('user_type', User.validate_user(db))
-
-    #         return url_response
-
-    #     return render_template('register.html')
 
     @app.route('/vendor')
     def vendor():

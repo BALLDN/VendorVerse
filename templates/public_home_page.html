@@ -14,22 +14,45 @@
     <body>
         <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
             <div class="container-fluid"> 
-            <a class="navbar-brand" href="/">VendorVerse</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <ul class="nav navbar-nav">
-                <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{{url_for("login")}}">Login</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{{url_for("register")}}">Sign Up</a>
-                </li>
-            </ul>
+                <div class="navbar_About_Us">
+                    <a class="navbar-brand" href="{{ url_for('index') }}">
+                        <img src="../static/logo.png" alt="Logo" class="navbar-logo">
+                        VendorVerse
+                    </a>
+                </div>
+            
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <ul class="nav navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{url_for("login")}}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{url_for("register")}}">Sign Up</a>
+                    </li>
+                </ul>
             </div>
         </nav>
         <div class="gradient-custom-4">
          <div class="container">
+            {% for mesg in get_flashed_messages() %}
+                <div class="position-fixed top-50 end-0 p-3" style="z-index: 1000">
+                    <div class="toast fade text-white bg-dark" id="myToast">
+                        <div class="toast-header">
+                            <strong class="me-auto">Booking Created</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            {{ mesg }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+
+
             <div class="row">
                 <h1>VendorVerse</h1>
 
@@ -37,49 +60,66 @@
                 <p>Hello/Konnichiwa, and Welcome to VendorVerse.</p>
 
                 <div class="home_page_boxes">
-                    <!--What is VendorVerse? Association to JRIA and SMBC. How to use the service? -->
-                    <h3>What is VendorVerse?</h3>
+                    <h3>Our Mission</h3>
+                    <p>We're committed to supporting local businesses, fostering community engagement, and helping small enterprises thrive through our employee network.</p>
+                </div>
 
-                    <div>
-                        <p>VendorVerse is a webservie that allows local Vendors in the Tralee area to book available times to sell their Goods or Services to the employees of JRIA.</p>
-                        <p>JRI America, Inc., located at <a href="https://www.google.com/maps/place/JRI-America/@52.2880559,-9.6700093,17z/data=!3m1!4b1!4m6!3m5!1s0x4845359cceab6b4f:0xe89504fbc015f259!8m2!3d52.2880528!4d-9.6675299!16s%2Fg%2F11gzq3d1nq?entry=ttu">Innovation Works 2, Kerry Technology Park, Tralee, Co. Kerry, V92 C6DD</a>, is a subsidiary of the Japanese IT financial services company, Japan Research Institute Ltd(JRI), which is the specialist IT subsidiary of Sumitomo Mitsui Financial Group(SMFG).</p>
-                        <h4>How to use our site?</h4>
-                        <p>
-                            Vendors may sign up and offer their availability to the company through booking forms. Vendors must input their information, such as 'Business Name', 'Contact Number' and 'Description of Business', when regstering their account.
-                            <br>Once accepted by our Admin team, they are able to view their available days on the Calendar. Once a suitable day has been selected, they must fill out a Booking Form, which includes information such as 'Location', 'Requirements for Vendor' and 'Discount Availability'.
-                            <br>Once accepted by our Admin team, this booking is available to be viewed by all Employees and the Vendor has a date to gain customers.
-                        </p>
+                <div>
+                    <div class="home_page_logins">
+
+                        <div class="home_page_login_areas">
+                            <p>If you already have an Account,<br>Sign in here</p>
+                            <a href="{{url_for("login")}}"><input type="button" value="Sign In"></a>
+                        </div>
+
+                        <div class="home_page_login_areas">
+                            <p>If you do not have an Account,<br>Register here</p>
+                            <a href="{{url_for("register")}}"><input type="button" value="Register"></a>
+                        </div>
+
                     </div>
                 </div>
 
                 <div class="home_page_boxes">
+
                     <!--Say why we have the service(Help local businesses gain customers). Picture, then text speaking about past vendors. -->
                     <h3>Why do we provide this Service?</h3>
 
-                    <p>We provide this service to help local businesses gain customers and work with the local community.</p>
-                    <p>We allow small businesses to gain large amounts of customers through our employees.</p>
+                    <p>We provide this service to help local businesses gain customers and work with the local community.<br>We allow small businesses to gain large amounts of customers through our employees.</p>
 
                     <div class="image_boxes">
                         <img src="../static/PancakeStockPhoto.jpg">
                         <div class="fix_text">
-                            <h4>Pancakes - The Bookshelf</h4>
-                            <p>'The Bookshelf' came to JRI-America to make and sell pancakes.</p>
-                            <p>The Vendor had a large amount of employees attending their stall.</p>
-                            <p>Employees were very satisfied by the pancakes, as they were of a high quality with a reasonable price.</p>
+                            <h4>Pancakes - Bookshelf</h4>
+                            <p>This is an example of a past Vendor, who sold pancakes to employees.<br>The Vendor had a large amount of employees attending their stall.</p>
                         </div>
                     </div>
 
                     <div class="image_boxes">
-                        <img src="../static/SushiStockPhoto.jpg">
                         <div class="fix_text">
                             <h4>Sushi - Kyoto</h4>
-                            <p>Staff from 'Kyoto' came to the JRIA building to make and sell sushi.</p>
-                            <p>The Vendor received a large amount of praise from the employees.</p>
-                            <p>Employees have requested that 'Kyoto' return again to sell more sushi.</p>
+                            <p>This is an example of a past Vendor, who sold sushi to employees.<br>The Vendor has been requested to return to JRIA by employees.</p>
                         </div>
+                        <img style="float:right;" src="../static/SushiStockPhoto.jpg">
                     </div>
                 </div>
             </div>
+
+            {% if 'cookie_accepted' not in cookies %}
+                <div id="cookie_box">
+                    This website uses optional cookies to improve your user experience on our webservice. If you reject optional, necessary cookies will still be used. 
+
+                    <div>
+                        <input type="button" id="cookies_accepted" value="Accept">
+                        <input type="button" id="decline_cookies" value="Decline">
+                    </div>
+                </div>
+            {% else %}
+                <div>
+                    <p id="cookies_accepted"></p>
+                    <p id="decline_cookies"></p>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -89,8 +129,7 @@
         <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.2.0/main.js" integrity="sha384-v0JEKw0y8RBe98KpDRzj2XKsds7Ab6Qfuwa6RZFOcbWWOJKvLwIFUyxs2kYXLP9w" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha384-Uz1UHyakAAz121kPY0Nx6ZGzYeUTy9zAtcpdwVmFCEwiTGPA2K6zSGgkKJEQfMhK" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js" integrity="sha384-e2kr3z94YEVTtgf8bBbR3EHF3Oi1yLDp7GdxIRn6upe2VFHnSRQe0brjEOeRKCoj" crossorigin="anonymous"></script>
-        <!-- Script JS -->
-        <script src="./static/public_calendar.js"></script>
+        <script src="../static/cookies.js"></script>
         
     </body>
 </html>

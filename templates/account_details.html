@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
-    <title>Vendor Details</title>
+    <title>Account Details</title>
 
     <link rel="stylesheet" href="./static/style.css">
 
@@ -20,29 +20,54 @@
           <div class="col-xs-12 col-sm-12 col-md-10 col-lg-6 col-xl-5">
             <div class="card" style="border-radius: 15px; min-height: 80vh;">
               <div class="card-body p-5">
-              <h2 class="text-uppercase text-center mb-5">Please enter the details of your business</h2>
+              <h2 class="text-uppercase text-center mb-5">Edit you Account Details</h2>
 
-              <form action="{{url_for("vendor_details_page")}}" method="post">
+              <form action="{{url_for("account")}}" method="post">
 
                 <div data-mdb-input-init class="form-outline mb-4">
-                  <label class="form-label" for="vendor_name">Vendor Name</label>
-                  <input type="text" name="vendor_name" id="vendor_name" placeholder="Vendor Name" class="form-control form-control-md" maxlength="30" required>
+                  
+                    <label class="form-label" for="vendor_name">Vendor Name</label>
+
+                    {% if  vendor.get("Vendor_Name")%}
+                    <input type="text" name="vendor_name" id="vendor_name" value="{{vendor.get("Vendor_Name")}}" class="form-control form-control-md" maxlength="30" required>
+                    {% else %}
+                    <input type="text" name="vendor_name" id="vendor_name" placeholder="Vendor Name" class="form-control form-control-md" maxlength="30" required>
+                    {% endif %}
                 </div>
 
                 <div data-mdb-input-init class="form-outline mb-4">
-                  <label class="form-label" for="phone_number">Phone Number</label>
+
+                    <label class="form-label" for="phone_number">Phone_Number</label>
+                  {% if  vendor.get("Phone_Number")%}
+                  <input type="text" name="phone_number" id="phone_number" value="{{vendor.get("Phone_Number")}}" class="form-control form-control-md" maxlength="30" required>
+                  {% else %}
                   <input type="text" id="phone_number" name="phone_number" placeholder="Phone Number" class="form-control form-control-md" maxlength="25" required>
+                 {% endif %}
+                
                 </div>
 
                 <div data-mdb-input-init class="form-outline mb-4">
-                  <label class="form-label" for="address">Address</label>
+
+                    <label class="form-label" for="address">Address</label>
+
+                  {% if  vendor.get("Address")%}
+                  <input type="text" name="address" id="address" value="{{vendor.get("Address")}}" class="form-control form-control-md" maxlength="70"required>   
+                  {% else %}
                   <input type="text" name="address" id="address" placeholder="Address" class="form-control form-control-md" maxlength="70"required>
+                 {% endif %}
+                
                 </div>
 
                 <div data-mdb-input-init class="form-outline mb-4">
                     <label class="form-label" for="about_us">Description of Business</label>
-                    <textarea type="text" name="about_us" id="about_us" placeholder="About Us" class="form-control form-control-md" maxlength="150" required> </textarea>
-                  </div>
+                    {% if  vendor.get("About_Us")%}
+                    <textarea type="text" name="about_us" id="about_us" class="form-control form-control-md" maxlength="150" required>{{vendor.get("About_Us")}}</textarea>
+                          
+                    {% else %}
+                    <textarea type="text" name="about_us" id="about_us"  class="form-control form-control-md" maxlength="150" required></textarea>
+                    {% endif %}
+                
+                </div>
 
 
                 <div class="d-flex justify-content-center">

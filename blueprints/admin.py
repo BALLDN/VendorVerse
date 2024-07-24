@@ -38,24 +38,24 @@ def handle_approvals():
         return _approve_entity('Users', user_id, action)
 
 
-def _approve_entity(collection_name, entity_id, action):
+def _approve_entity(collection_name: str, entity_id, action):
     try:
         db = firestore.client()
 
         entity_ref = db.collection(collection_name).document(entity_id)
 
         if not entity_ref.get().exists:
-            flash(f'{collection_name.capitalize()} not found', 'error')
+            flash(f'{collection_name.capitalize()[:-1]} not found', 'error')
             return redirect(url_for('admin.show_admin_dashboard'))
 
         if action == 'APPROVE':
             entity_ref.update({'Status': 'A'})
             flash(
-                {'message': f'{collection_name.capitalize()} approved successfully'})
+                {'message': f'{collection_name.capitalize()[:-1]} approved successfully'}, 'success')
         elif action == 'DENY':
             entity_ref.update({'Status': 'D'})
             flash(
-                {'message': f'{collection_name.capitalize()} denied successfully'})
+                {'message': f'{collection_name.capitalize()[:-1]} denied successfully'}, 'success')
 
         else:
             flash('Invalid action', 'error')

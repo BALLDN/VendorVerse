@@ -6,6 +6,33 @@ body {
   background: #84fab0;
 }
 
+#hideMe {
+  -webkit-animation: cssAnimation 5s forwards;
+  animation: cssAnimation 5s forwards;
+}
+@keyframes cssAnimation {
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes cssAnimation {
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 html {
   min-height: 100%;
   background: linear-gradient(
@@ -54,6 +81,7 @@ html {
 .addScroll {
   overflow-y: auto;
   height: 700px;
+  overflow-x: hidden;
 }
 
 Select {
@@ -217,11 +245,103 @@ Select {
   margin-right: 4px;
 }
 
-.cookie_banner {
-  position: sticky;
-  width: 60%;
+.home_page_boxes {
+  border: 2px solid #333;
+  padding-top: 1%;
+  margin-bottom: 1%;
+  border-radius: 15px;
+}
+.home_page_boxes h3,
+h4 {
+  border-bottom: 2px solid #000000;
+  margin-right: 66%;
+  margin-bottom: 2px;
+}
+
+.home_page_boxes h5 {
+  font-weight: bold;
+}
+
+.navbar-logo {
+  width: 40px; /* Adjust the width as per your requirement */
+  height: auto; /* Ensures the height scales proportionally */
+  padding-bottom: 2px; /* Optional: Adjust margin for spacing */
+}
+
+.navbar_About_Us {
+  display: flex;
+}
+
+.navbar_About_Us_realign {
+  padding-left: 10px !important;
+  padding-top: 5% !important;
+}
+
+.image_boxes {
   display: flex;
   align-items: center;
+  margin-bottom: 2%;
+  border: 2px solid #585858;
+  overflow: hidden; /* Ensure content stays within box */
+  border-radius: 15px;
+}
+
+.image_boxes img {
+  max-width: 100%; /* Limit image width to the size of its container */
+  height: auto; /* Maintain aspect ratio */
+  display: block; /* Ensure image is displayed as a block element */
+}
+
+.fix_text {
+  margin-left: 2%;
+  text-align: center;
+  flex: 1;
+}
+
+.home_page_boxes a:link,
+a:visited,
+a:active {
+  text-decoration: none;
+}
+.home_page_boxes a:hover {
+  text-decoration: underline;
+}
+
+#cookie_box {
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid #000000;
+  position: fixed;
+  bottom: 2%;
+  left: 17%;
+  right: 17%;
+  background-color: #ccc;
+  padding: 1%;
+}
+
+.home_page_logins {
+  display: flex;
+  justify-content: space-between;
+  margin: 2% 20% 2% 20%;
+}
+
+.home_page_login_areas {
+  border: 2px solid #000000;
+  border-radius: 15px;
+  text-align: center;
+  padding: 2%;
+}
+
+.home_page_login_areas p {
+  font-size: 20px;
+}
+
+.home_page_login_areas input[type="button"] {
+  background-color: #212529;
+  color: #ffffff8c;
+  border: 1px solid #212529;
+  border-radius: 10px;
+  padding: 3%;
 }
 
 #approvals_section {

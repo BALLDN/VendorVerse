@@ -2,16 +2,18 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
-    <title>Basic Calendar</title>
 
-    <link rel="stylesheet" href="./static/style.css">
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css'>
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'>
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.css'>
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.3.0/main.min.css'>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
+        <title>Basic Calendar</title>
+
+        <link rel="stylesheet" href="./static/style.css">
+        <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css'>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'>
+        <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.css'>
+        <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.3.0/main.min.css'>
+    </head>
 
 <body>
     <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
@@ -23,16 +25,16 @@
             </button>
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{url_for('auth.login')}}">Login</a>
+                    <a class="nav-link" aria-current="page" href="{{url_for(" login")}}">Login</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{url_for('auth.register')}}">Sign Up</a>
+                    <a class="nav-link" aria-current="page" href="{{url_for(" register")}}">Sign Up</a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="gradient-custom-3">
-        <div class="container ">
+        <div class="container">
 
             <div class="row">
                 <div class="col-8">
@@ -120,6 +122,23 @@
                     </div>
                 </div>
             </div>
+
+            {% if 'cookie_accepted' not in cookies %}
+            <div id="cookie_box">
+                This website uses optional cookies to improve your user experience on our webservice. If you reject
+                optional, necessary cookies will still be used.
+
+                <div>
+                    <input type="button" id="cookies_accepted" value="Accept">
+                    <input type="button" id="decline_cookies" value="Decline">
+                </div>
+            </div>
+            {% else %}
+            <div>
+                <p id="cookies_accepted"></p>
+                <p id="decline_cookies"></p>
+            </div>
+            {% endif %}
         </div>
     </div>
 
@@ -142,7 +161,7 @@
         integrity="sha384-e2kr3z94YEVTtgf8bBbR3EHF3Oi1yLDp7GdxIRn6upe2VFHnSRQe0brjEOeRKCoj"
         crossorigin="anonymous"></script>
     <!-- Script JS -->
-    <script type="module" src="./static/main.js"></script>
+    <script type="module" src="./static/public_calendar.js"></script>
 
 </body>
 

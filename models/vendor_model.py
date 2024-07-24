@@ -34,6 +34,14 @@ class Vendor:
             }
             
             return dictionary
+        
+        
+    @staticmethod
+    def get_users(database_connection):
+        # gets all users from db
+        users_ref = database_connection.collection('Vendors')
+        docs = users_ref.get()
+        return docs
 
     def add_vendor_details(database_connection, user_id):
         # adds a vendors details to db
@@ -48,4 +56,27 @@ class Vendor:
                 "Address": vendor_details.address, "About_Us": vendor_details.about_us, "User_ID": user_id}
         database_connection.collection("Vendors").add(details)
         return details
+    
+    def edit_vendor_details(database_connection, user_id):
+        vendor_ref = database_connection.collection('Vendors').where('User_ID', '==', user_id).get()
+
+        vendor = vendor_ref[0]
+        
+        # edits a vendors details to db
+        vendor_name = request.form['vendor_name']
+        phone_number = request.form['phone_number']
+        address = request.form['address']
+        about_us = request.form['about_us']
+
+
+        updated_details = {
+        "Vendor_Name": vendor_name,
+        "Phone_Number": phone_number,
+        "Address": address,
+        "About_Us": about_us,
+        }
+        
+        database_connection.collection('Vendors').document(vendor.id).update(updated_details)
+       
+        return updated_details
    

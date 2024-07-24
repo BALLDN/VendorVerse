@@ -40,6 +40,10 @@ def create_app(test_config=None):
     def employee():
         return render_template('employee_home_page.html', user_type='E')
 
+    @app.route('/about')
+    def about():
+        return render_template('about_us.html')
+
     return app
 
 

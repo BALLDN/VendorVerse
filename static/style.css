@@ -351,3 +351,8 @@ a:active {
   overflow-y: scroll;
   overflow-x: hidden;
 }
+
+.divider-vertical {
+  border-left: 1px solid #ccc;
+  height: 100%;
+}

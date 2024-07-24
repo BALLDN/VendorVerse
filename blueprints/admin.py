@@ -13,7 +13,7 @@ from firebase_admin import firestore
 admin_bp = Blueprint('admin', __name__)
 
 
-@admin_bp.route('/admin/', methods=['GET'])
+@admin_bp.route('/admin', methods=['GET'])
 def show_admin_dashboard():
     try:
         detailed_bookings, users, vendor_users = _get_data()
@@ -22,7 +22,7 @@ def show_admin_dashboard():
         abort(404)
 
 
-@admin_bp.route('/admin/', methods=['POST'])
+@admin_bp.route('/admin', methods=['POST'])
 def handle_approvals():
     action = request.form.get('action').upper()
     booking_id = request.form.get('bookingIdField')

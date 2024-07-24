@@ -38,18 +38,6 @@ def handle_approvals():
         return _approve_entity('Users', user_id, action)
 
 
-@admin_bp.route('/create_booking_admin', methods=['GET', 'POST'])
-def create_booking_admin():
-    db = firestore.client()
-    if request.method == 'GET':
-        Booking.get_user_id(db, request.cookies.get('login_email'))
-    if request.method == "POST":
-        user_id = Booking.get_user_id(db, request.form.get('Email'))
-        Booking.add_booking(db, user_id)
-        return redirect(url_for('create_booking_admin'))
-    return render_template('create_booking_admin.html', user_type='A')
-
-
 def _approve_entity(collection_name, entity_id, action):
     try:
         db = firestore.client()

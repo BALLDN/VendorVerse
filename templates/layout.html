@@ -38,18 +38,14 @@
     <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.2.0/main.js"
         integrity="sha384-HzsO7O03jzXNL71q5PoV/pyIOf38lLMWaZ2Gigw1XXKX7OGkJDgHk1mkABHkmw58"
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.2.0/main.js"
-        integrity="sha384-v0JEKw0y8RBe98KpDRzj2XKsds7Ab6Qfuwa6RZFOcbWWOJKvLwIFUyxs2kYXLP9w"
-        crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
         integrity="sha384-Uz1UHyakAAz121kPY0Nx6ZGzYeUTy9zAtcpdwVmFCEwiTGPA2K6zSGgkKJEQfMhK"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"
         integrity="sha384-e2kr3z94YEVTtgf8bBbR3EHF3Oi1yLDp7GdxIRn6upe2VFHnSRQe0brjEOeRKCoj"
         crossorigin="anonymous"></script>
-    <script type="module" src="{{url_for('static', filename='main.js')}}"></script>
-    <script type="module" src="{{url_for('static', filename='cookies.js')}}"></script>
-    <script type="module" src="{{url_for('static', filename='firebase.js')}}"></script>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}" type="module"></script>
 </body>
 
 </html>

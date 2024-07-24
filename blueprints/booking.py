@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, jsonify
+from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, DateField
 from wtforms.validators import InputRequired
@@ -7,6 +7,18 @@ from firebase_admin import firestore
 from models.booking_model import Booking
 
 booking_bp = Blueprint('booking', __name__)
+
+
+@booking_bp.route('/create_booking_admin', methods=['GET', 'POST'])
+def create_booking_admin():
+    db = firestore.client()
+    if request.method == 'GET':
+        Booking.get_user_id(db, request.cookies.get('login_email'))
+    if request.method == "POST":
+        user_id = Booking.get_user_id(db, request.form.get('Email'))
+        Booking.add_booking(db, user_id)
+        return redirect(url_for('create_booking_admin'))
+    return render_template('create_booking_admin.html', user_type='A')
 
 
 @booking_bp.route('/create_booking', methods=['GET', 'POST'])
@@ -20,8 +32,8 @@ def create_booking():
             db, request.cookies.get('login_email'))
         Booking.add_booking(db, user_id)
         flash("Your Booking has been created and is pending approval")
-        return render_template('create_booking_vendor.html')
-    return render_template('create_booking_vendor.html')
+        return render_template('create_booking_vendor.html', user_type='V')
+    return render_template('create_booking_vendor.html', user_type='V')
 
 
 @booking_bp.route('/manage_booking', methods=['GET', 'POST'])
@@ -29,15 +41,13 @@ def manage_bookings():
 
     db = firestore.client()
     form = BookingForm()
+    bookings = []
 
     if request.cookies.get('user_type') == "V":
         bookings = Booking.get_bookings_by_vendor_id(
             db, Booking.get_user_id(db, request.cookies.get('login_email')))
     elif request.cookies.get('user_type') == "A":
         bookings = Booking.get_approved_bookings(db)
-
-    if request.method == 'GET':
-        return render_template('manage_bookings_page.html', bookings=bookings, form=form)
 
     if request.method == 'POST':
         action = request.form.get('action')
@@ -75,9 +85,10 @@ def manage_bookings():
         elif request.cookies.get('user_type') == "A":
             bookings = Booking.get_approved_bookings(db)
 
-        return render_template('manage_bookings_page.html', bookings=bookings, form=form)
+        return render_template('booking.manage_bookings', bookings=bookings, form=form)
 
-    return render_template('manage_bookings_page.html', bookings=bookings, form=form)
+    if request.method == 'GET':
+        return render_template('manage_bookings_page.html', bookings=bookings, form=form)
 
 
 @booking_bp.route('/get_bookings_for_calendar', methods=['GET'])

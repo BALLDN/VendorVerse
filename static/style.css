@@ -317,6 +317,7 @@ a:active {
   right: 17%;
   background-color: #ccc;
   padding: 1%;
+  z-index: 3;
 }
 
 .home_page_logins {

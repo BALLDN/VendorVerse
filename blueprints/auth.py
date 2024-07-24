@@ -14,24 +14,18 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    db = firestore.client()
-
     if request.method == 'POST':
-        User.add_user(db)
-
         login_email = request.form['Email']
         user_type = request.form['User_Type']
 
         if user_type == "Vendor":
             url_response = make_response(
-                redirect(url_for('vendor_details_page')))
+                redirect(url_for('vendor.vendor_details_page')))
             flash("Your Account is Pending Approval")
         else:
             url_response = make_response(redirect(url_for('register')))
-            flash("Your Account is Pending Approval")
 
         url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
 
         return url_response
 

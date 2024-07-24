@@ -1,7 +1,8 @@
+import { signUp } from "./auth.js";
+
 document.addEventListener("DOMContentLoaded", function () {
   const calendarEl = document.getElementById("calendar");
   const myModal = new bootstrap.Modal(document.getElementById("form"));
-  const dangerAlert = document.getElementById("danger-alert");
   const close = document.querySelector(".btn-close");
 
   // Fetch bookings and store in localStorage
@@ -61,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const submitButton = document.getElementById("submit-button");
         const eventIdInput = document.getElementById("event-id");
 
-        modalTitle.innerHTML = "Edit Booking";
         dateInput.value = event.Date;
         locationInput.value = event.Location;
         dealInput.value = event.Deal;

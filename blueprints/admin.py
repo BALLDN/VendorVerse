@@ -1,5 +1,3 @@
-from google.cloud.firestore import Client
-from flask.wrappers import Request
 from flask import jsonify, Blueprint, redirect, render_template, abort, request, url_for, flash
 from jinja2 import TemplateNotFound
 import logging
@@ -8,6 +6,8 @@ from models.booking_model import Booking
 from models.user_model import User
 from models.vendor_model import Vendor
 from firebase_admin import firestore
+
+from util import *
 
 
 admin_bp = Blueprint('admin', __name__)
@@ -51,11 +51,11 @@ def _approve_entity(collection_name: str, entity_id, action):
         if action == 'APPROVE':
             entity_ref.update({'Status': 'A'})
             flash(
-                {'message': f'{collection_name.capitalize()[:-1]} approved successfully'}, 'success')
+                {'message': f'{collection_name.capitalize()[:-1]} approved successfully'}, FlashCategory.SUCCESS.value)
         elif action == 'DENY':
             entity_ref.update({'Status': 'D'})
             flash(
-                {'message': f'{collection_name.capitalize()[:-1]} denied successfully'}, 'success')
+                {'message': f'{collection_name.capitalize()[:-1]} denied successfully'}, FlashCategory.ERROR.value)
 
         else:
             flash('Invalid action', 'error')

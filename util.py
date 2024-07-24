@@ -1,3 +1,4 @@
+from enum import Enum
 from firebase_admin import credentials, initialize_app
 import logging
 import os
@@ -43,3 +44,10 @@ class TestConfig:
     TESTING = True
     DEBUG = True
     FIRESTORE_PROJECT_ID = 'test-project'
+
+
+class FlashCategory(Enum):
+    SUCCESS = 'success'
+    ERROR = 'danger'
+    INFO = 'info'
+    WARNING = 'warning'

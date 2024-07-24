@@ -5,9 +5,8 @@
 
 <div class="gradient-custom-3">
     <div class="container">
-        <div class="row">
+        <div class="row p-4">
             <div class="col-lg-8">
-                <h3 class="text-center">Calendar</h3>
 
                 <div id='calendar' style="border-radius: 15px;"></div>
 
@@ -47,7 +46,14 @@
             </div>
 
 
-            <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
+            <div class="d-flex col-md-8 col-sm-8 col-lg-4 col-xl-4">
+
+                {% if not bookings %}
+
+                <div class="m-4">Good job! No Pending Approvals at the moment. Take a break ☕!</div>
+                {% else %}
+
+
                 <form action="{{url_for('admin.handle_approvals')}}" method="post" id="mainForm">
                     <h2 class="text-center">Pending Approvals</h2>
                     <div id="approvals_section">
@@ -126,6 +132,7 @@
                             </div>
                             {% endif %}
                             {% endfor %}
+
                         </div>
                     </div>
                     <input type="hidden" name="bookingIdField" id="bookingIdField">
@@ -133,6 +140,8 @@
                     <!-- Hidden input to identify the action -->
                     <input type="hidden" name="action" id="action">
                 </form>
+
+                {%endif%}
             </div>
 
             <!-- Approve Modal -->
@@ -173,7 +182,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-danger" id="confirmCancel"
-                                onclick="submitCancelForm()">Confirm Cancel</button>
+                                onclick="submitDenyForm()">Confirm Cancel</button>
                         </div>
                     </div>
                 </div>

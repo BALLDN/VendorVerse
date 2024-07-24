@@ -17,7 +17,7 @@ admin_bp = Blueprint('admin', __name__)
 def show_admin_dashboard():
     try:
         detailed_bookings, users, vendor_users = _get_data()
-        return render_template('admin_home_page.html', bookings=detailed_bookings, users=users, vendor_users=vendor_users)
+        return render_template('admin_home_page.html', bookings=detailed_bookings, users=users, vendor_users=vendor_users, user_type='A')
     except TemplateNotFound:
         abort(404)
 
@@ -36,6 +36,18 @@ def handle_approvals():
 
     elif (user_id):
         return _approve_entity('Users', user_id, action)
+
+
+@admin_bp.route('/create_booking_admin', methods=['GET', 'POST'])
+def create_booking_admin():
+    db = firestore.client()
+    if request.method == 'GET':
+        Booking.get_user_id(db, request.cookies.get('login_email'))
+    if request.method == "POST":
+        user_id = Booking.get_user_id(db, request.form.get('Email'))
+        Booking.add_booking(db, user_id)
+        return redirect(url_for('create_booking_admin'))
+    return render_template('create_booking_admin.html', user_type='A')
 
 
 def _approve_entity(collection_name, entity_id, action):
@@ -98,28 +110,30 @@ def _get_data():
         detailed_bookings.append(booking)
 
     for user_snapshot in users:
-        if (user_snapshot.get("User_Type") == "V"):
-            user = user_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
-            user['id'] = user_snapshot.id
+        user = user_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
+        try:
+            if (user["User_Type"] == "V"):
+                user['id'] = user_snapshot.id
 
-            user_id = user_snapshot.id
-            vendor_details = Vendor.get_vendor_by_user_id(db, user_id)
+                vendor_details = Vendor.get_vendor_by_user_id(db, user['id'])
 
-            # Log vendor details fetched
+                # Log vendor details fetched
 
-            # Ensure vendor_details is a dictionary and log any potential issues
-            if vendor_details:
-                user['vendor_name'] = vendor_details.get('Vendor_Name')
-                user['vendor_phone'] = vendor_details.get(
-                    'Phone_Number')
-                user['vendor_address'] = vendor_details.get('Address')
-                logging.info(f"Vendor details added to User: {
-                             vendor_details}")
-            else:
-                logging.warning(
-                    f"No vendor details found for Vendor_ID: {user_id}")
+                # Ensure vendor_details is a dictionary and log any potential issues
+                if vendor_details:
+                    user['vendor_name'] = vendor_details.get('Vendor_Name')
+                    user['vendor_phone'] = vendor_details.get(
+                        'Phone_Number')
+                    user['vendor_address'] = vendor_details.get('Address')
+                    logging.info(f"Vendor details added to User: {
+                        vendor_details}")
+                else:
+                    logging.warning(
+                        f"No vendor details found for Vendor_ID: {user['id']}")
 
-            vendor_users.append(user)
+                vendor_users.append(user)
+        except Exception as e:
+            logging.error(e)
 
         # Log the detailed bookings list
     logging.info(f"Detailed bookings: {detailed_bookings}")

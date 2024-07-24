@@ -223,3 +223,10 @@ Select {
   display: flex;
   align-items: center;
 }
+
+#approvals_section {
+  height: 700px;
+  /* Adjust height as needed */
+  overflow-y: scroll;
+  overflow-x: hidden;
+}

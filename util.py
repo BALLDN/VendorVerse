@@ -1,9 +1,3 @@
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField
-from wtforms.validators import InputRequired
-from firebase_admin import firestore
-
 import logging
 import os
 
@@ -31,14 +25,6 @@ def setup_logging():
     auth_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
 
     auth_logger.addHandler(auth_handler)
-
-
-class BookingForm(FlaskForm):
-    date = DateField('Date', validators=[InputRequired()])
-    location = StringField('Location', validators=[InputRequired()])
-    discount = TextAreaField('Discount', validators=[InputRequired()])
-    additional_info = TextAreaField(
-        'Additional Information', validators=[InputRequired()])
 
 
 # config.py

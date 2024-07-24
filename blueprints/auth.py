@@ -12,6 +12,32 @@ auth_logger = logging.getLogger('auth_audit')
 auth_bp = Blueprint('auth', __name__)
 
 
+@auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    db = firestore.client()
+
+    if request.method == 'POST':
+        User.add_user(db)
+
+        login_email = request.form['Email']
+        user_type = request.form['User_Type']
+
+        if user_type == "Vendor":
+            url_response = make_response(
+                redirect(url_for('vendor_details_page')))
+            flash("Your Account is Pending Approval")
+        else:
+            url_response = make_response(redirect(url_for('register')))
+            flash("Your Account is Pending Approval")
+
+        url_response.set_cookie('login_email', login_email)
+        url_response.set_cookie('user_type', User.validate_user(db))
+
+        return url_response
+
+    return render_template('register.html')
+
+
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     db = firestore.client()
@@ -47,27 +73,22 @@ def login():
     return render_template('login.html')
 
 
-@auth_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    db = firestore.client()
+@auth_bp.route('/logout')
+def logout():
 
-    if request.method == 'POST':
-        User.add_user(db)
+    login_email = request.cookies.get('login_email')
+    user_type = request.cookies.get('user_type')
 
-        login_email = request.form['Email']
-        user_type = request.form['User_Type']
-
-        if user_type == "Vendor":
-            url_response = make_response(
-                redirect(url_for('vendor_details_page')))
-            flash("Your Account is Pending Approval")
-        else:
-            url_response = make_response(redirect(url_for('register')))
-            flash("Your Account is Pending Approval")
-
-        url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', User.validate_user(db))
+    if (login_email and user_type):
+        url_response = make_response(redirect(url_for("index")))
+        url_response.delete_cookie('login_email')
+        url_response.delete_cookie('user_type')
 
         return url_response
+    else:
+        return redirect(url_for("index"))
 
-    return render_template('register.html')
+
+@auth_bp.route('/reset')
+def reset():
+    return render_template('forgot_password.html')

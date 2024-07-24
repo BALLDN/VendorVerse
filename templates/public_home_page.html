@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1"/>
-    <title>Home</title>
+    <title>Public Home Page</title>
 
     <link rel="stylesheet" href="./static/style.css">
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css'>
@@ -62,12 +62,27 @@
                 <p>Hello/Konnichiwa, and Welcome to VendorVerse.</p>
 
                 <div class="home_page_boxes">
-
-
                     <h3>Our Mission</h3>
                     <p>We're committed to supporting local businesses, fostering community engagement, and helping small enterprises thrive through our employee network.</p>
+                </div>
 
+                <div>
+                    <div class="home_page_logins">
 
+                        <div class="home_page_login_areas">
+                            <p>If you already have an Account,<br>Sign in here</p>
+                            <a href="{{url_for("login")}}"><input type="button" value="Sign In"></a>
+                        </div>
+
+                        <div class="home_page_login_areas">
+                            <p>If you do not have an Account,<br>Register here</p>
+                            <a href="{{url_for("register")}}"><input type="button" value="Register"></a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="home_page_boxes">
                     <!--Say why we have the service(Help local businesses gain customers). Picture, then text speaking about past vendors. -->
                     <h3>Why do we provide this Service?</h3>
 

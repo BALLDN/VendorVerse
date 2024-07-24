@@ -22,6 +22,7 @@ body {
 }
 
 
+
 html{
     min-height: 100%;
     background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
@@ -297,4 +298,29 @@ Select{
     right: 17%;
     background-color: #ccc;
     padding: 1%;
+}
+
+.home_page_logins{
+    display: flex;
+    justify-content: space-between;
+    margin: 2% 20% 2% 20%;
+}
+
+.home_page_login_areas{
+    border: 2px solid #000000;
+    border-radius: 15px;
+    text-align: center;
+    padding: 2%;
+}
+
+.home_page_login_areas p{
+    font-size: 20px;
+}
+
+.home_page_login_areas input[type="button"]{
+    background-color: #212529;
+    color: #ffffff8c;
+    border: 1px solid #212529;
+    border-radius: 10px;
+    padding: 3%;
 }

@@ -6,6 +6,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <ul class="nav navbar-nav">
+            {% set user_type = session.get('user_type') or request.cookies.get('user_type') or user_type %}
             {% if user_type == 'V' %}
             <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/vendor">Dashboard</a>
@@ -31,7 +32,7 @@
                     Bookings</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="#">Polls</a>
+                <a class="nav-link" aria-current="page" href="#">Manage Polls</a>
             </li>
             {% elif user_type == 'E' %}
             <li class="nav-item">

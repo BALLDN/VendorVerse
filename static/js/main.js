@@ -16,25 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function initializeCalendar(events) {
     const calendar = new FullCalendar.Calendar(calendarEl, {
-      customButtons: {
-        customButton: {
-          text: "Add Booking",
-          click: function () {
-            myModal.show();
-            const modalTitle = document.getElementById("modal-title");
-            const submitButton = document.getElementById("submit-button");
-            modalTitle.innerHTML = "Add Booking";
-            submitButton.innerHTML = "Add Booking";
-            submitButton.setAttribute("id", "addEvent");
-            submitButton.classList.remove("btn-primary");
-            submitButton.classList.add("btn-success");
-
-            close.addEventListener("click", () => {
-              myModal.hide();
-            });
-          },
-        },
-      },
       headerToolbar: {
         center: "customButton",
         right: "today,prev,next",
@@ -54,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const event = events.find((e) => e.id === info.event.id);
 
         // Populate the modal fields with the latest event data
-        const modalTitle = document.getElementById("modal-title");
         const dateInput = document.getElementById("date");
         const locationInput = document.getElementById("location");
         const dealInput = document.getElementById("deal");

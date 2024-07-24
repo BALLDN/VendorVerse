@@ -11,68 +11,40 @@
 
                 <div id='calendar' style="border-radius: 15px;"></div>
 
-                <!-- Modal for adding/editing bookings -->
-                <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modal-title">Edit Booking</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="booking-form">
-                                    <div class="mb-3">
-                                        <label for="date" class="form-label">Date</label>
-                                        <input type="date" class="form-control" id="date" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="location" class="form-label">Location</label>
-                                        <input type="text" class="form-control" id="location" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="deal" class="form-label">Deal</label>
-                                        <input type="text" class="form-control" id="deal" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="additional-info" class="form-label">Additional Info</label>
-                                        <textarea class="form-control" id="additional-info" required></textarea>
-                                    </div>
-                                    <input type="hidden" id="event-id">
-                                    <button type="submit" class="btn btn-primary" id="submit-button">Save
-                                        changes</button>
-                                </form>
-                            </div>
+            </div>
+            <!-- Booking Details -->
+            <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-title">Booking Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                    </div>
-                </div>
-
-                <div id="danger-alert" class="alert alert-danger" style="display:none;">End date must be after start
-                    date.</div>
-
-                <!-- Modal for Deleting Events -->
-                <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog"
-                    aria-labelledby="delete-modal-title" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="delete-modal-title">Delete Event</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" id="delete-modal-body">
-                                Are you sure you want to delete this event?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                    id="cancel-delete-button">Cancel</button>
-                                <button type="button" class="btn btn-danger" id="delete-button">Delete</button>
-                            </div>
+                        <div class="modal-body">
+                            <form id="booking-form">
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="date" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="location" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deal" class="form-label">Deal</label>
+                                    <input type="text" class="form-control" id="deal" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="additional-info" class="form-label">Additional Info</label>
+                                    <textarea class="form-control" id="additional-info" disabled></textarea>
+                                </div>
+                                <input type="hidden" id="event-id">
+                                <button type="submit" class="btn btn-primary" id="submit-button" hidden></button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
                 <h2>About Us</h2>
                 <div class="about_us">

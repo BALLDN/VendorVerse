@@ -5,41 +5,38 @@
 
         <div class="row">
             <div class="col-lg-8">
-                <h3 class="text-center">Calendar</h3>
-
                 <div id='calendar' style="border-radius: 15px;"></div>
+            </div>
 
-                <!-- Booking Details -->
-                <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modal-title">Booking Details</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="booking-form">
-                                    <div class="mb-3">
-                                        <label for="date" class="form-label">Date</label>
-                                        <input type="date" class="form-control" id="date" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="location" class="form-label">Location</label>
-                                        <input type="text" class="form-control" id="location" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="deal" class="form-label">Deal</label>
-                                        <input type="text" class="form-control" id="deal" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="additional-info" class="form-label">Additional Info</label>
-                                        <textarea class="form-control" id="additional-info" disabled></textarea>
-                                    </div>
-                                    <input type="hidden" id="event-id">
-                                    <button type="submit" class="btn btn-primary" id="submit-button" hidden></button>
-                                </form>
-                            </div>
+            <!-- Booking Details -->
+            <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-title">Booking Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="booking-form">
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="date" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="location" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deal" class="form-label">Deal</label>
+                                    <input type="text" class="form-control" id="deal" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="additional-info" class="form-label">Additional Info</label>
+                                    <textarea class="form-control" id="additional-info" disabled></textarea>
+                                </div>
+                                <input type="hidden" id="event-id">
+                                <button type="submit" class="btn btn-primary" id="submit-button" hidden></button>
+                            </form>
                         </div>
                     </div>
                 </div>

@@ -87,16 +87,14 @@ class User:
     def validate_user(database_connection):
         users_ref = database_connection.collection('Users')
         form_email = request.form['Email']
-        password = request.form['Password']
 
         query = users_ref.where("Email", "==", form_email)
         results = query.get()
 
         for doc in results:
             found_user_type = doc.to_dict().get("User_Type")
-            found_password = doc.to_dict().get("Password")
 
-        if len(results) > 0 and found_password == password:
+        if len(results) > 0:
             # Decides which Homepage to load based on user type
             return found_user_type
         else:

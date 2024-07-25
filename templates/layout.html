@@ -21,10 +21,10 @@
 
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-    <div class="position-absolute top-4 end-0 p-3">
+    <div class="position-absolute top-4 end-0 p-3 z-3">
         {% for category, message in messages %}
         <div class="alert alert-dismissible fade show rounded-3 mb-3 {{ 'alert-' + category }}" role="alert">
-            {{ message.message }}
+            {{ message}}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endfor %}

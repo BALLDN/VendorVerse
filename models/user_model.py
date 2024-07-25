@@ -1,4 +1,5 @@
 from flask import flash, redirect, request, url_for
+from firebase_admin import firestore
 
 
 class User:
@@ -13,34 +14,24 @@ class User:
         print(self.email, self.password, self.user_type, self.status)
 
     @staticmethod
-    def add_user(database_connection):
-
-        # adds a user to db
-        status = "P"
-        email = request.form['Email']
-        password = request.form['Password']
-        user_type = request.form['User_Type'][0]
-
-        user_credentials = User(email, password, user_type, status)
-
-        user = {"Email": user_credentials.email, "Password": user_credentials.password,
-                "User_Type": user_credentials.user_type, "Status": user_credentials.status}
-        database_connection.collection("Users").add(user)
-        return user
+    def add_user(uid, email, user_type,):
+        db = firestore.client()
+        data = {"Email": email, "User_Type": user_type, "Status": "P"}
+        db.collection("Users").document(uid).set(data)
 
     @staticmethod
     def get_user_id_from_email(database_connection, email):
         users_ref = database_connection.collection('Users')
         query = users_ref.where("Email", "==", email)
         results = query.get()
-        
+
         for doc in results:
             user_id = doc.id
 
         if len(results) > 0:
             return user_id
         else:
-            return "No User Found!"       
+            return "No User Found!"
 
     @staticmethod
     def get_users(database_connection):
@@ -50,14 +41,14 @@ class User:
         for doc in docs:
             return ('{} => {}'.format(doc.id, doc.to_dict()))
         return docs
-    
+
     @staticmethod
     def get_pending_users(database_connection):
         users_ref = database_connection.collection('Users')
         query = users_ref.where("Status", "==", "P")
         results = query.get()
         return results
-    
+
     @staticmethod
     def reset_user_password(database_connection, email, current_password, new_password, confirmed_password):
         users_ref = database_connection.collection('Users')
@@ -84,9 +75,6 @@ class User:
 
         return {'status': 'success', 'message': 'Password reset successfully!'}
 
-            
-
-        
     @staticmethod
     def get_user_by_user_id(database_connection, user_id):
         users_ref = database_connection.collection('Users')

@@ -51,11 +51,11 @@ def _approve_entity(collection_name: str, entity_id, action):
         if action == 'APPROVE':
             entity_ref.update({'Status': 'A'})
             flash(
-                {'message': f'{collection_name.capitalize()[:-1]} approved successfully'}, FlashCategory.SUCCESS.value)
+                f'{collection_name.capitalize()[:-1]} approved successfully', FlashCategory.SUCCESS.value)
         elif action == 'DENY':
             entity_ref.update({'Status': 'D'})
             flash(
-                {'message': f'{collection_name.capitalize()[:-1]} denied successfully'}, FlashCategory.ERROR.value)
+                f'{collection_name.capitalize()[:-1]} denied successfully', FlashCategory.ERROR.value)
 
         else:
             flash('Invalid action', 'error')

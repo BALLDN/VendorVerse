@@ -6,12 +6,12 @@
 <div class="mask d-flex align-items-center gradient-custom-3">
   <div class="container registration_card">
     <div class="row d-flex justify-content-center align-items-center" style="max-width: 80vw">
-      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-5">
+      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-5 p-2">
         <div class="card" style="border-radius: 15px; min-height: 80vh;">
           <div class="card-body p-5">
             <h2 class="text-uppercase text-center mb-5">Register for VendorVerse!</h2>
 
-            <form id="form-register">
+            <form id="form-register" action="{{url_for('auth.register')}}" method="POST">
 
               <div data-mdb-input-init class="form-outline mb-4">
                 <label class="form-label" for="email">Email Address</label>
@@ -24,17 +24,17 @@
               </div>
 
               <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" name="confirm_password" class="form-control form-control-md"
-                  required>
+                <label class="form-label" for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password"
+                  class="form-control form-control-md" required>
               </div>
 
               <!-- An element to toggle between password visibility -->
               <input type="checkbox" onclick="showPassword()">Show Password
 
               <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="userType">User Type</label>
-                <select id="userType" class="form-select form-select-md mb-3" name="user_type"
+                <label class="form-label" for="user_type">User Type</label>
+                <select id="user_type" class="form-select form-select-md mb-3" name="user_type"
                   aria-label=".form-select-md example" required>
                   <!--  <option selected disabled>Please Select a User Type</option> -->
                   <option value="vendor">Vendor</option>

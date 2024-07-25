@@ -5,6 +5,8 @@ from wtforms.validators import InputRequired
 from firebase_admin import firestore
 
 from models.booking_model import Booking
+from models.user_model import User
+from models.vendor_model import Vendor
 
 booking_bp = Blueprint('booking', __name__)
 
@@ -113,24 +115,24 @@ def get_bookings():
         return jsonify({'error': str(e)}), 500
 
 
-@booking_bp.route('/get_booking/<booking_id>', methods=['GET'])
-def get_booking(booking_id):
+@booking_bp.route('/account', methods=['GET', 'POST'])
+def account():
     db = firestore.client()
+    # TODO: get uid from session
+    email = request.cookies.get('login_email')
+    user_id = User.get_user_id_from_email(db, email)
 
-    booking_ref = db.collection('Bookings').document(booking_id)
-    results = booking_ref.get()
+    vendor = Vendor.get_vendor_by_user_id(db, user_id)
 
-    if results.exists:
-        booking_data = results.to_dict()
-        response_data = {
-            "date": booking_data.get("Date"),
-            "location": booking_data.get("Location"),
-            "discount": booking_data.get("Deal"),
-            "additional_info": booking_data.get("Additional Info")
-        }
-        return jsonify(response_data)
-    else:
-        return jsonify({"error": "Booking not found"}), 404
+    if request.method == 'GET':
+        return render_template('account_details.html', vendor=vendor)
+
+    if request.method == 'POST':
+        Vendor.edit_vendor_details(db, user_id)
+        flash("Your Details have been edited")
+        return redirect(url_for('vendor'))
+
+    return render_template('account_details.html', vendor=vendor)
 
 
 class BookingForm(FlaskForm):

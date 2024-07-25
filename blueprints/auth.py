@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, abort
 import logging
-from firebase_admin import firestore
+from firebase_admin import firestore, auth
+from firebase_admin._user_mgt import UserRecord
+
 
 from models.user_model import User
+from util import FlashCategory
 
 
 # For Auth Audit only
@@ -15,21 +18,29 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        login_email = request.form['Email']
-        user_type = request.form['User_Type']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        user_type = request.form['user_type'][0].upper()
 
-        if user_type == "Vendor":
+        if password != confirm_password:
+            flash("Passwords Must Be The Same!", FlashCategory.ERROR.value)
+            return redirect(url_for('auth.register'))
+
+        flash("Your Account is Pending Approval", FlashCategory.SUCCESS.value)
+        user: UserRecord = auth.create_user(email=email, password=password)
+        if user_type == "V":
             url_response = make_response(
                 redirect(url_for('vendor.vendor_details_page')))
-            flash("Your Account is Pending Approval")
-        else:
-            url_response = make_response(redirect(url_for('register')))
-
-        url_response.set_cookie('login_email', login_email)
+        elif user_type == "E":
+            uid = user.uid
+            User.add_user(uid, email, user_type)
+            url_response = make_response(redirect(url_for('index')))
 
         return url_response
 
-    return render_template('register.html')
+    if request.method == 'GET':
+        return render_template('register.html')
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])

@@ -12,20 +12,20 @@
             <form action="{{url_for('auth.login')}}" method="post">
 
               <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="Email">Email Address</label>
+                <label class="form-label" for="email">Email Address</label>
 
                 {% if login_email %}
-                <input type="email" id="Email" name="Email" class="form-control form-control-md" value={{login_email}}
+                <input type="email" id="email" name="email" class="form-control form-control-md" value={{login_email}}
                   required>
                 {% else %}
-                <input type="email" id="Email" name="Email" class="form-control form-control-md" required>
+                <input type="email" id="email" name="email" class="form-control form-control-md" required>
                 {% endif %}
 
               </div>
 
               <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="Password">Password</label>
-                <input type="password" id="Password" name="Password" class="form-control form-control-md" required>
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control form-control-md" required>
               </div>
 
               <!-- An element to toggle between password visibility -->

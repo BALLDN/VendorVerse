@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 import logging
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, auth
 from flask import Flask, flash, redirect, render_template, request, send_from_directory, url_for, make_response, jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, DateField
@@ -13,6 +13,7 @@ from models.user_model import User
 from models.booking_model import Booking
 from models.vendor_model import Vendor
 from models.polls_model import Polls
+import time
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -76,27 +77,49 @@ def login():
         return render_template('login.html')
 
     if request.method == 'POST':
+        data = request.get_json()
+        id_token = data.get('id_token')
+        time.sleep(1)
+        try:
+        # Verify the ID token using Firebase Admin SDK
+            decoded_token = auth.verify_id_token(id_token)
+            uid = decoded_token['uid']
+            
+            # Retrieve user details from Firestore
+            user_doc = db.collection('Users').document(uid).get()
+            if user_doc.exists:
+                user_data = user_doc.to_dict()
+                user_type = user_data.get('User_type')
+                user_status = user_data.get('Status')
+                
+                if user_status == "A":
+                # Handle user based on user_type
+                    if user_type == 'V':
+                        redirect_url = (url_for('vendor'))
+                    elif user_type == 'E':
+                        redirect_url = (url_for('employee'))
+                    elif user_type == 'A':
+                        redirect_url = (url_for('admin'))
+                    else:
+                        url_response = jsonify({'error': 'Unknown user type'}), 400
+                else:
+                    flash("User not Approved")
+                    time.sleep(2)
+                    redirect_url = (url_for('index'))
+            else:
+                url_response = jsonify({'error': 'User not found'}), 404
+            
+            url_response = jsonify({'redirect_url': redirect_url})
 
-        # Get username used in login form
-        login_email = request.form['Email']
+        except Exception as e:
+            url_response = jsonify({'error': str(e)}), 400
 
-        if (User.validate_user(db) == "V"):
-            url_response = make_response(redirect(url_for('vendor')))
-        elif (User.validate_user(db) == "E"):
-            url_response = make_response(redirect(url_for('employee')))
-        elif (User.validate_user(db) == "A"):
-            url_response = make_response(redirect(url_for('admin')))
-        else:
-            # Error Message displays as appropriate
-            flash(User.validate_user(db))
-            return render_template('login.html')
-
-        # Set cookies for login details + user type
-        if 'cookie_accepted' in request.cookies:
+        
+        if 'cookies_accepted' in request.cookies:
             cookie_expiry = timedelta(days=14)
 
             url_response.set_cookie('login_email', login_email, max_age=cookie_expiry)
-            url_response.set_cookie('user_type', User.validate_user(db), max_age=cookie_expiry)
+            url_response.set_cookie('user_type', user_type, max_age=cookie_expiry)
 
         return url_response
     return render_template('login.html')
@@ -188,26 +211,29 @@ def employee_polls():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        User.add_user(db)
+        data = request.get_json()
+        login_email = data.get('email')
+        user_type = data.get('user_type')
+        print(user_type)
 
-        # Get username + user_type used in register form
-        login_email = request.form['Email']
-        user_type = request.form['User_Type']
+        print("YABADABADOO")  # Debugging output
 
-        if user_type == "Vendor":
-            url_response = make_response(redirect(url_for('vendor_details_page')))
+        if user_type == "V":
+            redirect_url = url_for('vendor_details_page')
         else:
-            url_response = make_response(redirect(url_for('index')))
             flash("Your Account is Pending Approval")
+            redirect_url = url_for('index')
 
-        # Set cookies for login details + user type
-        if 'cookie_accepted' in request.cookies:
+        # Create JSON response with redirect URL
+        response = jsonify({'redirect_url': redirect_url})
+
+        # Set cookies if 'cookie_accepted' is present
+        if 'cookies_accepted' in request.cookies:
             cookie_expiry = timedelta(days=14)
+            response.set_cookie('login_email', login_email, max_age=cookie_expiry)
+            response.set_cookie('user_type', user_type, max_age=cookie_expiry)
 
-            url_response.set_cookie('login_email', login_email, max_age=cookie_expiry)
-            url_response.set_cookie('user_type', User.validate_user(db), max_age=cookie_expiry)
-
-        return url_response
+        return response
 
     return render_template('register.html')
 

@@ -69,15 +69,20 @@ def vendor():
     return render_template('vendor_home_page.html', user_type='V')
 
 
-@vendor_bp.route('/vendor_details', methods=['GET', 'POST'])
-def vendor_details_page():
+@vendor_bp.route('/account', methods=['GET', 'POST'])
+def account():
     db = firestore.client()
+
     email = request.cookies.get('login_email')
     user_id = User.get_user_id_from_email(db, email)
-    if request.method == 'POST':
-        Vendor.add_vendor_details(db, user_id)
-        flash(
-            "Your Details have been saved and your account is pending approval")
-        return redirect(url_for('index'))
+    vendor = Vendor.get_vendor_by_user_id(db, user_id)
 
-    return render_template('vendor_details_page.html')
+    if request.method == 'GET':
+        return render_template('account_details.html', vendor=vendor)
+
+    if request.method == 'POST':
+        Vendor.edit_vendor_details(db, user_id)
+        flash("Your Details have been edited")
+        return redirect(url_for('vendor'))
+
+    return render_template('account_details.html', vendor=vendor)

@@ -84,18 +84,7 @@ class User:
 
     # Change to return entire user credentials
     @staticmethod
-    def validate_user(database_connection):
-        users_ref = database_connection.collection('Users')
-        form_email = request.form['Email']
-
-        query = users_ref.where("Email", "==", form_email)
-        results = query.get()
-
-        for doc in results:
-            found_user_type = doc.to_dict().get("User_Type")
-
-        if len(results) > 0:
-            # Decides which Homepage to load based on user type
-            return found_user_type
-        else:
-            return "Invalid Email or Password!"
+    def get_user_type_from_uid(uid):
+        db = firestore.client()
+        user_snapshot = db.collection("Users").document(uid).get()
+        return user_snapshot.get('User_Type')

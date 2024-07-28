@@ -2,64 +2,57 @@
 {% block title %}Booking Creation (Admin){% endblock %}
 {%block content%}
 
-<div class="mask d-flex align-items-center vh-100 gradient-custom-3">
-  <div class="container">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-6">
-        <div class="card mb-5 mt-5" style="border-radius: 15px;">
-          <div class="card-body p-5">
-            <h2 class="text-uppercase text-center mb-5">Please Enter the Details of your booking</h2>
+<div class="row d-flex justify-content-center align-items-center h-100">
+  <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-6">
+    <div class="card mb-5 mt-5" style="border-radius: 15px;">
+      <div class="card-body p-5">
+        <h2 class="text-uppercase text-center mb-5">Booking on behalf of a Vendor</h2>
 
-            <form action="{{url_for('booking.create_booking_admin')}}" method="post">
+        <form action="{{url_for('booking.create_booking_admin')}}" method="post">
 
-              <label class='form-label' for='VendorName'>Vendor Name</label>
-              <select class='form-select form-select-sm mb-2' aria-label='' name='VendorName' id='VendorName' required>
-                <option value='' disabled selected>Please select a Vendor</option>
-                {% for vendor in vendors %} <option value="{{ vendor.get('User_ID') }}">{{ vendor.get('Vendor_Name')
-                  }}</option>{% endfor %}
-              </select>
-
-              <label for="Date">Booking Date</label>
-              <input id="DateInput" name="Date" class="form-control mb-2" type="date" />
-
-              <div data-mdb-input-init class="form-outline mb-2">
-                <label class="form-label" for="Location">Location</label>
-                <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="Location"
-                  id="Location" required>
-                  <option value="" disabled selected>Select Location</option>
-                  <option value="Front Car park">Front Car Park</option>
-                  <option value="Back Car Park">Back Car Park</option>
-                </select>
-              </div>
-
-              <div data-mdb-input-init class="form-outline mb-2">
-                <label class="form-label" for="additional_info">Additional Information</label>
-                <textarea type="text" id="additional_info" name="additional_info" class="form-control form-control-md"
-                  maxlength="200" required> </textarea>
-              </div>
-
-              <!-- An element to toggle between password visibility -->
-
-              <input id="discount_checkbox" type="checkbox" onclick="addDiscountTextArea()">Is the vendor offering a
-              discount?
-
-              <div id="Discount_Section"> </div>
-
-
-              <div class="d-flex justify-content-center">
-                <button type="submit" data-mdb-button-init data-mdb-ripple-init
-                  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Confirm</button>
-              </div>
-
-            </form>
-
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Vendor Email</label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
           </div>
-        </div>
+
+
+          <label for="Date">Booking Date</label>
+          <input id="DateInput" name="Date" class="form-control mb-2" type="date" />
+
+          <div data-mdb-input-init class="form-outline mb-2">
+            <label class="form-label" for="Location">Location</label>
+            <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="Location" id="Location"
+              required>
+              <option value="" disabled selected>Select Location</option>
+              <option value="Front Car park">Front Car Park</option>
+              <option value="Back Car Park">Back Car Park</option>
+            </select>
+          </div>
+
+          <div data-mdb-input-init class="form-outline mb-2">
+            <label class="form-label" for="additional_info">Additional Information</label>
+            <textarea type="text" id="additional_info" name="additional_info" class="form-control form-control-md"
+              maxlength="200" required> </textarea>
+          </div>
+
+          <div class="form-check p-0">
+            <input id="discount_checkbox" name="discount_checkbox" type="checkbox" onclick="addDiscountTextArea()">
+            <label class="form-check-label" for="discount_checkbox">Is the Vendor offering a deal?</label>
+          </div>
+
+          <div id="Discount_Section"> </div>
+
+          <div class="d-flex justify-content-center">
+            <button type="submit" data-mdb-button-init data-mdb-ripple-init
+              class="btn btn-primary btn-block btn-lg px-5">Confirm</button>
+          </div>
+
+        </form>
+
       </div>
     </div>
   </div>
 </div>
-<script type="module" src="./static/firebase.js"></script> <!-- Auth functions -->
 
 <script>
   // Function to format the date to YYYY-MM-DD

@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, session
 import logging
 from firebase_admin import firestore, auth
 from firebase_admin._user_mgt import UserRecord
+from uuid import uuid4
 
 
 from models.user_model import User
@@ -18,6 +19,9 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
+    if request.method == 'GET':
+        return render_template('register.html')
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -28,41 +32,51 @@ def register():
             flash("Passwords Must Be The Same!", FlashCategory.ERROR.value)
             return redirect(url_for('auth.register'))
 
-        flash("Your Account is Pending Approval", FlashCategory.SUCCESS.value)
-        user: UserRecord = auth.create_user(email=email, password=password)
+        uid = uuid4().hex
+
+        User.add_user(uid, email, user_type)
+
         if user_type == "V":
             url_response = make_response(
-                redirect(url_for('vendor.vendor_details_page')))
+                redirect(url_for('auth.vendor_details_page')))
+            session['UID'] = uid
         elif user_type == "E":
-            uid = user.uid
-            User.add_user(uid, email, user_type)
+            flash("Your Account is Pending Approval",
+                  FlashCategory.SUCCESS.value)
             url_response = make_response(redirect(url_for('index')))
+        else:
+            flash('Invalid User Type. Please Try Again',
+                  FlashCategory.ERROR.value)
+            url_response = make_response(
+                redirect(url_for('index')))
+
+        try:
+            user: UserRecord = auth.create_user(
+                uid=uid, email=email, password=password)
+        except Exception as e:
+            flash(e, FlashCategory.ERROR.value)
 
         return url_response
-
-    if request.method == 'GET':
-        return render_template('register.html')
 
 
 @auth_bp.route('/vendor_details', methods=['GET', 'POST'])
 def vendor_details_page():
     db = firestore.client()
-    email = request.cookies.get('login_email')
-    user_id = User.get_user_id_from_email(db, email)
+    uid = session['UID']
     if request.method == 'POST':
-        Vendor.add_vendor_details(db, user_id)
+        Vendor.add_vendor_details(db, uid)
         flash(
             "Your Details have been saved and your account is pending approval")
+        session.clear()
         return redirect(url_for('index'))
 
-    return render_template('vendor_details_page.html')
+    if request.method == 'GET':
+        return render_template('vendor_details_page.html')
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    db = firestore.client()
     if request.method == 'GET':
-        # Get Cookies containing login info
         login_email = request.cookies.get('login_email')
 
         if login_email:
@@ -71,26 +85,28 @@ def login():
         return render_template('login.html')
 
     if request.method == 'POST':
-        login_email = request.form['Email']
+        id_token = request.authorization.token
 
-        user_type = User.validate_user(db)
+        try:
+            decoded_token = auth.verify_id_token(id_token)
+            uid = decoded_token['uid']
+            session['user_id'] = uid
+            user_type = User.get_user_type_from_uid(uid)
+            if user_type == "V":
+                url_response = make_response(
+                    redirect(url_for('vendor.vendor')))
+            elif user_type == "E":
+                url_response = make_response(redirect(url_for('employee')))
+            elif user_type == "A":
+                url_response = make_response(
+                    redirect(url_for('admin.show_admin_dashboard')))
+            else:
+                flash(user_type)
+                return render_template('login.html')
 
-        if user_type == "V":
-            url_response = make_response(redirect(url_for('vendor')))
-        elif user_type == "E":
-            url_response = make_response(redirect(url_for('employee')))
-        elif user_type == "A":
-            url_response = make_response(redirect(url_for('admin')))
-        else:
-            flash(user_type)
-            return render_template('login.html')
-
-        url_response.set_cookie('login_email', login_email)
-        url_response.set_cookie('user_type', user_type)
-
-        return url_response
-
-    return render_template('login.html')
+            return url_response
+        except Exception as e:
+            return f"An error occurred: {e}"
 
 
 @auth_bp.route('/logout')

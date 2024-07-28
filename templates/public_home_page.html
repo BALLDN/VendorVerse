@@ -1,82 +1,72 @@
 {%extends 'layout.html'%}
 {%block content%}
-<div class="gradient-custom-3">
-    <div class="container">
 
-        <div class="row">
-            <div class="col-lg-8">
-                <div id='calendar' style="border-radius: 15px;"></div>
-            </div>
+<div class="row">
 
-            <!-- Booking Details -->
-            <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modal-title">Booking Details</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="booking-form">
-                                <div class="mb-3">
-                                    <label for="date" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="date" disabled>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="location" class="form-label">Location</label>
-                                    <input type="text" class="form-control" id="location" disabled>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="deal" class="form-label">Deal</label>
-                                    <input type="text" class="form-control" id="deal" disabled>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="additional-info" class="form-label">Additional Info</label>
-                                    <textarea class="form-control" id="additional-info" disabled></textarea>
-                                </div>
-                                <input type="hidden" id="event-id">
-                                <button type="submit" class="btn btn-primary" id="submit-button" hidden></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
-                <h2>About Us</h2>
-                <div class="about_us">
-                    <p class="mt-2">Booking a time slot will allow your business to offer products to our Staff
-                        Members. Bookings can be made in advance with the following link: <a href="#">Make a Booking
-                            here!</a></p>
-                    <br>
-                    <p class="mt-2">Request a poll for our staff members to gauge their interest in your services:
-                        <a href="#">Create a poll here!</a>
-                    </p>
-                    <br>
-                    <p class="mt-2">For any further information you require contact: <a href="#">068 12345</a></p>
-                </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Welcome to VendorVerse</h5>
+                <p class="card-text">New here? Join us now!</p>
+                <a href="#" class="btn btn-primary">Register Now!</a>
+                <p class="card-text">Already a user? Welcome back!</p>
+                <a href="#" class="btn btn-primary">Sign In</a>
             </div>
         </div>
+    </div>
 
+    <div class="card p-4 col-lg-8 col-md-6">
+        <div id='calendar'></div>
     </div>
-    {% if 'cookie_accepted' not in cookies %}
-    <div id="cookie_box">
-        This website uses optional cookies to improve your user experience on our webservice. If you reject
-        optional, necessary cookies will still be used.
-
-        <div>
-            <input type="button" id="cookies_accepted" value="Accept">
-            <input type="button" id="decline_cookies" value="Decline">
-        </div>
-    </div>
-    {% else %}
-    <div>
-        <p id="cookies_accepted"></p>
-        <p id="decline_cookies"></p>
-    </div>
-    {% endif %}
-    <script src="{{ url_for('static', filename='js/cookies.js') }}" type="module"></script>
 
 </div>
+
+<!-- Booking Details -->
+<div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Booking Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="booking-form">
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="date" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="deal" class="form-label">Deal</label>
+                        <input type="text" class="form-control" id="deal" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="additional-info" class="form-label">Additional Info</label>
+                        <textarea class="form-control" id="additional-info" disabled></textarea>
+                    </div>
+                    <input type="hidden" id="event-id">
+                    <button type="submit" class="btn btn-primary" id="submit-button" hidden></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if 'cookie_accepted' not in cookies %}
+<div id="cookie_box" class="d-flex">
+    This website uses optional cookies to enhance your user experience. If you decline, essential cookies necessary for
+    the
+    website's functionality will still be used.
+
+    <button class="btn btn-success m-2" id="cookies_accept" value="Accept">Accept</button>
+    <button class="btn btn-danger m-2" id="cookies_decline" value="Decline">Decline</button>
+</div>
+{% endif %}
+<script src="{{ url_for('static', filename='js/cookies.js') }}" type="module"></script>
+
+
 
 {%endblock%}

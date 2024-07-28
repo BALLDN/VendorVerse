@@ -1,39 +1,38 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
+@font-face {
+  font-family: "MyCustomFont";
+  src: url("/static/fonts/nuku1.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
-  font-family: "Montserrat", sans-serif;
-  background: #84fab0;
+  background: url("/static/images/general-bg.jpg") no-repeat center center fixed;
+  background-size: cover;
 }
 
-#hideMe {
-  -webkit-animation: cssAnimation 5s forwards;
-  animation: cssAnimation 5s forwards;
-}
-@keyframes cssAnimation {
-  0% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@-webkit-keyframes cssAnimation {
-  0% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
 }
 
-.cd__main {
-  position: relative;
-  background: linear-gradient(to right, #4e54c8, #8f94fb) !important;
+.content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "MyCustomFont", sans-serif;
+}
+
+.card {
+  opacity: 90%;
 }
 
 #header {
@@ -41,10 +40,6 @@ body {
   margin: auto;
   padding: 20px;
   width: 600px;
-}
-
-.about_us {
-  padding-top: 100px;
 }
 
 /*Modify scrollbar for approvals section*/
@@ -68,78 +63,9 @@ body {
   overflow-x: hidden;
 }
 
-Select {
-  padding: 2px;
-}
-
-.gradient-custom-3 {
-  /* fallback for old browsers */
-
-  /* W3C, IE 10+/ Edge, Firefox 16+, Ch    background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));rome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(
-    to right,
-    rgba(132, 250, 176, 0.5),
-    rgba(143, 211, 244, 0.5)
-  );
-
-  background-repeat: repeat-y;
-}
-.gradient-custom-4 {
-  /* fallback for old browsers */
-  background: #84fab0;
-
-  min-height: 100%;
-
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(
-    to right,
-    rgba(132, 250, 176, 1),
-    rgba(143, 211, 244, 1)
-  );
-
-  background-repeat: repeat-y;
-}
-
-#calendar {
-  background: #fff;
-  margin: 40px;
-  min-height: 600px;
-  padding: 20px;
-}
-
-/*Set width for every <p> and <a>*/
-@media (max-width: 550px) {
-  p,
-  a {
-    font-size: 1em;
-  }
-  #calendar {
-    width: 80vw;
-    height: 400px;
-  }
-
-  .fc {
-    height: 350px;
-  }
-}
-
-@media (max-width: 1000px) {
-  /*#calendar{
-        width: 70vw;
-    }*/
-
-  #approvals_section {
-    width: 80vw;
-    margin: auto;
-    height: 100%;
-  }
-}
-
-@media (min-width: 551px) {
-  p,
-  a {
-    font-size: 1.1rem;
-  }
+#hideMe {
+  -webkit-animation: cssAnimation 5s forwards;
+  animation: cssAnimation 5s forwards;
 }
 
 #text_section {
@@ -223,42 +149,10 @@ Select {
   border-radius: 2px;
 }
 
-.fa,
-.fas {
-  font-size: 13px;
-  margin-right: 4px;
-}
-
-.home_page_boxes {
-  border: 2px solid #333;
-  padding-top: 1%;
-  margin-bottom: 1%;
-  border-radius: 15px;
-}
-.home_page_boxes h3,
-h4 {
-  border-bottom: 2px solid #000000;
-  margin-right: 66%;
-  margin-bottom: 2px;
-}
-
-.home_page_boxes h5 {
-  font-weight: bold;
-}
-
 .navbar-logo {
   width: 40px; /* Adjust the width as per your requirement */
   height: auto; /* Ensures the height scales proportionally */
   padding-bottom: 2px; /* Optional: Adjust margin for spacing */
-}
-
-.navbar_About_Us {
-  display: flex;
-}
-
-.navbar_About_Us_realign {
-  padding-left: 10px !important;
-  padding-top: 5% !important;
 }
 
 .image_boxes {

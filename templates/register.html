@@ -2,62 +2,59 @@
 {% block title %}Register{% endblock %}
 {%block content%}
 
+<div class="row d-flex justify-content-center">
+  <div class="col-sm-12 col-lg-6">
+    <div class="card">
+      <div class="card-body m-5">
 
-<div class="mask d-flex align-items-center gradient-custom-3">
-  <div class="container registration_card">
-    <div class="row d-flex justify-content-center align-items-center" style="max-width: 80vw">
-      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-5 p-2">
-        <div class="card" style="border-radius: 15px; min-height: 80vh;">
-          <div class="card-body p-5">
-            <h2 class="text-uppercase text-center mb-5">Register for VendorVerse!</h2>
-
-            <form id="form-register" action="{{url_for('auth.register')}}" method="POST">
-
-              <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="email">Email Address</label>
-                <input type="email" id="email" name="email" class="form-control form-control-md" required>
-              </div>
-
-              <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control form-control-md" required>
-              </div>
-
-              <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password"
-                  class="form-control form-control-md" required>
-              </div>
-
-              <!-- An element to toggle between password visibility -->
-              <input type="checkbox" onclick="showPassword()">Show Password
-
-              <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="user_type">User Type</label>
-                <select id="user_type" class="form-select form-select-md mb-3" name="user_type"
-                  aria-label=".form-select-md example" required>
-                  <!--  <option selected disabled>Please Select a User Type</option> -->
-                  <option value="vendor">Vendor</option>
-                  <option value="employee">Employee</option>
-                </select>
-              </div>
-
-
-              <div class="d-flex justify-content-center">
-                <button type="submit" data-mdb-button-init data-mdb-ripple-init
-                  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Register</button>
-              </div>
-
-              <p class="text-center text-muted mt-2 mb-0">Already have an account? <a href="{{url_for('auth.login')}}"
-                  class="fw-bold text-body">Login</a></p>
-
-              <p class="text-center text-muted mt-2 mb-0">Forgot your Password? <a href="{{url_for('auth.reset')}}"
-                  class="fw-bold text-body">Reset Password</a></p>
-
-            </form>
-
+        <form id="form-register" action="{{url_for('auth.register')}}" method="POST">
+          <h2 class="text-uppercase text-center mb-5">Register for VendorVerse!</h2>
+          <div data-mdb-input-init class="form-outline mb-4">
+            <label class="form-label" for="user_type">User Type</label>
+            <select id="user_type" class="form-select form-select-md mb-3" name="user_type"
+              aria-label=".form-select-md example" required>
+              <!--  <option selected disabled>Please Select a User Type</option> -->
+              <option value="vendor">Vendor</option>
+              <option value="employee">Employee</option>
+            </select>
           </div>
-        </div>
+
+          <div data-mdb-input-init class="form-outline mb-4">
+            <label class="form-label" for="email">Email Address</label>
+            <input type="email" id="email" name="email" class="form-control form-control-md" required>
+          </div>
+
+          <div data-mdb-input-init class="form-outline mb-4">
+            <label class="form-label" for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control form-control-md" required>
+          </div>
+
+          <div data-mdb-input-init class="form-outline mb-4">
+            <label class="form-label" for="confirm_password">Confirm Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" class="form-control form-control-md"
+              required>
+          </div>
+
+          <div class="form-check form-check-reverse justify-content-end">
+            <label class="form-check-label" for="show_password">Show Password</label>
+            <input class="form-check-input" id="show_password" type="checkbox" onclick="showPassword()">
+          </div>
+
+
+          <div class="d-flex justify-content-center">
+            <button type="submit" data-mdb-button-init data-mdb-ripple-init
+              class="btn btn-primary btn-block btn-lg px-5 ">Register</button>
+          </div>
+
+
+        </form>
+        <p class="text-muted mt-2 mb-0">Already have an account? <a href="{{url_for('auth.login')}}"
+            class="fw-bold text-body">Login</a></p>
+
+        <p class="text-muted mt-2 mb-0">Forgot your Password? <a href="{{url_for('auth.reset')}}"
+            class="fw-bold text-body">Reset Password</a></p>
+
+
       </div>
     </div>
   </div>

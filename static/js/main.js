@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function initializeCalendar(events) {
     const calendar = new FullCalendar.Calendar(calendarEl, {
+      height: "100%",
       headerToolbar: {
         center: "customButton",
         right: "today,prev,next",
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
       plugins: ["dayGrid", "interaction"],
       events: events.map((event) => ({
         id: event.id,
-        title: event["Additional Info"],
+        title: `${event[""]} - ${event["Additional Info"]}`,
         start: event.Date,
         backgroundColor: "blue",
         allDay: true,

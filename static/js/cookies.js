@@ -1,25 +1,21 @@
-var cookie_accepted = document.getElementById('cookies_accepted')
-var cookie_declined = document.getElementById('decline_cookies')
-
-var date = new Date();
-var cookiesExpiry = date.setDate(date.getDate() + 14);
-
-function acceptCookies(){
-
-    cookie_box.style.display = 'none'
-
-    if (cookie_accepted.value = 'Accept'){
-        console.log('accepted')
-    
-        document.cookie = "cookie_accepted=T; expires=" + cookiesExpiry + "; path=/"
-    }
+function acceptCookies(e) {
+  e.preventDefault();
+  const cookieBox = document.getElementById("cookie_box");
+  let date = new Date();
+  let cookiesExpiry = date.setDate(date.getDate() + 14);
+  document.cookie = "cookie_accepted=T; expires=" + cookiesExpiry + "; path=/";
+  cookieBox.remove();
 }
 
-cookie_accepted.addEventListener("click", acceptCookies)
-
-function declineCookies(){
-
-    cookie_box.style.display = 'none'
+function declineCookies(e) {
+  e.preventDefault();
+  const cookieBox = document.getElementById("cookie_box");
+  cookieBox.remove();
 }
 
-cookie_declined.addEventListener("click", declineCookies)
+document.addEventListener("DOMContentLoaded", function () {
+  const cookie_accepted = document.getElementById("cookies_accept");
+  const cookie_declined = document.getElementById("cookies_decline");
+  cookie_accepted.addEventListener("click", acceptCookies);
+  cookie_declined.addEventListener("click", declineCookies);
+});

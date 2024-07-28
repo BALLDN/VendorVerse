@@ -1,56 +1,58 @@
 {%extends 'layout.html'%}
 {% block title %}Login{% endblock %}
 {%block content%}
-<div class="mask d-flex align-items-center h-100 gradient-custom-3">
-  <div class="container">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-6 col-xl-5">
-        <div class="card" style="border-radius: 15px; min-height: 80vh;">
-          <div class="card-body p-5">
-            <h2 class="text-uppercase text-center mb-5">Login to VendorVerse</h2>
 
-            <form action="{{url_for('auth.login')}}" method="post">
+<div class="row d-flex justify-content-center">
+  <div class="col-sm-12 col-lg-6">
+    <div class="card">
+      <div class="card-body m-5">
 
-              <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="email">Email Address</label>
+        <form action="{{url_for('auth.login')}}" method="post" id="login_form">
+          <h2 class="text-uppercase text-center">Login to VendorVerse</h2>
 
-                {% if login_email %}
-                <input type="email" id="email" name="email" class="form-control form-control-md" value={{login_email}}
-                  required>
-                {% else %}
-                <input type="email" id="email" name="email" class="form-control form-control-md" required>
-                {% endif %}
+          <div data-mdb-input-init class="form-outline mb-4">
+            <label class="form-label" for="email">Email Address</label>
 
-              </div>
-
-              <div data-mdb-input-init class="form-outline mb-4">
-                <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control form-control-md" required>
-              </div>
-
-              <!-- An element to toggle between password visibility -->
-              <input type="checkbox" onclick="showPassword()">Show Password
-
-
-              <div class="d-flex justify-content-center">
-                <button type="submit" data-mdb-button-init data-mdb-ripple-init
-                  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Login</button>
-              </div>
-
-              <p class="text-center text-muted mt-2 mb-0">Don't have an account? <a href="{{url_for('auth.register')}}"
-                  class="fw-bold text-body">Register</a></p>
-
-              <p class="text-center text-muted mt-2 mb-0">Forgot you Password? <a href="{{url_for('auth.reset')}}"
-                  class="fw-bold text-body">Reset Password</a></p>
-
-            </form>
+            {% if login_email %}
+            <input type="email" id="email" name="email" class="form-control form-control-md" value={{login_email}}
+              required>
+            {% else %}
+            <input type="email" id="email" name="email" class="form-control form-control-md" required>
+            {% endif %}
 
           </div>
-        </div>
+
+          <div data-mdb-input-init class="form-outline mb-4">
+            <label class="form-label" for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control form-control-md" required>
+          </div>
+
+          <div class="d-flex justify-content-end align-items-center">
+          </div>
+
+          <div class="form-check form-check-reverse justify-content-end">
+            <label class="form-check-label" for="show_password">Show Password</label>
+            <input class="form-check-input" id="show_password" type="checkbox" onclick="showPassword()">
+          </div>
+
+          <div class="d-flex justify-content-center">
+            <button type="submit" data-mdb-button-init data-mdb-ripple-init
+              class="btn btn-primary btn-block btn-lg px-5">Login</button>
+          </div>
+
+
+        </form>
+        <p class="text-muted mt-2 mb-0">Don't have an account? <a href="{{url_for('auth.register')}}"
+            class="fw-bold text-body">Register</a></p>
+
+        <p class="text-muted mt-2 mb-0">Forgot you Password? <a href="{{url_for('auth.reset')}}"
+            class="fw-bold text-body">Reset Password</a></p>
+
       </div>
     </div>
   </div>
 </div>
+
 <script>
   function showPassword() {
     var password_field = document.getElementById("Password");

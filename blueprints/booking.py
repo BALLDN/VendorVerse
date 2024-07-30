@@ -6,6 +6,7 @@ from firebase_admin import firestore
 
 from models.booking_model import Booking
 from blueprints.auth import role_required
+from util import FlashCategory
 
 booking_bp = Blueprint('booking', __name__)
 
@@ -79,14 +80,13 @@ def create_booking():
     db = firestore.client()
 
     if request.method == 'GET':
-        Booking.get_user_id(db, request.cookies.get('login_email'))
+        return render_template('create_booking_vendor.html')
     if request.method == "POST":
-        user_id = Booking.get_user_id(
-            db, request.cookies.get('login_email'))
-        Booking.add_booking(db, user_id)
-        flash("Your Booking has been created and is pending approval")
+
+        Booking.add_booking(session['user_id'])
+        flash("Your Booking has been created and is pending approval",
+              FlashCategory.SUCCESS.value)
         return render_template('create_booking_vendor.html', user_type='V')
-    return render_template('create_booking_vendor.html', user_type='V')
 
 
 @booking_bp.route('/manage_booking', methods=['GET', 'POST'])

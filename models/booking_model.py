@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, session
 from firebase_admin import firestore
 from models.vendor_model import Vendor
 
@@ -21,16 +21,15 @@ class Booking:
         return self.date
 
     @staticmethod
-    def add_booking(database_connection, vendor_id):
+    def add_booking(vendor_id):
 
-        # adds a user to db
-        if (request.cookies.get('user_type') == "V"):
-            status = "P"
-        else:
-            status = "A"
         date = request.form['Date']
         location = request.form['Location']
         additional_info = request.form['additional_info']
+        status = "P"
+
+        if (session['user_type'] == 'A'):
+            status = "A"
 
         '''In case discount checkbox isn't checked'''
         if request.form.get('discount_checkbox') is None or request.form['discount'] is None:
@@ -38,13 +37,12 @@ class Booking:
         else:
             deal = request.form['discount']
 
-        booking_details = Booking(
-            date, deal, location, additional_info, vendor_id, status)
+        booking = {"Date": date, "Deal": deal, "Location": location,
+                   "Additional Info": additional_info, "Vendor_ID": vendor_id, "Status": status}
+        update_time, doc_ref = firestore.client().collection("Bookings").add(booking)
 
-        booking = {"Date": booking_details.date, "Deal": booking_details.deal, "Location": booking_details.location,
-                   "Additional Info": booking_details.additional_info, "Vendor_ID": booking_details.vendor_id, "Status": booking_details.status}
-        database_connection.collection("Bookings").add(booking)
-        return booking
+        if (update_time):
+            return True
 
     @staticmethod
     def get_users(database_connection):

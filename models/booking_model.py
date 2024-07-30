@@ -1,5 +1,6 @@
-
 from flask import request
+from firebase_admin import firestore
+from models.vendor_model import Vendor
 
 
 class Booking:
@@ -75,17 +76,49 @@ class Booking:
         results = query.get()
         return results
 
-    def get_approved_bookings(database_connection):
-        booking_ref = database_connection.collection('Bookings')
-        query = booking_ref.where("Status", "==", "A")
-        results = query.get()
-        return results
+    def get_all_bookings():
+        detailed_bookings = []
+        bookings = firestore.client().collection('Bookings').get()
+        for booking_snapshot in bookings:
+            booking = booking_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
+            booking['id'] = booking_snapshot.id
+
+            vendor_id = booking.get("Vendor_ID")
+            vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
+
+            # Ensure vendor_details is a dictionary and log any potential issues
+            if vendor_details:
+                booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
+                booking['Vendor_Phone'] = vendor_details.get(
+                    'Phone_Number')
+                booking['Vendor_Address'] = vendor_details.get('Address')
+
+            detailed_bookings.append(booking)
+
+        return detailed_bookings
 
     def get_pending_bookings(database_connection):
+        detailed_bookings = []
         booking_ref = database_connection.collection('Bookings')
         query = booking_ref.where("Status", "==", "P")
-        results = query.get()
-        return results
+        pending_bookings = query.get()
+        for booking_snapshot in pending_bookings:
+            booking = booking_snapshot.to_dict()
+            booking['id'] = booking_snapshot.id
+
+            vendor_id = booking.get("Vendor_ID")
+            vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
+
+            # Ensure vendor_details is a dictionary and log any potential issues
+            if vendor_details:
+                booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
+                booking['Vendor_Phone'] = vendor_details.get(
+                    'Phone_Number')
+                booking['Vendor_Address'] = vendor_details.get('Address')
+
+            detailed_bookings.append(booking)
+
+        return detailed_bookings
 
     def remove_booking(database_connection, booking_id):
 

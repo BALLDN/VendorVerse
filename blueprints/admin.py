@@ -2,6 +2,7 @@ from flask import jsonify, Blueprint, redirect, render_template, abort, request,
 from jinja2 import TemplateNotFound
 import logging
 
+from blueprints.auth import role_required
 from models.booking_model import Booking
 from models.user_model import User
 from models.vendor_model import Vendor
@@ -14,10 +15,17 @@ admin_bp = Blueprint('admin', __name__)
 
 
 @admin_bp.route('/admin', methods=['GET'])
-def show_admin_dashboard():
+@role_required('A')
+def view_admin_dashboard():
     try:
         detailed_bookings, users, vendor_users = _get_data()
-        return render_template('admin_home_page.html', bookings=detailed_bookings, users=users, vendor_users=vendor_users, user_type='A')
+        return render_template(
+            'admin_home_page.html',
+            bookings=detailed_bookings,
+            users=users,
+            vendor_users=vendor_users,
+            home_url=url_for('admin.view_admin_dashboard')
+        )
     except TemplateNotFound:
         abort(404)
 
@@ -46,7 +54,7 @@ def _approve_entity(collection_name: str, entity_id, action):
 
         if not entity_ref.get().exists:
             flash(f'{collection_name.capitalize()[:-1]} not found', 'error')
-            return redirect(url_for('admin.show_admin_dashboard'))
+            return redirect(url_for('admin.view_admin_dashboard'))
 
         if action == 'APPROVE':
             entity_ref.update({'Status': 'A'})
@@ -59,9 +67,9 @@ def _approve_entity(collection_name: str, entity_id, action):
 
         else:
             flash('Invalid action', 'error')
-            return redirect(url_for('admin.show_admin_dashboard'))
+            return redirect(url_for('admin.view_admin_dashboard'))
 
-        return redirect(url_for('admin.show_admin_dashboard'))
+        return redirect(url_for('admin.view_admin_dashboard'))
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -72,38 +80,15 @@ def _get_data():
     users = User.get_pending_users(db)
     detailed_bookings = []
     vendor_users = []
-    for booking_snapshot in bookings:
-        booking = booking_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
-        booking['id'] = booking_snapshot.id
-
-        vendor_id = booking.get("Vendor_ID")
-        vendor_details = Vendor.get_vendor_by_user_id(db, vendor_id)
-
-        # Log vendor details fetched
-        logging.info(f"Fetched vendor details for Vendor_ID {
-                     vendor_id}: {vendor_details}")
-
-        # Ensure vendor_details is a dictionary and log any potential issues
-        if vendor_details:
-            booking['vendor_name'] = vendor_details.get('Vendor_Name')
-            booking['vendor_phone'] = vendor_details.get(
-                'Phone_Number')
-            booking['vendor_address'] = vendor_details.get('Address')
-            logging.info(f"Vendor details added to booking: {
-                         vendor_details}")
-        else:
-            logging.warning(
-                f"No vendor details found for Vendor_ID: {vendor_id}")
-
-        detailed_bookings.append(booking)
 
     for user_snapshot in users:
         user = user_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
+
         try:
             if (user["User_Type"] == "V"):
                 user['id'] = user_snapshot.id
 
-                vendor_details = Vendor.get_vendor_by_user_id(db, user['id'])
+                vendor_details = Vendor.get_vendor_by_user_id(user['id'])
 
                 # Log vendor details fetched
 
@@ -120,6 +105,7 @@ def _get_data():
                         f"No vendor details found for Vendor_ID: {user['id']}")
 
                 vendor_users.append(user)
+
         except Exception as e:
             logging.error(e)
 

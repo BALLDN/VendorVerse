@@ -1,15 +1,18 @@
-from enum import Enum
-from firebase_admin import credentials, initialize_app
-import logging
 import os
+import logging
+
+from enum import Enum
+from google.cloud.firestore import Client
+from firebase_admin import credentials, initialize_app
 
 
-def init_firebase_admin():
+def init_firebase():
     try:
         cred = credentials.Certificate(
             os.environ.get('FIREBASE_PRIVATE_KEY'))
         initialize_app(cred)
         logging.info("Firebase Admin initialized successfully")
+
     except Exception as e:
         logging.exception("Failed to initialize Firebase Admin: %s", e)
 

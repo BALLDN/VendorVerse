@@ -1,6 +1,9 @@
 import datetime
-from flask import flash, redirect, request, jsonify, url_for
-from models.user_model import User
+from flask import flash, redirect, request, jsonify, url_for, session
+from firebase_admin import firestore
+
+from util import FlashCategory
+
 
 class Polls:
 
@@ -9,7 +12,7 @@ class Polls:
         title = data.get('PollTitle')
         User_ID = data.get('VendorName')
         amount = int(request.form.get('Amount'))
-        
+
         choices = []
         for i in range(1, amount + 1):
             choice = request.form.get(f'choice{i}')
@@ -25,38 +28,40 @@ class Polls:
             'options': choices,
             'createdAt': datetime.now(),
         })
-        
-        print(jsonify({'message': 'Poll created', 'poll_id': poll_ref[1].id}), 201)
-        
+
+        print(jsonify({'message': 'Poll created',
+              'poll_id': poll_ref[1].id}), 201)
+
         return poll_ref
-    
-    
-        
-    def get_polls(database_connection):
-        polls_ref = database_connection.collection('Polls')
+
+    def get_polls():
+        db = firestore.client()
+        polls_ref = db.collection('Polls')
         docs = polls_ref.get()
-        
+
         return docs
-    
+
     @staticmethod
     def get_polls_by_vendor_id(database_connection, vendor_id):
-        polls_ref = database_connection.collection('Polls').where('Vendor_ID', '==', vendor_id)
+        polls_ref = database_connection.collection(
+            'Polls').where('Vendor_ID', '==', vendor_id)
         docs = polls_ref.get()
-        
+
         return docs
-    
+
     def submit_response(database_connection):
         poll_id = request.form.get('poll_id')
         selected_option = request.form.get('selected_option')
-        user_id = User.get_user_id_from_email(database_connection, request.cookies.get('login_email'))
-        
+        user_id = session['user_id']
+
         if not poll_id or not user_id:
-            flash('You are not logged in!')
-            return redirect(url_for('employee_polls'))
-        
-        if(not selected_option):
-            flash('You have not selected an option!')
-            return redirect(url_for('employee_polls'))
+            flash('You are not logged in!', FlashCategory.ERROR.value)
+            return redirect(url_for('polls.employee_polls'))
+
+        if (not selected_option):
+            flash('You have not selected an option!',
+                  FlashCategory.WARNING.value)
+            return redirect(url_for('polls.employee_polls'))
 
         poll_ref = database_connection.collection('Polls').document(poll_id)
         responses_ref = poll_ref.collection('Responses')
@@ -65,8 +70,9 @@ class Polls:
         existing_response = responses_ref.where('user_id', '==', user_id).get()
 
         if existing_response:
-            flash('You have already responded to this poll')
-            return redirect(url_for('employee_polls'))
+            flash('You have already responded to this poll',
+                  FlashCategory.INFO.value)
+            return redirect(url_for('polls.employee_polls'))
 
         # Store the response
         responses_ref.add({
@@ -75,20 +81,20 @@ class Polls:
             'createdAt': datetime.datetime.now()
         })
 
-        flash('Your response has been recorded')
-        return redirect(url_for('employee_polls'))
-    
+        flash('Your response has been recorded', FlashCategory.SUCCESS.value)
+        return redirect(url_for('polls.employee_polls'))
+
     def get_poll_results(database_connection, poll_id):
         poll_ref = database_connection.collection('Polls').document(poll_id)
         responses_ref = poll_ref.collection('Responses')
-        
+
         # Retrieve all responses
         responses = responses_ref.get()
-        
+
         # If there are no responses, return empty results
         if not responses:
             return {}, 0
-        
+
         # Count the total number of responses and responses for each option
         total_responses = len(responses)
         option_counts = {}

@@ -1,17 +1,17 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from firebase_admin import firestore
 
 from models.polls_model import Polls
 from models.vendor_model import Vendor
 
-poll_bp = Blueprint('poll', __name__)
+poll_bp = Blueprint('polls', __name__)
 
 
 @poll_bp.route('/admin_polls', methods=['GET', 'POST'])
 def admin_polls():
     db = firestore.client()
 
-    polls = Polls.get_polls(db)
+    polls = Polls.get_polls()
 
     poll_results = []
 
@@ -32,21 +32,22 @@ def admin_polls():
             print(poll_results)
 
         return render_template('admin_polls_page.html', vendors=vendors, poll_results=poll_results)
+
     if request.method == 'POST':
         _create_poll(db)
-        return redirect(url_for('admin'))
-    return render_template('admin_polls_page.html')
+        return redirect(url_for('admin.view_admin_dashboard'))
+    return render_template('poll.admin_polls')
 
 
 @poll_bp.route('/employee_polls', methods=['GET', 'POST'])
 def employee_polls():
     db = firestore.client()
 
-    polls = Polls.get_polls(db)
+    polls = Polls.get_polls()
     if request.method == 'GET':
         return render_template('employee_polls_page.html', polls=polls)
     if request.method == 'POST':
-        Polls.submit_response(db)
+        Polls.submit_response()
 
     return render_template('employee_polls_page.html', polls=polls)
 

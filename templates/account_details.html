@@ -8,14 +8,14 @@
       <div class="card-body p-5">
         <h2 class="text-uppercase text-center mb-5">Edit your Account Details</h2>
 
-        <form action="{{url_for(" account")}}" method="post">
+        <form action="{{url_for('vendor.account')}}" method="post">
 
           <div data-mdb-input-init class="form-outline mb-4">
 
             <label class="form-label" for="vendor_name">Vendor Name</label>
 
             {% if vendor.get("Vendor_Name")%}
-            <input type="text" name="vendor_name" id="vendor_name" value="{{vendor.get(" Vendor_Name")}}"
+            <input type="text" name="vendor_name" id="vendor_name" value="{{vendor.get('Vendor_Name')}}"
               class="form-control form-control-md" maxlength="30" required>
             {% else %}
             <input type="text" name="vendor_name" id="vendor_name" placeholder="Vendor Name"
@@ -27,7 +27,7 @@
 
             <label class="form-label" for="phone_number">Phone_Number</label>
             {% if vendor.get("Phone_Number")%}
-            <input type="text" name="phone_number" id="phone_number" value="{{vendor.get(" Phone_Number")}}"
+            <input type="text" name="phone_number" id="phone_number" value="{{vendor.get('Phone_Number')}}"
               class="form-control form-control-md" maxlength="30" required>
             {% else %}
             <input type="text" id="phone_number" name="phone_number" placeholder="Phone Number"
@@ -41,7 +41,7 @@
             <label class="form-label" for="address">Address</label>
 
             {% if vendor.get("Address")%}
-            <input type="text" name="address" id="address" value="{{vendor.get(" Address")}}"
+            <input type="text" name="address" id="address" value="{{vendor.get('Address')}}"
               class="form-control form-control-md" maxlength="70" required>
             {% else %}
             <input type="text" name="address" id="address" placeholder="Address" class="form-control form-control-md"
@@ -66,7 +66,9 @@
 
           <div class="d-flex justify-content-center">
             <button type="submit" data-mdb-button-init data-mdb-ripple-init
-              class="btn btn-success btn-block btn-lg text-body">Confirm</button>
+              class="btn btn-primary btn-block btn-lg px-5">
+              <h4 class="m-0">Confirm</h4>
+            </button>
           </div>
 
         </form>

@@ -22,9 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
       plugins: ["dayGrid", "interaction"],
       events: events.map((event) => ({
         id: event.id,
-        title: `${event[""]} - ${event["Additional Info"]}`,
+        title: `${event["Vendor_Name"]}`,
         start: event.Date,
-        backgroundColor: "blue",
+        backgroundColor: getRandomRGB(),
         allDay: true,
         editable: false,
       })),
@@ -100,5 +100,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         myModal.hide();
       });
+  }
+
+  function getRandomRGB() {
+    // Generate random values for red, green, and blue (0-255)
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+
+    // Return the RGB color string
+    return `rgb(${r}, ${g}, ${b})`;
   }
 });

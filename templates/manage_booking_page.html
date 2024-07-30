@@ -1,0 +1,145 @@
+{% extends 'layout.html' %}
+{% block title %}Bookings Manager{% endblock %}
+{% block content%}
+
+<div class="row d-flex justify-content-center h-100">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-6">
+        <h2 class="text-center">Manage Bookings</h2>
+        <form action="{{url_for('booking.manage_booking')}}" method="post" id="mainForm">
+            <div class="vstack gap-3">
+                {% for booking in bookings %}
+                <div class="card ">
+                    <div class="card-header">
+                        <h3>Status - {{ booking.get("Status") }}</h3>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-7 justify-content-between align-items-start">
+                                <div>
+                                    <strong>{{ booking.vendor_name }}</strong>
+                                    <div>📞 {{ booking.vendor_phone }}</div>
+                                    <div>🏢 {{ booking.vendor_address }}</div>
+                                </div>
+                            </div>
+                            <div class="col-5 justify-content-end">
+                                <div class="text-end">{{ booking.get('Date') }}</div>
+                                <div class="text-end">{{ booking.get('Location') }}</div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <p class="px-4">{{ booking.get('Additional Info') }}</p>
+
+                    </div>
+                    <div class="card-footer text-center">
+                        <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal"
+                            data-bs-target="#editModal" onclick="setBookingId('{{ booking.id }}')">Edit</button>
+                        <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
+                            data-bs-target="#cancelModal" onclick="setBookingId('{{ booking.id }}')">Cancel</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Hidden input to identify the action -->
+            <input type="hidden" name="action" id="action" value="">
+        </form>
+    </div>
+</div>
+
+<!-- Edit Booking -->
+<div class="modal fade edit-form" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="modal-title">Edit Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    {{ form.date.label }}
+                    {{ form.date(class_="form-control", id_="date") }}
+                </div>
+                <div class="form-group">
+                    {{ form.location.label }}
+                    {{ form.location(class_="form-control", id_="location") }}
+                </div>
+                <div class="form-group">
+                    {{ form.discount.label }}
+                    {{ form.discount(class_="form-control", id_="deal") }}
+                </div>
+                <div class="form-group">
+                    {{ form.additional_info.label }}
+                    {{ form.additional_info(class_="form-control", id_="additional-info") }}
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 d-flex justify-content-center">
+                <button type="submit" class="btn btn-dark" name="modify_button" id="modify_button">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Booking -->
+<div class="modal fade" id="cancelModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Cancel Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to cancel this booking?
+            </div>
+            <div class="modal-footer">
+                <button type="submit" name="cancel_button" class="btn btn-danger m-2 w-full"
+                    onclick="submitCancelForm()">Confirm Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showModifyModal() {
+        const selectedBookingId = document.querySelector('input[name="options"]:checked').value;
+
+        $.ajax({
+            url: '/get_booking/' + selectedBookingId,
+            method: 'GET',
+            success: function (response) {
+                if (response.error) {
+                    alert(response.error);
+                    return;
+                }
+
+                $('#modal-title').text('Edit Event');
+                $('#date').val(response.date);
+                $('#location').val(response.location);
+                $('#discount').val(response.discount);
+                $('#additional_info').val(response.additional_info);
+
+                $('#form').modal('show');
+            },
+            error: function () {
+                alert('Failed to fetch booking details.');
+            }
+        });
+    }
+
+    function submitCancelForm() {
+        document.getElementById('action').value = 'cancel';
+        document.getElementById('mainForm').submit();
+    }
+
+    document.getElementById('modify_button').addEventListener('click', function () {
+        document.getElementById('action').value = 'modify';
+    });
+</script>
+</div>
+
+
+{% endblock %}

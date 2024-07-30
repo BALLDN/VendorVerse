@@ -12,32 +12,36 @@
 
           <div data-mdb-input-init class="form-outline mb-4">
             <label class="form-label" for="email">Email Address</label>
+            <input type="email" id="email" name="email" class="form-control form-control-md"
+              value="{{login_email or ''}}" placeholder="example@mail.com" required>
+            <div class="invalid-feedback">
+              Invalid Credentials
+            </div>
 
-            {% if login_email %}
-            <input type="email" id="email" name="email" class="form-control form-control-md" value={{login_email}}
-              required>
-            {% else %}
-            <input type="email" id="email" name="email" class="form-control form-control-md" required>
-            {% endif %}
 
           </div>
 
           <div data-mdb-input-init class="form-outline mb-4">
             <label class="form-label" for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-control form-control-md" required>
-          </div>
+            <input type="password" id="password" name="password" class="form-control form-control-md password-toggle"
+              required>
+            <div class="invalid-feedback">
+              Invalid Credentials
+            </div>
 
-          <div class="d-flex justify-content-end align-items-center">
           </div>
 
           <div class="form-check form-check-reverse justify-content-end">
             <label class="form-check-label" for="show_password">Show Password</label>
-            <input class="form-check-input" id="show_password" type="checkbox" onclick="showPassword()">
+            <input class="form-check-input" id="show_password" type="checkbox">
           </div>
 
           <div class="d-flex justify-content-center">
             <button type="submit" data-mdb-button-init data-mdb-ripple-init
-              class="btn btn-primary btn-block btn-lg px-5">Login</button>
+              class="btn btn-dark btn-block btn-lg px-5 m-3">
+              <h4 class="m-0">Login</h4>
+
+            </button>
           </div>
 
 
@@ -53,19 +57,6 @@
   </div>
 </div>
 
-<script>
-  function showPassword() {
-    var password_field = document.getElementById("Password");
-    //Show password as text
-    if (password_field.type === "password") {
-      password_field.type = "text";
-    }
-    //Hide Password again
-    else {
-      password_field.type = "password";
-    }
-  }
-</script>
 <script src="{{ url_for('static', filename='js/auth.js') }}" type="module"></script>
 
 {%endblock%}

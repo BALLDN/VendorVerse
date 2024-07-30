@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, session
+from functools import wraps
+from time import sleep
+from flask import Blueprint, get_flashed_messages, render_template, request, redirect, url_for, flash, make_response, session
 import logging
 from firebase_admin import firestore, auth
 from firebase_admin._user_mgt import UserRecord
@@ -20,7 +22,10 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        return render_template('register.html')
+        if session.get('access_token'):
+            return redirect(url_for('index'))
+        else:
+            return render_template('register.html')
 
     if request.method == 'POST':
         email = request.form['email']
@@ -65,9 +70,9 @@ def vendor_details_page():
     uid = session['UID']
     if request.method == 'POST':
         Vendor.add_vendor_details(db, uid)
-        flash(
-            "Your Details have been saved and your account is pending approval")
         session.clear()
+        flash(
+            "Your Details have been saved and your account is pending approval", FlashCategory.SUCCESS.value)
         return redirect(url_for('index'))
 
     if request.method == 'GET':
@@ -77,6 +82,9 @@ def vendor_details_page():
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
+        if session.get('access_token'):
+            return redirect(url_for('index'))
+
         login_email = request.cookies.get('login_email')
 
         if login_email:
@@ -85,46 +93,66 @@ def login():
         return render_template('login.html')
 
     if request.method == 'POST':
-        id_token = request.authorization.token
+        access_token = request.authorization.token
 
         try:
-            decoded_token = auth.verify_id_token(id_token)
+            sleep(0.5)
+            decoded_token = auth.verify_id_token(access_token)
             uid = decoded_token['uid']
             session['user_id'] = uid
-            user_type = User.get_user_type_from_uid(uid)
-            if user_type == "V":
-                url_response = make_response(
-                    redirect(url_for('vendor.vendor')))
-            elif user_type == "E":
-                url_response = make_response(redirect(url_for('employee')))
-            elif user_type == "A":
-                url_response = make_response(
-                    redirect(url_for('admin.show_admin_dashboard')))
-            else:
-                flash(user_type)
-                return render_template('login.html')
+            session['access_token'] = access_token
 
-            return url_response
+            user = User.get_user_by_user_id(session['user_id'])
+            session['user_type'] = user.get('User_Type')
+            status = user.get('Status')
+            if status != 'A':
+                session.clear()
+                return redirect(url_for('index', status='PENDING'))
+
+            if session['user_type'] == "A":
+                return redirect(
+                    url_for('admin.view_admin_dashboard'))
+            elif session['user_type'] == "V":
+                return redirect(
+                    url_for('vendor.view_vendor_dashboard'))
+            elif session['user_type'] == "E":
+                return redirect(url_for('employee'))
+            else:
+                flash('An error has occured during sign in. Please try again.',
+                      FlashCategory.ERROR.value)
+                return redirect(url_for('index'))
+
         except Exception as e:
-            return f"An error occurred: {e}"
+            flash('An error has occured during sign in. Please try again.',
+                  FlashCategory.ERROR.value)
+            logging.ERROR(e)
+            return redirect(url_for('index'))
 
 
 @auth_bp.route('/logout')
 def logout():
-
-    login_email = request.cookies.get('login_email')
-    user_type = request.cookies.get('user_type')
-
-    if (login_email and user_type):
-        url_response = make_response(redirect(url_for("index")))
-        url_response.delete_cookie('login_email')
-        url_response.delete_cookie('user_type')
-
-        return url_response
-    else:
-        return redirect(url_for("index"))
+    session.clear()
+    flash("You have logged out successfully.", FlashCategory.SUCCESS.value)
+    return redirect(url_for('index'))
 
 
 @auth_bp.route('/reset')
 def reset():
     return render_template('forgot_password.html')
+
+
+def role_required(user_type):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if 'access_token' not in session:
+                flash("Please log in to access this page.",
+                      FlashCategory.INFO.value)
+                return redirect(url_for('auth.login'))
+            if session.get('user_type') != user_type:
+                flash(f"You need escalated privileges to access this page.",
+                      FlashCategory.INFO.value)
+                return redirect(url_for('auth.login'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator

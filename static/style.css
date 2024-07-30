@@ -1,20 +1,20 @@
 @font-face {
-  font-family: "MyCustomFont";
+  font-family: "HeadingsFont";
   src: url("/static/fonts/nuku1.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "GeneralFont";
+  src: url("/static/fonts/Ubuntu-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 body {
+  font-family: "GeneralFont", sans-serif;
   background: url("/static/images/general-bg.jpg") no-repeat center center fixed;
   background-size: cover;
-}
-
-html,
-body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
 }
 
 .content {
@@ -28,11 +28,11 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "MyCustomFont", sans-serif;
+  font-family: "HeadingsFont", sans-serif;
 }
 
-.card {
-  opacity: 90%;
+.translucent {
+  background-color: rgba(255, 255, 255, 0.75);
 }
 
 #header {
@@ -91,11 +91,8 @@ h6 {
   font-weight: 500;
 }
 
-.fc-customButton-button {
-  font-size: 13px !important;
-  top: 80px;
-  transform: translateY(-50%);
-  margin: 10px;
+button.fc-today-button {
+  text-transform: capitalize;
 }
 
 .form-group {
@@ -110,10 +107,6 @@ h6 {
   border-radius: 3px !important;
   padding: 0px 8px !important;
   font-size: 15px;
-}
-
-.fc .fc-ltr .fc-unthemed {
-  height: 700px;
 }
 
 .context-menu {
@@ -185,19 +178,6 @@ a:active {
   text-decoration: underline;
 }
 
-#cookie_box {
-  display: flex;
-  justify-content: space-between;
-  border: 2px solid #000000;
-  position: fixed;
-  bottom: 2%;
-  left: 17%;
-  right: 17%;
-  background-color: #ccc;
-  padding: 1%;
-  z-index: 3;
-}
-
 .home_page_logins {
   display: flex;
   justify-content: space-between;
@@ -223,8 +203,8 @@ a:active {
   padding: 3%;
 }
 
-#approvals_section {
-  height: 700px;
+.scrollable-panel {
+  max-height: 800px;
   /* Adjust height as needed */
   overflow-y: scroll;
   overflow-x: hidden;

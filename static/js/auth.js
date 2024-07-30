@@ -2,40 +2,55 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
-import { auth, firestore } from "./firebase.js";
+import { auth } from "./firebase.js";
 
 export function signIn(email, password) {
-  return signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const idToken = userCredential.user.getIdToken();
+  const btnSubmit = document.querySelector("button[type='submit']");
+  signInWithEmailAndPassword(auth, email, password)
+    .then(function (userCreds) {
+      btnSubmit.innerHTML = `
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      `;
       fetch("/login", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${idToken}`,
+          Authorization: `Bearer ${userCreds.user.accessToken}`,
         },
       }).then(function (response) {
-        if (response.ok) {
-          window.location.href = response.headers.get("Location") || "/";
-        } else {
-          console.error("Server responded with an error:", response.statusText);
-        }
+        auth_redirect(response);
       });
     })
-    .catch((error) => {
+    .catch(function (error) {
+      btnSubmit.innerHTML = `
+      <h4 class="m-0">Login</h4>
+      `;
+      if (error.code == "auth/invalid-login-credentials") {
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+
+        [email, password].forEach((input) => {
+          input.classList.toggle("is-invalid");
+          setTimeout(() => {
+            input.classList.toggle("is-invalid");
+          }, 1000);
+        });
+      }
       console.error("Error signing in:", error.code, error.message);
-      throw error;
     });
 }
 
-export function signOutUser() {
-  return signOut(auth)
-    .then(() => {
-      console.log("User signed out");
-    })
-    .catch((error) => {
-      console.error("Error signing out:", error);
-      throw error;
-    });
+function auth_redirect(response) {
+  if (response.ok) {
+    if (response.redirected) {
+      window.location.assign(response.url);
+    } else {
+      window.location.assign("/");
+    }
+  } else {
+    throw Exception(response.statusText);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -43,10 +58,23 @@ document.addEventListener("DOMContentLoaded", function () {
   if (frmLogin) {
     frmLogin.addEventListener("submit", function (e) {
       e.preventDefault();
+
       const formData = new FormData(frmLogin);
       const email = formData.get("email");
       const password = formData.get("password");
       signIn(email, password);
+    });
+  }
+
+  const show_password = document.querySelector("#show_password");
+  const password_fields = document.querySelectorAll("input.password-toggle");
+  if (show_password) {
+    show_password.addEventListener("change", () => {
+      password_fields.forEach((field) => {
+        const type =
+          field.getAttribute("type") === "password" ? "text" : "password";
+        field.setAttribute("type", type);
+      });
     });
   }
 });

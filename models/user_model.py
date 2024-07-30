@@ -1,4 +1,3 @@
-from flask import flash, redirect, request, url_for
 from firebase_admin import firestore
 
 
@@ -14,32 +13,18 @@ class User:
         print(self.email, self.password, self.user_type, self.status)
 
     @staticmethod
-    def add_user(uid, email, user_type,):
-        db = firestore.client()
-        data = {"Email": email, "User_Type": user_type, "Status": "P"}
-        db.collection("Users").document(uid).set(data)
+    def add_user(uid, email, user_type):
+
+        data = {"Email": email,
+                "User_Type": user_type, "Status": "P"}
+        firestore.client().collection("Users").document(uid).set(data)
 
     @staticmethod
-    def get_user_id_from_email(database_connection, email):
-        users_ref = database_connection.collection('Users')
-        query = users_ref.where("Email", "==", email)
-        results = query.get()
-
-        for doc in results:
-            user_id = doc.id
-
-        if len(results) > 0:
-            return user_id
-        else:
-            return "No User Found!"
-
-    @staticmethod
-    def get_users(database_connection):
-        # gets all users from db
-        users_ref = database_connection.collection('Users')
+    def get_all_users():
+        users_ref = firestore.client().collection('Users')
         docs = users_ref.get()
         for doc in docs:
-            return ('{} => {}'.format(doc.id, doc.to_dict()))
+            return (f'{doc.id} => {doc.to_dict()}')
         return docs
 
     @staticmethod
@@ -76,15 +61,6 @@ class User:
         return {'status': 'success', 'message': 'Password reset successfully!'}
 
     @staticmethod
-    def get_user_by_user_id(database_connection, user_id):
-        users_ref = database_connection.collection('Users')
-        query = users_ref.where("User_ID", "==", user_id)
-        results = query.get()
-        return results
-
-    # Change to return entire user credentials
-    @staticmethod
-    def get_user_type_from_uid(uid):
-        db = firestore.client()
-        user_snapshot = db.collection("Users").document(uid).get()
-        return user_snapshot.get('User_Type')
+    def get_user_by_user_id(user_id):
+        user_doc = firestore.client().collection('Users').document(user_id).get()
+        return user_doc.to_dict()

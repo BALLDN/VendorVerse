@@ -55,18 +55,24 @@
     </div>
 </div>
 
-{% if 'cookie_accepted' not in cookies %}
-<div id="cookie_box" class="d-flex">
-    This website uses optional cookies to enhance your user experience. If you decline, essential cookies necessary for
-    the
-    website's functionality will still be used.
 
-    <button class="btn btn-success m-2" id="cookies_accept" value="Accept">Accept</button>
-    <button class="btn btn-danger m-2" id="cookies_decline" value="Decline">Decline</button>
-</div>
-{% endif %}
 <script src="{{ url_for('static', filename='js/cookies.js') }}" type="module"></script>
 
 
 
+{%endblock%}
+
+{%block cookie_consent%}
+{% if 'cookie_accepted' not in cookies %}
+<div id="cookie_box" class="d-flex w-100 sticky-bottom z-3 bg-light p-3 shadow-lg justify-content-between ">
+
+    This website uses optional cookies to enhance your user experience. If you decline, essential cookies necessary for
+    the
+    website's functionality will still be used.
+    <div>
+        <button class="btn btn-success m-2" id="cookies_accept" value="Accept">Accept</button>
+        <button class="btn btn-danger m-2" id="cookies_decline" value="Decline">Decline</button>
+    </div>
+</div>
+{% endif %}
 {%endblock%}

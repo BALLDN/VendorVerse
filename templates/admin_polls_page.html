@@ -2,80 +2,76 @@
 {% block title %}Polls Manager{% endblock %}
 {%block content%}
 
-<div class="row justify-content-center">
-    <div class="col-md-7"> <!-- Center the column -->
-        <div class="card mt-5 mb-3" style="border-radius: 15px;">
-            <div class="card-body p-5">
-                <h2 class="text-uppercase text-center mb-5">Create a Poll</h2>
+<div class="card mt-5 mb-3" style="border-radius: 15px;">
+    <div class="card-body p-5">
+        <h2 class="text-uppercase text-center mb-5">Create a Poll</h2>
 
-                {% for mesg in get_flashed_messages() %}
-                <div class="alert alert-danger">
-                    <strong>{{ mesg }}</strong>
-                </div>
-                {% endfor %}
-
-                <form action="{{ url_for('admin_polls') }}" method="post">
-                    <div data-mdb-input-init class="form-outline mb-2">
-
-                        <div id="Vendor_Section"> </div>
-
-                    </div>
-
-                    <div data-mdb-input-init class="form-outline mb-2">
-                        <label class="form-label" for="PollTitle">Poll Title</label>
-                        <input type="text" id="PollTitle" name="PollTitle" class="form-control form-control-md"
-                            maxlength="100" required>
-                    </div>
-
-                    <div data-mdb-input-init class="form-outline mb-2">
-                        <label class="form-label" for="Amount">Amount of Choices</label>
-                        <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="Amount"
-                            id="Amount" required>
-                            <option value="" disabled selected>Please select how many choices you would like
-                            </option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                        </select>
-                    </div>
-
-                    <div id="pollChoices"></div> <!-- Container for dynamically generated input fields -->
-
-
-                    <input id="vendor_checkbox" name="vendor_checkbox" type="checkbox" onclick="addVendorInput()">Is
-                    this poll on behalf of a Vendor?
-
-                    <div class="d-flex justify-content-center">
-                        <button type="submit" data-mdb-button-init data-mdb-ripple-init
-                            class="btn btn-success btn-block btn-lg text-body">Submit</button>
-                    </div>
-                </form>
-            </div>
+        {% for mesg in get_flashed_messages() %}
+        <div class="alert alert-danger">
+            <strong>{{ mesg }}</strong>
         </div>
+        {% endfor %}
+
+        <form action="{{ url_for('polls.admin_polls') }}" method="post">
+            <div data-mdb-input-init class="form-outline mb-2">
+
+                <div id="Vendor_Section"> </div>
+
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-2">
+                <label class="form-label" for="PollTitle">Poll Title</label>
+                <input type="text" id="PollTitle" name="PollTitle" class="form-control form-control-md" maxlength="100"
+                    required>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-2">
+                <label class="form-label" for="Amount">Amount of Choices</label>
+                <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="Amount" id="Amount"
+                    required>
+                    <option value="" disabled selected>Please select how many choices you would like
+                    </option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+
+            <div id="pollChoices"></div> <!-- Container for dynamically generated input fields -->
+
+
+            <input id="vendor_checkbox" name="vendor_checkbox" type="checkbox" onclick="addVendorInput()">Is
+            this poll on behalf of a Vendor?
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                    class="btn btn-success btn-block btn-lg text-body">Submit</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <div class="col-md-5"> <!-- Center the column -->
-        <h2 class="text-uppercase text-center mb-4">Polls</h2>
-        <div class="addScroll" style="padding: 30px;">
-            {% for poll_result in poll_results %}
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h4>{{ poll_result.poll_data.Title }}</h4>
-                    {% if poll_result.poll_data.Vendor_Name != "No Vendor"%}
-                    <p><strong>Vendor Name:</strong> {{ poll_result.poll_data.Vendor_Name }}</p>
-                    {% endif%}
-                    <p><strong>Total Responses:</strong> {{ poll_result.total_responses }}</p>
-                    <ul class="list-group mt-3">
-                        {% for option, percentage in poll_result.option_percentages.items() %}
-                        <li class="list-group-item">
-                            {{ option }}: {{ "%.2f" % percentage }}%
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+<div class="">
+    <h2 class="text-uppercase text-center mb-4">Polls</h2>
+    <div class="d-flex flex-wrap justify-content-between">
+        {% for poll_result in poll_results %}
+        <div class="card m-2" style="width: 30%;">
+            <div class="card-body">
+                <h4>{{ poll_result.poll_data.Title }}</h4>
+                {% if poll_result.poll_data.Vendor_Name != "No Vendor"%}
+                <p><strong>Vendor Name:</strong> {{ poll_result.poll_data.Vendor_Name }}</p>
+                {% endif%}
+                <p><strong>Total Responses:</strong> {{ poll_result.total_responses }}</p>
+                <ul class="list-group mt-3">
+                    {% for option, percentage in poll_result.option_percentages.items() %}
+                    <li class="list-group-item">
+                        {{ option }}: {{ "%.2f" % percentage }}%
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
 </div>
 

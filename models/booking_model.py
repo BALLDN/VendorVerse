@@ -82,16 +82,18 @@ class Booking:
         for booking_snapshot in bookings:
             booking = booking_snapshot.to_dict()
             booking['id'] = booking_snapshot.id
-
+            
             vendor_id = booking.get("Vendor_ID")
             vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
 
             # Ensure vendor_details is a dictionary and log any potential issues
             if vendor_details:
                 booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
-                booking['Vendor_Phone'] = vendor_details.get(
-                    'Phone_Number')
+                booking['Vendor_Phone'] = vendor_details.get('Phone_Number')
                 booking['Vendor_Address'] = vendor_details.get('Address')
+
+            # Log the booking to verify all fields
+            print(f"Retrieved Booking: {booking}")
 
             detailed_bookings.append(booking)
 

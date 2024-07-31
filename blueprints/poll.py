@@ -1,3 +1,4 @@
+import datetime
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from firebase_admin import firestore
 
@@ -9,11 +10,11 @@ from util import FlashCategory
 poll_bp = Blueprint('polls', __name__)
 
 
+
 @poll_bp.route('/admin_polls', methods=['GET', 'POST'])
 @role_required('A')
 def admin_polls():
     db = firestore.client()
-
     polls = Polls.get_polls()
 
     poll_results = []
@@ -45,6 +46,7 @@ def admin_polls():
 @poll_bp.route('/submit_poll_response', methods=['POST'])
 @role_required('E')
 def submit_poll_response():
+    db = firestore.client()
     try:
         poll_id = request.form.get('poll_id')
         selected_option = request.form.get('selected_option')
@@ -92,7 +94,7 @@ def _create_poll(database_connection):
 
     if not title or not choices:
         flash('Missing fields')
-        return redirect(url_for('admin_polls'))
+        return redirect(url_for('polls.admin_polls'))
 
     poll_ref = database_connection.collection('Polls').add({
         'Title': title,
@@ -106,4 +108,4 @@ def _create_poll(database_connection):
     poll_id = poll_ref[1].id
 
     flash("A poll has been created. To view the poll, navigate to the View/Create Polls Page")
-    return redirect(url_for('admin_polls'))
+    return redirect(url_for('polls.admin_polls'))

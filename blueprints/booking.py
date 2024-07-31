@@ -41,8 +41,7 @@ def manage_booking_admin():
 
         if action == 'cancel':
             if booking_id:
-                booking_ref = db.collection(
-                    'Bookings').document(booking_id)
+                booking_ref = db.collection('Bookings').document(booking_id)
                 if booking_ref.get().exists:
                     booking_ref.update({"Status": "D"})
                     print(f"Booking {booking_id} status updated to D")
@@ -66,13 +65,11 @@ def manage_booking_admin():
 
         # Reload the bookings after any action
         if request.cookies.get('user_type') == "V":
-            bookings = Booking.get_bookings_by_vendor_id(
-                db, Booking.get_user_id(db, request.cookies.get('login_email')))
+            bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
         elif request.cookies.get('user_type') == "A":
             bookings = Booking.get_approved_bookings()
 
         return render_template('booking.manage_booking', bookings=bookings, form=form)
-
 
 @booking_bp.route('/create_booking', methods=['GET', 'POST'])
 @role_required('V')

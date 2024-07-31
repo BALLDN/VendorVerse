@@ -1,63 +1,31 @@
 {%extends 'layout.html'%}
 {%block content%}
 
-<h5 class="display-1">Welcome to VendorVerse</h5>
-
-<div class="card h-100">
-    <div class="card-body">
-        <a href="#" class="btn btn-primary">Register Now!</a>
-    </div>
-</div>
-<div class="card h-100">
-    <div class="card-body">
-        <a href="#" class="btn btn-primary">Sign In</a>
-    </div>
-</div>
-
-<!-- Booking Details -->
-<div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-title">Booking Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="container d-flex justify-content-center align-items-center">
+    <div class="card p-4 rounded-4 shadow-sm">
+        <div class="card-body">
+            <div class="d-flex flex-column align-items-center m-4">
+                <img src="/static/images/Logo.png" alt="Logo" width="200" height="200" class="d-inline-block mb-4">
+                <h1 class="display-1">VendorVerse</h1>
+                <div class="h4 fst-italic muted">Empowering Local, Connecting Global</div>
             </div>
-            <div class="modal-body">
-                <form id="booking-form">
-                    <div class="mb-3">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="date" class="form-control" id="date" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label for="location" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="location" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label for="deal" class="form-label">Deal</label>
-                        <input type="text" class="form-control" id="deal" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label for="additional-info" class="form-label">Additional Info</label>
-                        <textarea class="form-control" id="additional-info" disabled></textarea>
-                    </div>
-                    <input type="hidden" id="event-id">
-                    <button type="submit" class="btn btn-primary" id="submit-button" hidden></button>
-                </form>
-            </div>
+            <a href="{{url_for('auth.register')}}"
+                class="btn btn-dark w-100 mb-3 lead fs-4 d-flex justify-content-center align-items-center px-5">
+                <span>🚀 Register</span>
+            </a>
+            <a href="{{url_for('auth.login')}}"
+                class="btn btn-dark w-100 lead fs-4 d-flex justify-content-center align-items-center px-5">
+                <span>🔑 Login</span>
+            </a>
         </div>
     </div>
 </div>
 
-
-<script src="{{ url_for('static', filename='js/cookies.js') }}" type="module"></script>
-
-
-
 {%endblock%}
 
 {%block cookie_consent%}
-{% if 'cookie_accepted' not in cookies %}
-<div id="cookie_box" class="d-flex w-100 sticky-bottom z-3 bg-light p-3 shadow-lg justify-content-between ">
+<div id="cookie_consent"
+    class="position-fixed w-100 d-flex z-3 bg-light p-3 shadow-lg justify-content-between sticky-bottom">
 
     This website uses optional cookies to enhance your user experience. If you decline, essential cookies necessary for
     the
@@ -67,5 +35,6 @@
         <button class="btn btn-danger m-2" id="cookies_decline" value="Decline">Decline</button>
     </div>
 </div>
-{% endif %}
+
+<script src="{{ url_for('static', filename='js/cookies.js') }}" type="module"></script>
 {%endblock%}

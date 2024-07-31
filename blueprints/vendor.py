@@ -6,6 +6,7 @@ from models.user_model import User
 from models.vendor_model import Vendor
 
 from blueprints.auth import role_required
+from util import FlashCategory
 
 
 vendor_bp = Blueprint('vendor', __name__)
@@ -93,5 +94,5 @@ def account():
     user_id = session['user_id']
 
     Vendor.edit_vendor_details(db, user_id)
-    flash("Your Details have been edited")
-    return redirect(url_for('vendor'))
+    flash("Your Details have been edited", FlashCategory.SUCCESS.value)
+    return redirect(url_for('vendor.account'))

@@ -2,7 +2,7 @@ from functools import wraps
 from time import sleep
 from flask import Blueprint, get_flashed_messages, render_template, request, redirect, url_for, flash, make_response, session
 import logging
-from firebase_admin import firestore, auth
+from firebase_admin import firestore, auth, exceptions
 from firebase_admin._user_mgt import UserRecord
 from uuid import uuid4
 
@@ -39,8 +39,6 @@ def register():
 
         uid = uuid4().hex
 
-        User.add_user(uid, email, user_type)
-
         if user_type == "V":
             url_response = make_response(
                 redirect(url_for('auth.vendor_details_page')))
@@ -56,10 +54,16 @@ def register():
                 redirect(url_for('index')))
 
         try:
-            user: UserRecord = auth.create_user(
+            auth.create_user(
                 uid=uid, email=email, password=password)
+        except exceptions.InvalidArgumentError as e:
+            flash('Invalid Email!', FlashCategory.ERROR.value)
+            return redirect(url_for('auth.register'))
         except Exception as e:
-            flash(e, FlashCategory.ERROR.value)
+            flash(str(e), FlashCategory.ERROR.value)
+            return redirect(url_for('auth.register'))
+
+        User.add_user(uid, email, user_type)
 
         return url_response
 
@@ -96,7 +100,7 @@ def login():
         access_token = request.authorization.token
 
         try:
-            sleep(0.5)
+            sleep(0.1)
             decoded_token = auth.verify_id_token(access_token)
             uid = decoded_token['uid']
             session['user_id'] = uid

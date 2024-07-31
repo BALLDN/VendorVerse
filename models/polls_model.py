@@ -2,11 +2,10 @@ import datetime
 from flask import flash, redirect, request, jsonify, url_for, session
 from firebase_admin import firestore
 
-from util import FlashCategory
-
 
 class Polls:
 
+    @staticmethod
     def create_poll(database_connection):
         data = request.json
         title = data.get('PollTitle')
@@ -34,6 +33,7 @@ class Polls:
 
         return poll_ref
 
+    @staticmethod
     def get_polls():
         db = firestore.client()
         polls_ref = db.collection('Polls')
@@ -49,41 +49,26 @@ class Polls:
 
         return docs
 
-    def submit_response(database_connection):
-        poll_id = request.form.get('poll_id')
-        selected_option = request.form.get('selected_option')
+    @staticmethod
+    def submit_response(poll_id, selected_option):
+        db = firestore.client()
+
         user_id = session['user_id']
 
-        if not poll_id or not user_id:
-            flash('You are not logged in!', FlashCategory.ERROR.value)
-            return redirect(url_for('polls.employee_polls'))
-
-        if (not selected_option):
-            flash('You have not selected an option!',
-                  FlashCategory.WARNING.value)
-            return redirect(url_for('polls.employee_polls'))
-
-        poll_ref = database_connection.collection('Polls').document(poll_id)
+        poll_ref = db.collection('Polls').document(poll_id)
         responses_ref = poll_ref.collection('Responses')
 
-        # Check if the user has already responded to the poll
-        existing_response = responses_ref.where('user_id', '==', user_id).get()
-
-        if existing_response:
-            flash('You have already responded to this poll',
-                  FlashCategory.INFO.value)
-            return redirect(url_for('polls.employee_polls'))
+        existing_response = responses_ref.document(user_id).get()
+        if existing_response.exists:
+            raise Exception('You have already responded to this poll')
 
         # Store the response
-        responses_ref.add({
-            'user_id': user_id,
+        return responses_ref.document(user_id).set({
             'selected_option': selected_option,
-            'createdAt': datetime.datetime.now()
+            'responded_at': datetime.datetime.now()
         })
 
-        flash('Your response has been recorded', FlashCategory.SUCCESS.value)
-        return redirect(url_for('polls.employee_polls'))
-
+    @staticmethod
     def get_poll_results(database_connection, poll_id):
         poll_ref = database_connection.collection('Polls').document(poll_id)
         responses_ref = poll_ref.collection('Responses')

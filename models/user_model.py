@@ -1,4 +1,7 @@
 from firebase_admin import firestore
+import logging
+
+from models.vendor_model import Vendor
 
 
 class User:
@@ -28,11 +31,31 @@ class User:
         return docs
 
     @staticmethod
-    def get_pending_users(database_connection):
-        users_ref = database_connection.collection('Users')
-        query = users_ref.where("Status", "==", "P")
-        results = query.get()
-        return results
+    def get_pending_employees():
+        return firestore.client().collection('Users').where("Status", "==", "P").where(
+            "User_Type", "==", "E").get()
+
+    @staticmethod
+    def get_pending_vendors_with_details():
+        pending_vendors_with_details = []
+        pending_vendors = firestore.client().collection('Users').where("Status", "==", "P").where(
+            "User_Type", "==", "V").get()
+
+        for vendor_snapshot in pending_vendors:
+            vendor = vendor_snapshot.to_dict()
+            vendor['id'] = vendor_snapshot.id
+
+            vendor_details = Vendor.get_vendor_by_user_id(vendor['id'])
+
+            if vendor_details:
+                vendor['vendor_name'] = vendor_details.get('Vendor_Name')
+                vendor['vendor_phone'] = vendor_details.get(
+                    'Phone_Number')
+                vendor['vendor_address'] = vendor_details.get('Address')
+
+            pending_vendors_with_details.append(vendor)
+
+        return pending_vendors_with_details
 
     @staticmethod
     def reset_user_password(database_connection, email, current_password, new_password, confirmed_password):

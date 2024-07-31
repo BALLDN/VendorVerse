@@ -85,24 +85,24 @@
                             {% if user_type == 'V' %}
                             <li>
                                 <a class="dropdown-item" aria-current="page" href="{{ url_for('vendor.account') }}">
-                                    <h6>Account</h6>
+                                    <span class="fs-5">My Profile</span>
                                 </a>
                             </li>
                             {% endif %}
                             <li class="px-2">
                                 <a class="btn btn-danger w-100" href="{{ url_for('auth.logout') }}">
-                                    <h6 class="my-0">Logout</h6>
+                                    <span class="my-0 fs-5">Logout</span>
                                 </a>
                             </li>
                             {% else %}
                             <li>
                                 <a class="dropdown-item" aria-current="page" href="{{ url_for('auth.register') }}">
-                                    <h6>Register</h6>
+                                    <span class="fs-5">Register</span>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" aria-current="page" href="{{ url_for('auth.login') }}">
-                                    <h6>Login</h6>
+                                    <span class="fs-5">Login</span>
                                 </a>
                             </li>
                             {% endif %}

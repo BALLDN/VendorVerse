@@ -18,12 +18,12 @@ admin_bp = Blueprint('admin', __name__)
 @role_required('A')
 def view_admin_dashboard():
     try:
-        detailed_bookings, users, vendor_users = _get_data()
+        bookings, vendors, employees = _get_pending_approvals()
         return render_template(
             'admin_home_page.html',
-            bookings=detailed_bookings,
-            users=users,
-            vendor_users=vendor_users,
+            bookings=bookings,
+            vendors=vendors,
+            employees=employees,
             home_url=url_for('admin.view_admin_dashboard')
         )
     except TemplateNotFound:
@@ -74,43 +74,9 @@ def _approve_entity(collection_name: str, entity_id, action):
         return jsonify({'error': str(e)}), 500
 
 
-def _get_data():
-    db = firestore.client()
-    bookings = Booking.get_pending_bookings(db)
-    users = User.get_pending_users(db)
-    detailed_bookings = []
-    vendor_users = []
+def _get_pending_approvals():
+    bookings = Booking.get_pending_bookings_with_details()
+    vendors = User.get_pending_vendors_with_details()
+    employees = User.get_pending_employees()
 
-    for user_snapshot in users:
-        user = user_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
-
-        try:
-            if (user["User_Type"] == "V"):
-                user['id'] = user_snapshot.id
-
-                vendor_details = Vendor.get_vendor_by_user_id(user['id'])
-
-                # Log vendor details fetched
-
-                # Ensure vendor_details is a dictionary and log any potential issues
-                if vendor_details:
-                    user['vendor_name'] = vendor_details.get('Vendor_Name')
-                    user['vendor_phone'] = vendor_details.get(
-                        'Phone_Number')
-                    user['vendor_address'] = vendor_details.get('Address')
-                    logging.info(f"Vendor details added to User: {
-                        vendor_details}")
-                else:
-                    logging.warning(
-                        f"No vendor details found for Vendor_ID: {user['id']}")
-
-                vendor_users.append(user)
-
-        except Exception as e:
-            logging.error(e)
-
-        # Log the detailed bookings list
-    logging.info(f"Detailed bookings: {detailed_bookings}")
-    logging.info(f"Vendors: {vendor_users}")
-
-    return detailed_bookings, users, vendor_users
+    return bookings, vendors, employees

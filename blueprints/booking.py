@@ -30,7 +30,7 @@ def manage_booking_admin():
 
     db = firestore.client()
     form = BookingForm()
-    bookings = Booking.get_all_bookings()
+    bookings = Booking.get_approved_bookings()
 
     if request.method == 'GET':
         return render_template('manage_booking_page.html', bookings=bookings, form=form)
@@ -62,14 +62,14 @@ def manage_booking_admin():
                 bookings = Booking.get_bookings_by_vendor_id(
                     db, Booking.get_user_id(db, request.cookies.get('login_email')))
             elif (request.cookies.get('user_type') == "A"):
-                bookings = Booking.get_all_bookings()
+                bookings = Booking.get_approved_bookings()
 
         # Reload the bookings after any action
         if request.cookies.get('user_type') == "V":
             bookings = Booking.get_bookings_by_vendor_id(
                 db, Booking.get_user_id(db, request.cookies.get('login_email')))
         elif request.cookies.get('user_type') == "A":
-            bookings = Booking.get_all_bookings()
+            bookings = Booking.get_approved_bookings()
 
         return render_template('booking.manage_booking', bookings=bookings, form=form)
 
@@ -77,8 +77,6 @@ def manage_booking_admin():
 @booking_bp.route('/create_booking', methods=['GET', 'POST'])
 @role_required('V')
 def create_booking():
-    db = firestore.client()
-
     if request.method == 'GET':
         return render_template('create_booking_vendor.html')
     if request.method == "POST":
@@ -86,7 +84,8 @@ def create_booking():
         Booking.add_booking(session['user_id'])
         flash("Your Booking has been created and is pending approval",
               FlashCategory.SUCCESS.value)
-        return render_template('create_booking_vendor.html', user_type='V')
+        return redirect(url_for('booking.create_booking'))
+        # return render_template('create_booking_vendor.html')
 
 
 @booking_bp.route('/manage_booking', methods=['GET', 'POST'])
@@ -128,14 +127,14 @@ def manage_booking():
                 bookings = Booking.get_bookings_by_vendor_id(
                     db, Booking.get_user_id(db, request.cookies.get('login_email')))
             elif (request.cookies.get('user_type') == "A"):
-                bookings = Booking.get_all_bookings()
+                bookings = Booking.get_approved_bookings()
 
         # Reload the bookings after any action
         if request.cookies.get('user_type') == "V":
             bookings = Booking.get_bookings_by_vendor_id(
                 db, Booking.get_user_id(db, request.cookies.get('login_email')))
         elif request.cookies.get('user_type') == "A":
-            bookings = Booking.get_all_bookings()
+            bookings = Booking.get_approved_bookings()
 
         return render_template('booking.manage_booking', bookings=bookings, form=form)
 
@@ -143,8 +142,7 @@ def manage_booking():
 @booking_bp.route('/get_bookings_for_calendar', methods=['GET'])
 def get_bookings():
     try:
-
-        bookings = Booking.get_all_bookings()
+        bookings = Booking.get_approved_bookings()
         return jsonify(bookings)
     except Exception as e:
         return jsonify({'error': str(e)}), 500

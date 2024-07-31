@@ -4,13 +4,13 @@
 
 <div class="row d-flex justify-content-center">
   <div class="col-sm-12 col-lg-6">
-    <div class="card">
+    <div class="card rounded-4 shadow-sm">
       <div class="card-body m-5">
 
         <form id="form-register" action="{{url_for('auth.register')}}" method="POST">
-          <h2 class="text-uppercase text-center mb-5">Register for VendorVerse!</h2>
+          <h2 class="text-uppercase mb-5">Register to join us now!</h2>
           <div data-mdb-input-init class="form-outline mb-4">
-            <label class="form-label" for="user_type">User Type</label>
+            <label class="form-label" for="user_type"><span>Register as </span></label>
             <select id="user_type" class="form-select form-select-md mb-3" name="user_type"
               aria-label=".form-select-md example" required>
               <option value="vendor">Vendor</option>

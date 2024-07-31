@@ -18,7 +18,7 @@
                         {% if poll.get('Vendor_Name') != "No Vendor" %}
                         <p class="card-text"><strong>Vendor Name:</strong> {{ poll.get('Vendor_Name') }}</p>
                         {% endif %}
-                        <form action="{{ url_for('polls.employee_polls') }}" method="post">
+                        <form action="{{ url_for('polls.submit_poll_response') }}" method="post">
                             <input type="hidden" name="poll_id" value="{{ poll.id }}">
                             {% for option in poll.get('options') %}
                             <div class="form-check">

@@ -1,13 +1,16 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from firebase_admin import firestore
 
+from blueprints.auth import role_required
 from models.polls_model import Polls
 from models.vendor_model import Vendor
+from util import FlashCategory
 
 poll_bp = Blueprint('polls', __name__)
 
 
 @poll_bp.route('/admin_polls', methods=['GET', 'POST'])
+@role_required('A')
 def admin_polls():
     db = firestore.client()
 
@@ -39,17 +42,28 @@ def admin_polls():
     return render_template('poll.admin_polls')
 
 
-@poll_bp.route('/employee_polls', methods=['GET', 'POST'])
-def employee_polls():
-    db = firestore.client()
+@poll_bp.route('/submit_poll_response', methods=['POST'])
+@role_required('E')
+def submit_poll_response():
+    try:
+        poll_id = request.form.get('poll_id')
+        selected_option = request.form.get('selected_option')
 
-    polls = Polls.get_polls()
-    if request.method == 'GET':
-        return render_template('employee_polls_page.html', polls=polls)
-    if request.method == 'POST':
-        Polls.submit_response()
+        if not poll_id:
+            raise Exception(
+                'We have encountered an issue submitting your response. Please try again.')
 
-    return render_template('employee_polls_page.html', polls=polls)
+        if (not selected_option):
+            raise Exception('You have not selected an option!')
+
+        result = Polls.submit_response(poll_id, selected_option)
+        if result.update_time:
+            flash('Your response has been recorded',
+                  FlashCategory.SUCCESS.value)
+    except Exception as e:
+        flash(str(e), FlashCategory.ERROR.value)
+    finally:
+        return redirect(url_for('employee'))
 
 
 def _create_poll(database_connection):

@@ -74,11 +74,13 @@ class Booking:
         results = query.get()
         return results
 
-    def get_all_bookings():
+    @staticmethod
+    def get_approved_bookings():
         detailed_bookings = []
-        bookings = firestore.client().collection('Bookings').get()
+        bookings = firestore.client().collection(
+            'Bookings').where("Status", "==", "A").get()
         for booking_snapshot in bookings:
-            booking = booking_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
+            booking = booking_snapshot.to_dict()
             booking['id'] = booking_snapshot.id
 
             vendor_id = booking.get("Vendor_ID")
@@ -95,11 +97,33 @@ class Booking:
 
         return detailed_bookings
 
-    def get_pending_bookings(database_connection):
+    # @staticmethod
+    # def get_all_bookings():
+    #     detailed_bookings = []
+    #     bookings = firestore.client().collection('Bookings').get()
+    #     for booking_snapshot in bookings:
+    #         booking = booking_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
+    #         booking['id'] = booking_snapshot.id
+
+    #         vendor_id = booking.get("Vendor_ID")
+    #         vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
+
+    #         # Ensure vendor_details is a dictionary and log any potential issues
+    #         if vendor_details:
+    #             booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
+    #             booking['Vendor_Phone'] = vendor_details.get(
+    #                 'Phone_Number')
+    #             booking['Vendor_Address'] = vendor_details.get('Address')
+
+    #         detailed_bookings.append(booking)
+
+    #     return detailed_bookings
+
+    def get_pending_bookings_with_details():
+        db = firestore.client()
         detailed_bookings = []
-        booking_ref = database_connection.collection('Bookings')
-        query = booking_ref.where("Status", "==", "P")
-        pending_bookings = query.get()
+        booking_ref = db.collection('Bookings')
+        pending_bookings = booking_ref.where("Status", "==", "P").get()
         for booking_snapshot in pending_bookings:
             booking = booking_snapshot.to_dict()
             booking['id'] = booking_snapshot.id
@@ -107,12 +131,12 @@ class Booking:
             vendor_id = booking.get("Vendor_ID")
             vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
 
-            # Ensure vendor_details is a dictionary and log any potential issues
             if vendor_details:
-                booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
-                booking['Vendor_Phone'] = vendor_details.get(
+                booking['vendor_name'] = vendor_details.get('Vendor_Name')
+                booking['vendor_phone'] = vendor_details.get(
                     'Phone_Number')
-                booking['Vendor_Address'] = vendor_details.get('Address')
+                booking['vendor_address'] = vendor_details.get('Address')
+                booking['vendor_email'] = vendor_details.get('Email')
 
             detailed_bookings.append(booking)
 

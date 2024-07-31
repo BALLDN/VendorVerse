@@ -1,53 +1,57 @@
 {%extends 'layout.html'%}
 {%block title%}About{%endblock%}
 {%block content%}
-<div class="card p-4" style=" background-color: rgba(255, 255, 255, 0.75)">
-    <div>
-        <h1 class="display-4 mb-2">Discover VendorVerse</h1>
-
-        <p>VendorVerse connects local vendors in Tralee with JRI America employees seamlessly.
-            <br>
-            Our platform simplifies the booking process, allowing vendors to showcase their products and services
-            efficiently during available slots.
-        </p>
-    </div>
-
-
-    <div class="container d-flex gap-3 justify-content-around">
-        <div class="p-4 bg-light rounded border border-secondary shadow-sm max-w-40">
-            <h4>Our Mission</h4>
-            <p>We support local businesses and foster community engagement, helping small enterprises thrive through
-                our
-                network.</p>
+<div class="container p-4 rounded border border-secondary shadow-sm rounded-4"
+    style="background-color: rgba(255, 255, 255, 0.75);">
+    <div class="row gx-4 gy-4 align-items-start">
+        <div class="col-lg-6 my-4">
+            <div class="vstack justify-content-between">
+                <div>
+                    <h1 class="display-5 mb-2">Discover VendorVerse</h1>
+                    <div style="text-align: justify">VendorVerse connects local vendors in Tralee with JRI America
+                        employees seamlessly.
+                        Our platform simplifies the booking process, allowing vendors to showcase their products and
+                        services efficiently during available slots.
+                    </div>
+                </div>
+                <div class="d-flex flex-column flex-md-row gap-3 justify-content-around mt-4">
+                    <div class="p-4 bg-light rounded border border-secondary shadow-sm flex-grow-1 rounded-4">
+                        <h4>Our Mission</h4>
+                        <div style="text-align: justify">We support local businesses and foster community engagement,
+                            helping small enterprises thrive
+                            through our network.</div>
+                    </div>
+                    <div class="p-4 bg-light rounded border border-secondary shadow-sm flex-grow-1 rounded-4">
+                        <h4>About Us</h4>
+                        <div style="text-align: justify">JRI America, Inc., based at <a
+                                href="https://www.google.com/maps/place/JRI-America/@52.2880559,-9.6700093,17z/data=!3m1!4b1!4m6!3m5!1s0x4845359cceab6b4f:0xe89504fbc015f259!8m2!3d52.2880528!4d-9.6675299!16s%2Fg%2F11gzq3d1nq?entry=ttu">Innovation
+                                Works 2, Kerry Technology Park, Tralee, Co. Kerry, V92 C6DD</a>, is a subsidiary of
+                            Japan
+                            Research Institute Ltd and part of the Sumitomo Mitsui Financial Group (SMFG).</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="p-4 bg-light rounded border border-secondary shadow-sm max-w-40">
-            <h4>About Us</h4>
-            <p>JRI America, Inc., based at <a
-                    href="https://www.google.com/maps/place/JRI-America/@52.2880559,-9.6700093,17z/data=!3m1!4b1!4m6!3m5!1s0x4845359cceab6b4f:0xe89504fbc015f259!8m2!3d52.2880528!4d-9.6675299!16s%2Fg%2F11gzq3d1nq?entry=ttu">Innovation
-                    Works 2, Kerry Technology Park, Tralee, Co. Kerry, V92 C6DD</a>, is a subsidiary of Japan
-                Research Institute
-                Ltd and part of the Sumitomo Mitsui Financial Group (SMFG).</p>
-        </div>
-    </div>
-
-    <div class="my-4">
-        <h1 class="display-4 my-3">Getting Started with Us</h1>
-        <div class="p-4 bg-light rounded border border-secondary shadow-sm ">
-            <h5>1. Register as a Vendor</h5>
-            <p>Sign up by providing your business details. Our Admin team will review your application and send you an
-                approval
-                email once you’re set!</p>
-
-            <h5>2. Set Up Your Bookings</h5>
-            <p>View available dates on our calendar. Select a date, fill out the Booking Form with your location and
-                requirements,
-                and confirm your booking effortlessly!</p>
-
-            <h5>3. Connect with Customers</h5>
-            <p>Approved bookings appear on our Employees' calendars, giving you visibility and helping you engage with
-                potential
-                customers.</p>
+        <div class="col-lg-6 my-4">
+            <div class="vstack justify-content-between">
+                <h1 class="display-5 mb-2">Getting Started with Us</h1>
+                <div class="p-4 bg-light rounded border border-secondary shadow-sm rounded-4">
+                    <h5>1. Register as a Vendor</h5>
+                    <p>Sign up by providing your business details. Our Admin team will review your application and send
+                        you
+                        an approval email once you’re set!</p>
+                    <h5>2. Set Up Your Bookings</h5>
+                    <p>View available dates on our calendar. Select a date, fill out the Booking Form with your location
+                        and
+                        requirements, and confirm your booking effortlessly!</p>
+                    <h5>3. Connect with Customers</h5>
+                    <p>Approved bookings appear on our Employees' calendars, giving you visibility and helping you
+                        engage
+                        with potential customers.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 {%endblock%}

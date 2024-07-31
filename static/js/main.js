@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const calendarEl = document.getElementById("calendar");
-  const myModal = new bootstrap.Modal(document.getElementById("form"));
+  const myModal = new bootstrap.Modal(document.getElementById("form"), {});
   const close = document.querySelector(".btn-close");
 
   // Fetch bookings and store in localStorage
@@ -53,53 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     calendar.render();
-
-    // Form submission logic
-    document
-      .getElementById("booking-form")
-      .addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        const dateInput = document.getElementById("date").value;
-        const locationInput = document.getElementById("location").value;
-        const dealInput = document.getElementById("deal").value;
-        const additionalInfoInput =
-          document.getElementById("additional-info").value;
-        const eventIdInput = document.getElementById("event-id").value;
-
-        const updatedEvent = {
-          id: eventIdInput,
-          Date: dateInput,
-          Location: locationInput,
-          Deal: dealInput,
-          "Additional Info": additionalInfoInput,
-        };
-
-        // Update local storage
-        let events = JSON.parse(localStorage.getItem("events")) || [];
-        const eventIndex = events.findIndex((e) => e.id === updatedEvent.id);
-        if (eventIndex !== -1) {
-          events.splice(eventIndex, 1, updatedEvent);
-        } else {
-          events.push(updatedEvent);
-        }
-        localStorage.setItem("events", JSON.stringify(events));
-
-        // Update the calendar event
-        let calendarEvent = calendar.getEventById(updatedEvent.id);
-        if (calendarEvent) {
-          calendarEvent.remove();
-        }
-        calendar.addEvent({
-          id: updatedEvent.id,
-          title: updatedEvent["Additional Info"],
-          start: updatedEvent.Date,
-          backgroundColor: "blue",
-          allDay: true,
-        });
-
-        myModal.hide();
-      });
   }
 
   function getRandomRGB() {

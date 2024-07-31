@@ -4,22 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <meta name="description"
+        content="VendorVerse aims to connect local SMEs in Tralee with our company as a portal to engage with our staff. See how we can help your business thrive. 📈">
+    <meta name="keywords"
+        content="VendorVerse, local vendors, Tralee, JRI America, booking platform, community engagement, small businesses, SME">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="VendorVerse">
+    <meta property="og:description"
+        content="VendorVerse aims to connect local SMEs in Tralee with our company as a portal to engage with our staff. See how we can help your business thrive. 📈">
+    <meta property="og:image" content="{{ url_for('static', filename='og-image.png') }}">
+    <meta property="og:url" content="{{ request.url }}">
+
     <title>{% block title %}Home{% endblock %} | VendorVerse</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css"
-        integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-        integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.3.0/main.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block style_override %}{% endblock %}
 </head>
+
 
 <body>
     {% include 'navbar.html' %}
@@ -28,7 +29,7 @@
     {% set messages = get_flashed_messages(with_categories=true) %}
     {% endif %}
 
-    <div class="position-fixed top-4 end-0 p-3 z-3">
+    <div id="älert_container" class="position-fixed top-4 end-0 p-3 z-3">
         {% for category, message in messages %}
         <div class="alert alert-dismissible fade show rounded-3 mb-3 {{ 'alert-' + category }}" role="alert">
             {{ message}}
@@ -37,14 +38,13 @@
         {% endfor %}
     </div>
 
-    <div class="content p-5 overflow-scroll" style="max-height: 85dvh">
+    <div class="content container p-4">
         {% block content %}
         {% endblock %}
     </div>
 
     {%block cookie_consent%}
     {% endblock %}
-
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"

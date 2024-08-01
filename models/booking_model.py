@@ -86,8 +86,6 @@ class Booking:
                 booking['Vendor_Phone'] = vendor_details.get('Phone_Number')
                 booking['Vendor_Address'] = vendor_details.get('Address')
 
-            # Log the booking to verify all fields
-            print(f"Retrieved Booking: {booking}")
 
             detailed_bookings.append(booking)
 
@@ -111,9 +109,6 @@ class Booking:
                 booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
                 booking['Vendor_Phone'] = vendor_details.get('Phone_Number')
                 booking['Vendor_Address'] = vendor_details.get('Address')
-
-            # Log the booking to verify all fields
-            print(f"Retrieved Booking: {booking}")
 
             detailed_bookings.append(booking)
 

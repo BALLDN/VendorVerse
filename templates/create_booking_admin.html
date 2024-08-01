@@ -10,10 +10,11 @@
 
         <form action="{{url_for('booking.create_booking_admin')}}" method="post">
 
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Vendor Email</label>
-            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-          </div>
+          <label class='form-label' for='VendorName'>Vendor Name</label>
+          <select class='form-select form-select-sm mb-2' aria-label='' name='VendorName' id='VendorName' required>
+          <option value='' disabled selected>Please select a Vendor</option>
+          {% for vendor in vendors %} <option value="{{ vendor.get('User_ID') }}">{{ vendor.get('Vendor_Name') }}</option>{% endfor %}
+          </select>
 
 
           <label for="Date">Booking Date</label>

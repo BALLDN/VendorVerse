@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect, session
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField
+from wtforms import SelectField, StringField, TextAreaField, DateField
 from wtforms.validators import InputRequired
 from firebase_admin import firestore
 
@@ -55,21 +55,13 @@ def manage_booking_admin():
             booking_id = request.form['options']
             print(booking_id)
             Booking.modify_booking(db, booking_id)
-
-            # Display Updated Bookings
-            if (request.cookies.get('user_type') == "V"):
-                bookings = Booking.get_bookings_by_vendor_id(
-                    db, Booking.get_user_id(db, request.cookies.get('login_email')))
-            elif (request.cookies.get('user_type') == "A"):
-                bookings = Booking.get_approved_bookings()
-
-        # Reload the bookings after any action
-        if request.cookies.get('user_type') == "V":
-            bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
-        elif request.cookies.get('user_type') == "A":
             bookings = Booking.get_approved_bookings()
 
-        return render_template('booking.manage_booking', bookings=bookings, form=form)
+        # Reload the bookings after any action
+
+        bookings = Booking.get_approved_bookings()
+
+        return render_template('booking.manage_booking_admin', bookings=bookings, form=form)
 
 @booking_bp.route('/create_booking', methods=['GET', 'POST'])
 @role_required('V')
@@ -83,12 +75,11 @@ def create_booking():
               FlashCategory.SUCCESS.value)
         return redirect(url_for('booking.create_booking'))
         # return render_template('create_booking_vendor.html')
-
-
+        
+        
 @booking_bp.route('/manage_booking', methods=['GET', 'POST'])
 @role_required('V')
 def manage_booking():
-
     db = firestore.client()
     form = BookingForm()
 
@@ -99,12 +90,11 @@ def manage_booking():
 
     if request.method == 'POST':
         action = request.form.get('action')
-        booking_id = request.form.get('options')
+        booking_id = request.form.get('booking_id')
 
         if action == 'cancel':
             if booking_id:
-                booking_ref = db.collection(
-                    'Bookings').document(booking_id)
+                booking_ref = db.collection('Bookings').document(booking_id)
                 if booking_ref.get().exists:
                     booking_ref.update({"Status": "D"})
                     print(f"Booking {booking_id} status updated to D")
@@ -114,27 +104,13 @@ def manage_booking():
                 print("No booking ID provided")
 
         elif action == 'modify':
-            # Store Booking ID
-            booking_id = request.form['options']
-            print(booking_id)
-            Booking.modify_booking(db, booking_id)
+            if booking_id:
+                Booking.modify_booking(db, booking_id)
+            else:
+                print("No booking ID provided")
 
-            # Display Updated Bookings
-            if (request.cookies.get('user_type') == "V"):
-                bookings = Booking.get_bookings_by_vendor_id(
-                    db, Booking.get_user_id(db, request.cookies.get('login_email')))
-            elif (request.cookies.get('user_type') == "A"):
-                bookings = Booking.get_approved_bookings()
-
-        # Reload the bookings after any action
-        if request.cookies.get('user_type') == "V":
-            bookings = Booking.get_bookings_by_vendor_id(
-                db, Booking.get_user_id(db, request.cookies.get('login_email')))
-        elif request.cookies.get('user_type') == "A":
-            bookings = Booking.get_approved_bookings()
-
-        return render_template('booking.manage_booking', bookings=bookings, form=form)
-
+        bookings = Booking.get_bookings_by_vendor_id(db, session['user_id'])
+        return render_template('manage_booking_page.html', bookings=bookings, form=form)
 
 @booking_bp.route('/get_bookings_for_calendar', methods=['GET'])
 def get_bookings():
@@ -147,7 +123,6 @@ def get_bookings():
 
 class BookingForm(FlaskForm):
     date = DateField('Date', validators=[InputRequired()])
-    location = StringField('Location', validators=[InputRequired()])
+    location = SelectField('Location', choices=[('Front Car Park', 'Front Car Park'), ('Back Car Park', 'Back Car Park')]) 
     discount = TextAreaField('Discount', validators=[InputRequired()])
-    additional_info = TextAreaField(
-        'Additional Information', validators=[InputRequired()])
+    additional_info = TextAreaField('Additional Information', validators=[InputRequired()])

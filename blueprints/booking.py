@@ -6,6 +6,7 @@ from firebase_admin import firestore
 
 from models.booking_model import Booking
 from blueprints.auth import role_required
+from models.vendor_model import Vendor
 from util import FlashCategory
 
 booking_bp = Blueprint('booking', __name__)
@@ -15,13 +16,16 @@ booking_bp = Blueprint('booking', __name__)
 @role_required('A')
 def create_booking_admin():
     db = firestore.client()
+    vendors = Vendor.get_users(db)
     if request.method == 'GET':
         Booking.get_user_id(db, request.cookies.get('login_email'))
     if request.method == "POST":
-        user_id = Booking.get_user_id(db, request.form.get('Email'))
-        Booking.add_booking(db, user_id)
-        return redirect(url_for('create_booking_admin'))
-    return render_template('create_booking_admin.html', user_type='A')
+        user_id = request.form.get('VendorName')
+        Booking.add_booking(user_id)
+        flash("A booking has been created and can be viewed on the calendar",
+              FlashCategory.SUCCESS.value)
+        return redirect(url_for('admin.view_admin_dashboard'))
+    return render_template('create_booking_admin.html', user_type='A', vendors=vendors)
 
 
 @booking_bp.route('/manage_booking_admin', methods=['GET', 'POST'])
@@ -37,7 +41,7 @@ def manage_booking_admin():
 
     if request.method == 'POST':
         action = request.form.get('action')
-        booking_id = request.form.get('options')
+        booking_id = request.form.get('booking_id')
 
         if action == 'cancel':
             if booking_id:
@@ -51,17 +55,16 @@ def manage_booking_admin():
                 print("No booking ID provided")
 
         elif action == 'modify':
-            # Store Booking ID
-            booking_id = request.form['options']
-            print(booking_id)
-            Booking.modify_booking(db, booking_id)
-            bookings = Booking.get_approved_bookings()
+            if booking_id:
+                Booking.modify_booking(db, booking_id)
+            else:
+                print("No booking ID provided")
 
         # Reload the bookings after any action
 
         bookings = Booking.get_approved_bookings()
 
-        return render_template('booking.manage_booking_admin', bookings=bookings, form=form)
+        return render_template('manage_booking_page.html', bookings=bookings, form=form)
 
 @booking_bp.route('/create_booking', methods=['GET', 'POST'])
 @role_required('V')
@@ -73,8 +76,7 @@ def create_booking():
         Booking.add_booking(session['user_id'])
         flash("Your Booking has been created and is pending approval",
               FlashCategory.SUCCESS.value)
-        return redirect(url_for('booking.create_booking'))
-        # return render_template('create_booking_vendor.html')
+        return redirect(url_for('vendor.view_vendor_dashboard'))
         
         
 @booking_bp.route('/manage_booking', methods=['GET', 'POST'])

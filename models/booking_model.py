@@ -69,10 +69,30 @@ class Booking:
             return "No User Found!"
 
     def get_bookings_by_vendor_id(database_connection, vendor_id):
+        detailed_bookings = []
         booking_ref = database_connection.collection('Bookings')
         query = booking_ref.where("Vendor_ID", "==", vendor_id)
         results = query.get()
-        return results
+
+        for booking_snapshot in results:
+            booking = booking_snapshot.to_dict()
+            booking['id'] = booking_snapshot.id
+            
+            vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
+
+            # Ensure vendor_details is a dictionary and log any potential issues
+            if vendor_details:
+                booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
+                booking['Vendor_Phone'] = vendor_details.get('Phone_Number')
+                booking['Vendor_Address'] = vendor_details.get('Address')
+
+            # Log the booking to verify all fields
+            print(f"Retrieved Booking: {booking}")
+
+            detailed_bookings.append(booking)
+
+        return detailed_bookings
+
 
     @staticmethod
     def get_approved_bookings():
@@ -157,27 +177,37 @@ class Booking:
             return "No User Found!"
 
     def modify_booking(database_connection, booking_id):
-        booking_ref = database_connection.collection(
-            'Bookings').document(booking_id)
-        if booking_ref is not None:
-            if (request.cookies.get('user_type') == "V"):
-                status = "P"
-            else:
-                status = "A"
-            date = request.form['date']
-            location = request.form['location']
-            additional_info = request.form['additional-info']
+        booking_ref = database_connection.collection('Bookings').document(booking_id)
+        
+        # Check if the document exists
+        if not booking_ref.get().exists:
+            return "No booking found with the provided ID!"
+        
+        # Determine the status based on user type
+        status = "P" if session.get('user_type') == "V" else "A"
+        
+        # Retrieve form data with default values
+        date = request.form.get('date', 'No date provided')
+        location = request.form.get('location', 'No location provided')
+        additional_info = request.form.get('additional_info', 'No additional info provided')
+        
+        # Handle discount
+        discount = request.form.get('discount', "No Discount")
+        
+        print(f"Date: {date}, Location: {location}, Discount: {discount}, Additional Info: {additional_info}")
 
-            '''In case discount checkbox isn't checked'''
-            if request.form['deal'] is None:
-                discount = "No Discount"
-            else:
-                discount = request.form['deal']
 
-            print(booking_ref)
-            booking_ref.update({"Status": status, "Date": date, "Location": location,
-                               "Deal": discount, "`Additional Info`": additional_info})
+        # Update booking record
+        try:
+            booking_ref.update({
+                "Status": status,
+                "Date": date,
+                "Location": location,
+                "Deal": discount,
+                "`Additional Info`": additional_info
+            })
+            print("Booking Updated")
             return booking_ref
-
-        else:
-            return "No User Found!"
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return "Failed to update booking!"

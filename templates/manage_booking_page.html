@@ -35,17 +35,18 @@
                     </div>
                     <div class="card-footer text-center">
                         <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal"
-                            data-bs-target="#editModal" onclick="setBookingId('{{ booking.id }}')">Edit</button>
+                            data-bs-target="#editModal" onclick="setBookingId('{{ booking.id }}', 'modify')">Edit</button>
                         <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
-                            data-bs-target="#cancelModal" onclick="setBookingId('{{ booking.id }}')">Cancel</button>
+                            data-bs-target="#cancelModal" onclick="setBookingId('{{ booking.id }}', 'cancel')">Cancel</button>
                     </div>
                 </div>
                 {% endfor %}
             </div>
 
-            <!-- Hidden input to identify the action -->
-            <input type="hidden" name="action" id="action" value="">
-        </form>
+            <!-- Hidden inputs to store the action and booking id -->
+            <input type="hidden" name="action" id="action">
+            <input type="hidden" name="booking_id" id="booking_id">
+  
     </div>
 </div>
 
@@ -60,23 +61,23 @@
             <div class="modal-body">
                 <div class="form-group">
                     {{ form.date.label }}
-                    {{ form.date(class_="form-control", id_="date") }}
+                    {{ form.date(class_="form-control", id="date") }}
                 </div>
                 <div class="form-group">
                     {{ form.location.label }}
-                    {{ form.location(class_="form-control", id_="location") }}
+                    {{ form.location(class_="form-control", id="location")}}
                 </div>
                 <div class="form-group">
                     {{ form.discount.label }}
-                    {{ form.discount(class_="form-control", id_="deal") }}
+                    {{ form.discount(class_="form-control", id="deal") }}
                 </div>
                 <div class="form-group">
                     {{ form.additional_info.label }}
-                    {{ form.additional_info(class_="form-control", id_="additional-info") }}
+                    {{ form.additional_info(class_="form-control", id="additional-info") }}
                 </div>
             </div>
             <div class="modal-footer border-top-0 d-flex justify-content-center">
-                <button type="submit" class="btn btn-dark" name="modify_button" id="modify_button">Submit</button>
+                <button type="button" class="btn btn-dark" onclick="submitModifyForm()" id="modify_button">Submit</button>
             </div>
         </div>
     </div>
@@ -95,49 +96,37 @@
                 Are you sure you want to cancel this booking?
             </div>
             <div class="modal-footer">
-                <button type="submit" name="cancel_button" class="btn btn-danger m-2 w-full"
-                    onclick="submitCancelForm()">Confirm Cancel</button>
+                <button type="button" class="btn btn-danger m-2 w-full" onclick="submitCancelForm()">Confirm Cancel</button>
             </div>
         </div>
+    </form>
     </div>
 </div>
 
 <script>
-    function showModifyModal() {
-        const selectedBookingId = document.querySelector('input[name="options"]:checked').value;
+    function setBookingId(bookingId, action) {
+        document.getElementById('booking_id').value = bookingId;
+        document.getElementById('action').value = action;
+    }
 
-        $.ajax({
-            url: '/get_booking/' + selectedBookingId,
-            method: 'GET',
-            success: function (response) {
-                if (response.error) {
-                    alert(response.error);
-                    return;
-                }
-
-                $('#modal-title').text('Edit Event');
-                $('#date').val(response.date);
-                $('#location').val(response.location);
-                $('#discount').val(response.discount);
-                $('#additional_info').val(response.additional_info);
-
-                $('#form').modal('show');
-            },
-            error: function () {
-                alert('Failed to fetch booking details.');
-            }
-        });
+    function setBookingDetails(bookingId, bookingDetails) {
+        setBookingId(bookingId, 'modify');
+        document.getElementById('date').value = bookingDetails.Date;
+        document.getElementById('location').value = bookingDetails.Location;
+        document.getElementById('deal').value = bookingDetails.Discount;
+        document.getElementById('additional-info').value = bookingDetails["Additional Info"];
     }
 
     function submitCancelForm() {
-        document.getElementById('action').value = 'cancel';
+        setBookingId(document.getElementById('booking_id').value, 'cancel');
         document.getElementById('mainForm').submit();
     }
 
-    document.getElementById('modify_button').addEventListener('click', function () {
-        document.getElementById('action').value = 'modify';
-    });
+    function submitModifyForm() {
+        setBookingId(document.getElementById('booking_id').value, 'modify');
+        document.getElementById('mainForm').submit();
+    }
+
 </script>
-</div>
 
 {% endblock %}

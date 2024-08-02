@@ -5,7 +5,6 @@
 <div class="row">
     <div class="col-8 card p-4">
         <div id='calendar'></div>
-
     </div>
     <!-- Booking Details -->
     <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
@@ -41,21 +40,55 @@
         </div>
     </div>
 
-    <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
-        <h2>About Us</h2>
-        <div class="about_us">
-            <p class="mt-5">Booking a time slot will allow your business to offer products to our Staff
-                Members. Bookings can be made in advance with the following link: <a href="#">Make a Booking
-                    here!</a></p>
-            <br>
-            <p class="mt-5">Request a poll for our staff members to gauge their interest in your services:
-                <a href="#">Create a poll here!</a>
-            </p>
-            <br>
-            <p class="mt-5">For any further information you require contact: <a href="#">068 12345</a></p>
+    <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4 d-flex justify-content-center align-items-center">
+    <div class="col-10">
+        <div class="w-100">
+            <h2 class="text-center">Create a Booking</h2>
+            <div style="border-radius: 15px;" class="card mb-5">
+                <div class="card-body p-5">
+                    <h2 class="text-uppercase text-center mb-5">Please Enter the Details of your booking</h2>
+
+                    <form action="{{url_for('booking.create_booking')}}" method="post">
+
+                        <div data-mdb-input-init class="form-outline mb-2">
+                            <label class="form-label" for="additional_info">Booking Title</label>
+                            <input type="text" id="additional_info" name="additional_info" class="form-control form-control-md"
+                            maxlength="200" required> </input>
+                        </div>
+
+                        <div data-mdb-input-init class="form-outline mb-2">
+                            <label for="Date">Booking Date</label>
+                            <input id="dateInput" name="Date" class="form-control mb-2" type="date" />
+                        </div>
+
+                        <div data-mdb-input-init class="form-outline mb-2">
+                            <label class="form-label" for="Location">Location</label>
+                            <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="Location" id="Location"
+                            required>
+                            <option value="" disabled selected>Select Location</option>
+                            <option value="Front Car park">Front Car Park</option>
+                            <option value="Back Car Park">Back Car Park</option>
+                            </select>
+                        </div>
+
+                        <div class="form-check p-0">
+                            <input id="discount_checkbox" name="discount_checkbox" type="checkbox" onclick="addDiscountTextArea()">
+                            <label class="form-check-label" for="discount_checkbox">Are you offering a deal?</label>
+                        </div>
+
+                        <div id="Discount_Section"> </div>
+
+                        <div class="d-flex justify-content-center mt-2">
+                            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-block btn-lg px-5">
+                            <h4 class="m-0">Confirm</h4>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
 <script>
     function submitBookingCancelForm() {
@@ -93,6 +126,35 @@
     // Set the min attribute of the date input field
     document.addEventListener('DOMContentLoaded', () => {
         const dateInput = document.getElementById('date');
+        dateInput.setAttribute('min', getCurrentDate());
+    });
+
+    function addDiscountTextArea() {
+        if (document.getElementById('discount_checkbox').checked) {
+            document.getElementById("Discount_Section").innerHTML = " <div data-mdb-input-init class='form-outline mb-4'><label class='form-label' for='discount'>Please enter the details of your deal</label><textarea type='text' maxlength='200' name='discount' id='discount' class='form-control form-control-md' required> </textarea></div>";
+        } else {
+            document.getElementById("Discount_Section").innerHTML = "";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const dateInput = document.getElementById('dateInput');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    });
+
+    // Function to format the date to YYYY-MM-DD
+    function getCurrentDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Set the min attribute of the date input field
+    document.addEventListener('DOMContentLoaded', () => {
+        const dateInput = document.getElementById('DateInput');
         dateInput.setAttribute('min', getCurrentDate());
     });
 </script>

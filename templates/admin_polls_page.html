@@ -1,8 +1,9 @@
 {%extends 'layout.html'%}
 {% block title %}Polls Manager{% endblock %}
 {%block content%}
+<div class="row justify-content-center">
 
-<div class="card mt-5 mb-3" style="border-radius: 15px;">
+<div class="card mt-5 mb-3" style="border-radius: 15px; width: 60%;">
     <div class="card-body p-5">
         <h2 class="text-uppercase text-center mb-5">Create a Poll</h2>
 
@@ -50,12 +51,14 @@
         </form>
     </div>
 </div>
+</div>
+</div>
 
 <div class="">
-    <h2 class="text-uppercase text-center mb-4">Polls</h2>
+    <h2 class="text-uppercase text-center m-4">Polls</h2>
     <div class="d-flex flex-wrap justify-content-between">
         {% for poll_result in poll_results %}
-        <div class="card m-2" style="width: 30%;">
+        <div class="card m-4" style="width: 30%;">
             <div class="card-body">
                 <h4>{{ poll_result.poll_data.Title }}</h4>
                 {% if poll_result.poll_data.Vendor_Name != "No Vendor"%}

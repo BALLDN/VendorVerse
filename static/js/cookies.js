@@ -1,15 +1,12 @@
 function acceptCookies(e) {
   e.preventDefault();
-  const cookieBox = document.getElementById("cookie_box");
-  let date = new Date();
-  let cookiesExpiry = date.setDate(date.getDate() + 14);
-  document.cookie = "cookie_accepted=T; expires=" + cookiesExpiry + "; path=/";
+  const cookieBox = document.getElementById("cookie_consent");
   cookieBox.remove();
 }
 
 function declineCookies(e) {
   e.preventDefault();
-  const cookieBox = document.getElementById("cookie_box");
+  const cookieBox = document.getElementById("cookie_consent");
   cookieBox.remove();
 }
 

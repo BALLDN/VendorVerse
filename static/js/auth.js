@@ -13,7 +13,7 @@ export function signIn(email, password) {
           <span class="visually-hidden">Loading...</span>
         </div>
       `;
-      fetch("/login", {
+      fetch("/auth/login", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${userCreds.user.accessToken}`,

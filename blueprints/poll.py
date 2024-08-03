@@ -10,9 +10,8 @@ from util import FlashCategory
 poll_bp = Blueprint('polls', __name__)
 
 
-
 @poll_bp.route('/admin_polls', methods=['GET', 'POST'])
-@role_required('A')
+@role_required(['A'])
 def admin_polls():
     db = firestore.client()
     polls = Polls.get_polls()
@@ -44,7 +43,7 @@ def admin_polls():
 
 
 @poll_bp.route('/submit_poll_response', methods=['POST'])
-@role_required('E')
+@role_required(['E'])
 def submit_poll_response():
     db = firestore.client()
     try:

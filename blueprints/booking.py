@@ -1,153 +1,68 @@
 from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect, session
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField
-from wtforms.validators import InputRequired
+
 from firebase_admin import firestore
 
 from models.booking_model import Booking
 from blueprints.auth import role_required
 from util import FlashCategory
+import logging
 
-booking_bp = Blueprint('booking', __name__)
-
-
-@booking_bp.route('/create_booking_admin', methods=['GET', 'POST'])
-@role_required('A')
-def create_booking_admin():
-    db = firestore.client()
-    if request.method == 'GET':
-        Booking.get_user_id(db, request.cookies.get('login_email'))
-    if request.method == "POST":
-        user_id = Booking.get_user_id(db, request.form.get('Email'))
-        Booking.add_booking(db, user_id)
-        return redirect(url_for('create_booking_admin'))
-    return render_template('create_booking_admin.html', user_type='A')
+booking_bp = Blueprint('booking', __name__, url_prefix='/booking')
 
 
-@booking_bp.route('/manage_booking_admin', methods=['GET', 'POST'])
-@role_required('A')
-def manage_booking_admin():
-
-    db = firestore.client()
-    form = BookingForm()
-    bookings = Booking.get_approved_bookings()
-
-    if request.method == 'GET':
-        return render_template('manage_booking_page.html', bookings=bookings, form=form)
-
-    if request.method == 'POST':
-        action = request.form.get('action')
-        booking_id = request.form.get('options')
-
-        if action == 'cancel':
-            if booking_id:
-                booking_ref = db.collection('Bookings').document(booking_id)
-                if booking_ref.get().exists:
-                    booking_ref.update({"Status": "D"})
-                    print(f"Booking {booking_id} status updated to D")
-                else:
-                    print("No booking found with the provided ID")
-            else:
-                print("No booking ID provided")
-
-        elif action == 'modify':
-            # Store Booking ID
-            booking_id = request.form['options']
-            print(booking_id)
-            Booking.modify_booking(db, booking_id)
-
-            # Display Updated Bookings
-            if (request.cookies.get('user_type') == "V"):
-                bookings = Booking.get_bookings_by_vendor_id(
-                    db, Booking.get_user_id(db, request.cookies.get('login_email')))
-            elif (request.cookies.get('user_type') == "A"):
-                bookings = Booking.get_approved_bookings()
-
-        # Reload the bookings after any action
-        if request.cookies.get('user_type') == "V":
-            bookings = Booking.get_bookings_by_vendor_id(db, Booking.get_user_id(db, request.cookies.get('login_email')))
-        elif request.cookies.get('user_type') == "A":
-            bookings = Booking.get_approved_bookings()
-
-        return render_template('booking.manage_booking', bookings=bookings, form=form)
-
-@booking_bp.route('/create_booking', methods=['GET', 'POST'])
-@role_required('V')
+@booking_bp.route('/create', methods=['POST'])
+@role_required(['A', 'V'])
 def create_booking():
-    if request.method == 'GET':
-        return render_template('create_booking_vendor.html')
-    if request.method == "POST":
+    try:
+        form = request.form
+        vendor_email = form.get('vendor_email')
+        title = form.get('title')
+        location = form.get('location')
+        date = form.get('date')
+        deal = form.get('deal')
+        if vendor_email:
+            success = Booking.add_booking(
+                title, location, date, deal, vendor_email)
+        else:
+            success = Booking.add_booking(
+                title, location, date, deal, session['user_id'])
+        if success:
+            flash("Your Booking has been created and is pending approval",
+                  FlashCategory.SUCCESS.value)
+    except Exception as e:
+        flash('An error was encountered during the attempt of creating a Booking. Please try again.',
+              FlashCategory.ERROR.value)
+    return redirect(url_for('index'))
 
-        Booking.add_booking(session['user_id'])
-        flash("Your Booking has been created and is pending approval",
-              FlashCategory.SUCCESS.value)
-        return redirect(url_for('booking.create_booking'))
-        # return render_template('create_booking_vendor.html')
 
+@booking_bp.route('/action', methods=['POST'])
+@role_required(['V', 'A'])
+def manage_booking_action():
+    action = request.form.get('action')
+    booking_id = request.form.get('bookingIdField')
 
-@booking_bp.route('/manage_booking', methods=['GET', 'POST'])
-@role_required('V')
-def manage_booking():
-
-    db = firestore.client()
-    form = BookingForm()
-
-    bookings = Booking.get_bookings_by_vendor_id(db, session['user_id'])
-
-    if request.method == 'GET':
-        return render_template('manage_booking_page.html', bookings=bookings, form=form)
-
-    if request.method == 'POST':
-        action = request.form.get('action')
-        booking_id = request.form.get('options')
+    try:
+        if action == 'edit':
+            result = Booking.edit_booking(booking_id)
 
         if action == 'cancel':
-            if booking_id:
-                booking_ref = db.collection(
-                    'Bookings').document(booking_id)
-                if booking_ref.get().exists:
-                    booking_ref.update({"Status": "D"})
-                    print(f"Booking {booking_id} status updated to D")
-                else:
-                    print("No booking found with the provided ID")
-            else:
-                print("No booking ID provided")
+            result = Booking.cancel_booking(booking_id)
 
-        elif action == 'modify':
-            # Store Booking ID
-            booking_id = request.form['options']
-            print(booking_id)
-            Booking.modify_booking(db, booking_id)
+        if not result.update_time:
+            raise Exception('Booking update failed')
 
-            # Display Updated Bookings
-            if (request.cookies.get('user_type') == "V"):
-                bookings = Booking.get_bookings_by_vendor_id(
-                    db, Booking.get_user_id(db, request.cookies.get('login_email')))
-            elif (request.cookies.get('user_type') == "A"):
-                bookings = Booking.get_approved_bookings()
+    except Exception as e:
+        flash("An error has occuring during cancellation of Booking. Please try again.",
+              FlashCategory.ERROR.value)
+        logging.ERROR(str(e))
 
-        # Reload the bookings after any action
-        if request.cookies.get('user_type') == "V":
-            bookings = Booking.get_bookings_by_vendor_id(
-                db, Booking.get_user_id(db, request.cookies.get('login_email')))
-        elif request.cookies.get('user_type') == "A":
-            bookings = Booking.get_approved_bookings()
-
-        return render_template('booking.manage_booking', bookings=bookings, form=form)
+    return redirect(url_for('booking.manage_booking'))
 
 
-@booking_bp.route('/get_bookings_for_calendar', methods=['GET'])
+@booking_bp.route('/calendar', methods=['GET'])
 def get_bookings():
     try:
         bookings = Booking.get_approved_bookings()
         return jsonify(bookings)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-class BookingForm(FlaskForm):
-    date = DateField('Date', validators=[InputRequired()])
-    location = StringField('Location', validators=[InputRequired()])
-    discount = TextAreaField('Discount', validators=[InputRequired()])
-    additional_info = TextAreaField(
-        'Additional Information', validators=[InputRequired()])

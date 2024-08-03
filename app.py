@@ -47,7 +47,7 @@ def create_app(test_config=None):
             return render_template('public_home_page.html')
 
     @app.route('/employee', methods=['GET'])
-    @role_required('E')
+    @role_required(['E'])
     def employee():
         polls = Polls.get_polls()
         return render_template('employee_home_page.html', home_url=url_for('employee'), polls=polls)

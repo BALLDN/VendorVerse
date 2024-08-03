@@ -8,20 +8,23 @@
       <div class="card-body p-5">
         <h2 class="text-uppercase text-center mb-5">Booking on behalf of a Vendor</h2>
 
-        <form action="{{url_for('booking.create_booking_admin')}}" method="post">
+        <form action="{{url_for('booking.create_booking')}}" method="post">
 
           <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Vendor Email</label>
-            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+            <label for="vendor_email" class="form-label">Vendor Email</label>
+            <input type="email" class="form-control" id="vendor_email" placeholder="name@example.com"
+              name="vendor_email">
           </div>
 
-
-          <label for="Date">Booking Date</label>
-          <input id="DateInput" name="Date" class="form-control mb-2" type="date" />
+          <div data-mdb-input-init class="form-outline mb-2">
+            <label class="form-label" for="title">Booking Title</label>
+            <input type="text" id="title" name="title" class="form-control form-control-md" maxlength="200" required>
+            </textarea>
+          </div>
 
           <div data-mdb-input-init class="form-outline mb-2">
-            <label class="form-label" for="Location">Location</label>
-            <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="Location" id="Location"
+            <label class="form-label" for="location">Location</label>
+            <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="location" id="location"
               required>
               <option value="" disabled selected>Select Location</option>
               <option value="Front Car park">Front Car Park</option>
@@ -30,17 +33,20 @@
           </div>
 
           <div data-mdb-input-init class="form-outline mb-2">
-            <label class="form-label" for="additional_info">Additional Information</label>
-            <textarea type="text" id="additional_info" name="additional_info" class="form-control form-control-md"
-              maxlength="200" required> </textarea>
+            <label for="dateInput">Date</label>
+            <input id="dateInput" name="date" class="form-control mb-2" type="date" />
           </div>
 
-          <div class="form-check p-0">
-            <input id="discount_checkbox" name="discount_checkbox" type="checkbox" onclick="addDiscountTextArea()">
+          <div data-mdb-input-init class="form-check p-0">
+            <input id="discount_checkbox" name="discount_checkbox" type="checkbox" onchange="toggleDealDetails()">
             <label class="form-check-label" for="discount_checkbox">Is the Vendor offering a deal?</label>
           </div>
 
-          <div id="Discount_Section"> </div>
+          <div data-mdb-input-init id="deal_details" class='form-outline mb-4' hidden>
+            <label class='form-label' for='deal'>Deal Details</label>
+            <textarea type='text' maxlength='200' id='deal' name="deal" class='form-control form-control-md'
+              required> </textarea>
+          </div>
 
           <div class="d-flex justify-content-center mt-2">
             <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-block btn-lg px-5">
@@ -56,35 +62,18 @@
 </div>
 
 <script>
-  // Function to format the date to YYYY-MM-DD
-  function getCurrentDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  function toggleDealDetails() {
+    document.getElementById("deal_details").toggleAttribute('hidden');
   }
 
-  // Set the min attribute of the date input field
   document.addEventListener('DOMContentLoaded', () => {
-    const dateInput = document.getElementById('DateInput');
-    dateInput.setAttribute('min', getCurrentDate());
-  });
-</script>
-<script>
-  function addDiscountTextArea() {
-
-    if (document.getElementById('discount_checkbox').checked) {
-      document.getElementById("Discount_Section").innerHTML = " <div data-mdb-input-init class='form-outline mb-4'><label class='form-label' for='discount'>Please enter the details of the discount</label><textarea type='text' maxlength='200' id='discount' class='form-control form-control-md' required> </textarea></div>";
-    } else {
-      document.getElementById("Discount_Section").innerHTML = "";
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('discount_checkbox').checked = false;
     const dateInput = document.getElementById('dateInput');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
+    const today = new Date();
+    today.setDate(today.getDate() + 3);
+    const twoDaysAfter = today.toISOString().split('T')[0];
+
+    dateInput.setAttribute('min', twoDaysAfter);
   });
 </script>
 {%endblock%}

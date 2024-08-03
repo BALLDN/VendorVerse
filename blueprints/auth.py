@@ -1,3 +1,4 @@
+import array
 from functools import wraps
 from time import sleep
 from flask import Blueprint, get_flashed_messages, render_template, request, redirect, url_for, flash, make_response, session
@@ -16,7 +17,7 @@ from util import FlashCategory
 auth_logger = logging.getLogger('auth_audit')
 
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -68,7 +69,7 @@ def register():
         return url_response
 
 
-@auth_bp.route('/vendor_details', methods=['GET', 'POST'])
+@auth_bp.route('/vendor-details', methods=['GET', 'POST'])
 def vendor_details_page():
     db = firestore.client()
     uid = session['UID']
@@ -140,12 +141,12 @@ def logout():
     return redirect(url_for('index'))
 
 
-@auth_bp.route('/reset')
+@auth_bp.route('/password-reset')
 def reset():
     return render_template('forgot_password.html')
 
 
-def role_required(user_type):
+def role_required(user_type: array):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -153,7 +154,7 @@ def role_required(user_type):
                 flash("Please log in to access this page.",
                       FlashCategory.INFO.value)
                 return redirect(url_for('auth.login'))
-            if session.get('user_type') != user_type:
+            if session.get('user_type') not in user_type:
                 flash(f"You need escalated privileges to access this page.",
                       FlashCategory.INFO.value)
                 return redirect(url_for('auth.login'))

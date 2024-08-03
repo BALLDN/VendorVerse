@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const close = document.querySelector(".btn-close");
 
   // Fetch bookings and store in localStorage
-  fetch("/get_bookings_for_calendar")
+  fetch("/booking/calendar")
     .then((response) => response.json())
     .then((bookings) => {
       localStorage.setItem("events", JSON.stringify(bookings));
@@ -22,7 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
       plugins: ["dayGrid", "interaction"],
       events: events.map((event) => ({
         id: event.id,
-        title: `${event["Vendor_Name"]}`,
+        title: `${event["Additional Info"]}\nby ${
+          event["Vendor_Name"] || event["Vendor_ID"]
+        }`,
         start: event.Date,
         backgroundColor: getRandomRGB(),
         allDay: true,
@@ -38,15 +40,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const locationInput = document.getElementById("location");
         const dealInput = document.getElementById("deal");
         const additionalInfoInput = document.getElementById("additional-info");
-        const submitButton = document.getElementById("submit-button");
-        const eventIdInput = document.getElementById("event-id");
 
         dateInput.value = event.Date;
         locationInput.value = event.Location;
         dealInput.value = event.Deal;
-        additionalInfoInput.value = event["Additional Info"];
-        eventIdInput.value = event.id;
-        submitButton.innerHTML = "Save changes";
+        additionalInfoInput.value = `${event["Additional Info"]} by ${
+          event["Vendor_Name"] || event["Vendor_ID"]
+        }`;
 
         myModal.show();
       },

@@ -2,31 +2,46 @@ from flask import Blueprint, redirect, render_template, request, url_for, flash,
 from jinja2 import TemplateNotFound
 from firebase_admin import firestore
 
-from models.user_model import User
 from models.vendor_model import Vendor
-
+from models.booking_model import Booking
 from blueprints.auth import role_required
-from util import FlashCategory
+from util import FlashCategory, BookingForm
 
 
-vendor_bp = Blueprint('vendor', __name__)
+vendor_bp = Blueprint('vendor', __name__, url_prefix='/vendor')
 
 
-@vendor_bp.route('/vendor', methods=['GET'])
-@role_required('V')
+@vendor_bp.route('/', methods=['GET'])
+@role_required(['V'])
 def view_vendor_dashboard():
     return render_template('vendor_home_page.html', home_url=url_for('vendor.view_vendor_dashboard'))
 
 
-@vendor_bp.route('/account', methods=['GET'])
-@role_required('V')
-def view_account():
+@vendor_bp.route('/profile', methods=['GET'])
+@role_required(['V'])
+def view_profile():
     try:
         vendor = Vendor.get_vendor_by_user_id(session['user_id'])
         return render_template('account_details.html', vendor=vendor)
 
     except TemplateNotFound:
         abort(404)
+
+
+@vendor_bp.route('/manage-bookings', methods=['GET'])
+@role_required(['V'])
+def view_manage_bookings():
+    db = firestore.client()
+
+    bookings = Booking.get_bookings_by_vendor_id(session['user_id'])
+
+    return render_template('manage_bookings_page.html', bookings=bookings, form=BookingForm())
+
+
+@vendor_bp.route('/create-booking', methods=['GET'])
+@role_required(['V'])
+def view_create_booking():
+    return render_template('create_booking_vendor.html')
 
 
 @vendor_bp.route('/vendor', methods=['POST'])
@@ -90,7 +105,6 @@ def vendor():
 def account():
     db = firestore.client()
 
-    email = request.cookies.get('login_email')
     user_id = session['user_id']
 
     Vendor.edit_vendor_details(db, user_id)

@@ -1,16 +1,16 @@
 function acceptCookies(e) {
   e.preventDefault();
-  const cookieBox = document.getElementById("cookie_box");
+  const cookieConsent = document.getElementById("cookie_consent");
   let date = new Date();
   let cookiesExpiry = date.setDate(date.getDate() + 14);
   document.cookie = "cookie_accepted=T; expires=" + cookiesExpiry + "; path=/";
-  cookieBox.remove();
+  cookieConsent.remove();
 }
 
 function declineCookies(e) {
   e.preventDefault();
-  const cookieBox = document.getElementById("cookie_box");
-  cookieBox.remove();
+  const cookieConsent = document.getElementById("cookie_consent");
+  cookieConsent.remove();
 }
 
 document.addEventListener("DOMContentLoaded", function () {

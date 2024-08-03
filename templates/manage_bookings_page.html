@@ -4,7 +4,7 @@
 
 <div class="row d-flex justify-content-center h-100">
     <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-6">
-        <form action="{{ url_for('booking.manage_booking') }}" method="post" id="mainForm">
+        <form action="{{ url_for('booking.manage_booking_action') }}" method="post" id="mainForm">
             <div class="vstack gap-3">
                 {% for booking in bookings %}
                 <div class="card ">
@@ -13,14 +13,10 @@
                     </div>
 
                     <div class="card-body">
-
                         <div class="row">
                             <div class="col-7 justify-content-between align-items-start">
-                                <div>
-                                    <strong>{{ booking.get("Vendor_Name") }}</strong>
-                                    <div>📞 {{ booking.get("Vendor_Phone") }}</div>
-                                    <div>🏢 {{ booking.get("Vendor_Address") }}</div>
-                                </div>
+                                <div class="fs-4 fw-bold">{{ booking.get("Additional Info") }}</div>
+                                <div class="px-3">{{ booking.get("Deal") }}</div>
                             </div>
                             <div class="col-5 justify-content-end">
                                 <div class="text-end">{{ booking.get('Date') }}</div>
@@ -30,21 +26,29 @@
 
                         <hr>
 
-                        <p class="px-4">{{ booking.get("Additional Info") }}</p>
+                        <div class="row">
+                            <div class="col-12">
+                                <strong>{{ booking.get("Vendor_Name") }}</strong>
+                                <div>📧 {{ booking.get("Vendor_Email") }}</div>
+                                <div>📞 {{ booking.get("Vendor_Phone") }}</div>
+                                <div>🏢 {{ booking.get("Vendor_Address") }}</div>
+                            </div>
+                        </div>
 
                     </div>
                     <div class="card-footer text-center">
                         <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal"
-                            data-bs-target="#editModal" onclick="setBookingId('{{ booking.id }}')">Edit</button>
+                            data-bs-target="#editModal" id="btn_edit"
+                            onclick="setBookingId('{{ booking.id }}')">Edit</button>
                         <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
                             data-bs-target="#cancelModal" onclick="setBookingId('{{ booking.id }}')">Cancel</button>
                     </div>
                 </div>
+
+                <input type="hidden" name="bookingIdField" id="bookingIdField">
+                <input type="hidden" name="action" id="action" value="">
                 {% endfor %}
             </div>
-
-            <!-- Hidden input to identify the action -->
-            <input type="hidden" name="action" id="action" value="">
         </form>
     </div>
 </div>
@@ -103,6 +107,9 @@
 </div>
 
 <script>
+    function setBookingId(bookingId) {
+        document.getElementById('bookingIdField').value = bookingId;
+    }
     function showModifyModal() {
         const selectedBookingId = document.querySelector('input[name="options"]:checked').value;
 
@@ -128,13 +135,12 @@
             }
         });
     }
-
     function submitCancelForm() {
         document.getElementById('action').value = 'cancel';
         document.getElementById('mainForm').submit();
     }
 
-    document.getElementById('modify_button').addEventListener('click', function () {
+    document.getElementById('btn_edit').addEventListener('click', function () {
         document.getElementById('action').value = 'modify';
     });
 </script>

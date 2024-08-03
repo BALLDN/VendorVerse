@@ -6,11 +6,12 @@
 <div class="row">
     <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
         <div class="card p-4">
-            <h2 class="text-center mb-5">Polls</h2>
+            <h2 class="text-center mb-4">Polls</h2>
             {% if not polls%}
             <p>No Polls at the moment, come back later!</p>
             {%else%}
-            <div class="scrollable-panel">
+            <div class="overflow-scroll vstack gap-3" style="max-height: 640px; height: 640px;">
+
                 {% for poll in polls %}
                 <div class="card mb-4">
                     <div class="card-body">
@@ -41,45 +42,11 @@
         </div>
 
     </div>
-    <div class="col-lg-8 card p-4 mh-50">
-        <div id='calendar'></div>
-    </div>
-
-</div>
-
-</div>
-
-<!-- Booking Details -->
-<div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-title">Booking Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="booking-form">
-                    <div class="mb-3">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="date" class="form-control" id="date" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label for="location" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="location" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label for="deal" class="form-label">Deal</label>
-                        <input type="text" class="form-control" id="deal" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label for="additional-info" class="form-label">Additional Info</label>
-                        <textarea class="form-control" id="additional-info" disabled></textarea>
-                    </div>
-                    <input type="hidden" id="event-id">
-                    <button type="submit" class="btn btn-primary" id="submit-button" hidden></button>
-                </form>
-            </div>
-        </div>
+    <div class="col-lg-8">
+        {% include 'calendar.html' %}
     </div>
 </div>
+
+</div>
+
 {% endblock %}

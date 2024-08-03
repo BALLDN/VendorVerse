@@ -1,3 +1,4 @@
+from sys import prefix
 from flask import jsonify, Blueprint, redirect, render_template, abort, request, url_for, flash
 from jinja2 import TemplateNotFound
 import logging
@@ -11,11 +12,11 @@ from firebase_admin import firestore
 from util import *
 
 
-admin_bp = Blueprint('admin', __name__)
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
-@admin_bp.route('/admin', methods=['GET'])
-@role_required('A')
+@admin_bp.route('/', methods=['GET'])
+@role_required(['A'])
 def view_admin_dashboard():
     try:
         bookings, vendors, employees = _get_pending_approvals()
@@ -30,7 +31,22 @@ def view_admin_dashboard():
         abort(404)
 
 
-@admin_bp.route('/admin', methods=['POST'])
+@admin_bp.route('/manage-bookings', methods=['GET'])
+@role_required(['A'])
+def view_manage_bookings():
+
+    bookings = Booking.get_all_bookings()
+
+    return render_template('manage_bookings_page.html', bookings=bookings, form=BookingForm())
+
+
+@admin_bp.route('/create-booking', methods=['GET'])
+@role_required(['A'])
+def view_create_booking():
+    return render_template('create_booking_admin.html')
+
+
+@admin_bp.route('/approve', methods=['POST'])
 def handle_approvals():
     action = request.form.get('action').upper()
     booking_id = request.form.get('bookingIdField')

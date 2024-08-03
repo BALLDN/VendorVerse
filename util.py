@@ -2,8 +2,10 @@ import os
 import logging
 
 from enum import Enum
-from google.cloud.firestore import Client
 from firebase_admin import credentials, initialize_app
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, DateField
+from wtforms.validators import InputRequired
 
 
 def init_firebase():
@@ -57,3 +59,11 @@ class FlashCategory(Enum):
 
     def __str__(self):
         return self.value
+
+
+class BookingForm(FlaskForm):
+    date = DateField('Date', validators=[InputRequired()])
+    location = StringField('Location', validators=[InputRequired()])
+    discount = TextAreaField('Discount', validators=[InputRequired()])
+    additional_info = TextAreaField(
+        'Additional Information', validators=[InputRequired()])

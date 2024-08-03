@@ -177,10 +177,17 @@ class Booking:
             else:
                 discount = request.form['deal']
 
-            print(booking_ref)
-            booking_ref.update({"Status": status, "Date": date, "Location": location,
-                               "Deal": discount, "`Additional Info`": additional_info})
+        # Update booking record
+        try:
+            booking_ref.update({
+                "Status": status,
+                "Date": date,
+                "Location": location,
+                "Deal": discount,
+                "`Additional Info`": additional_info
+            })
+            print("Booking Updated")
             return booking_ref
-
-        else:
-            return "No User Found!"
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return "Failed to update booking!"

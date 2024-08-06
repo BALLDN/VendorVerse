@@ -11,12 +11,6 @@
         <form action="{{url_for('booking.create_booking')}}" method="post">
 
           <div data-mdb-input-init class="form-outline mb-2">
-            <label class="form-label" for="additional_info">Booking Title</label>
-            <input type="text" id="additional_info" name="additional_info" class="form-control form-control-md"
-              maxlength="200" required> </input>
-          </div>
-
-          <div data-mdb-input-init class="form-outline mb-2">
             <label for="Date">Booking Date</label>
             <input id="dateInput" name="Date" class="form-control mb-2" type="date" />
           </div>
@@ -29,6 +23,11 @@
               <option value="Front Car park">Front Car Park</option>
               <option value="Back Car Park">Back Car Park</option>
             </select>
+          </div>
+
+          <div data-mdb-input-init class="form-outline mb-2">
+            <label class="form-label" for="additional_info">Additional Information</label>
+            <textarea type="text" id="additional_info" name="additional_info" class="form-control form-control-md" maxlength="200" required> </textarea>
           </div>
 
 

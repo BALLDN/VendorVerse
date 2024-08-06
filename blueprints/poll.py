@@ -107,5 +107,5 @@ def _create_poll(database_connection):
     # Get the ID of the newly created poll
     poll_id = poll_ref[1].id
 
-    flash("A poll has been created. To view the poll, navigate to the View/Create Polls Page")
+    flash("A poll has been created. To view the poll, navigate to the View/Create Polls Page",FlashCategory.SUCCESS.value)
     return redirect(url_for('polls.admin_polls'))

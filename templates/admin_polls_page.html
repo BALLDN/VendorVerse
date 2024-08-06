@@ -2,65 +2,70 @@
 {% block title %}Polls Manager{% endblock %}
 {%block content%}
 
-<div class="card mt-5 mb-3" style="border-radius: 15px;">
+<div class="card mt-5 mb-3 bg-light" style="border-radius: 15px;">
     <div class="card-body p-5">
         <h2 class="text-uppercase text-center mb-5">Create a Poll</h2>
 
-        {% for mesg in get_flashed_messages() %}
-        <div class="alert alert-danger">
-            <strong>{{ mesg }}</strong>
-        </div>
-        {% endfor %}
-
-        <form action="{{ url_for('polls.admin_polls') }}" method="post">
+        <form action="{{ url_for('poll.create_poll') }}" method="post">
             <div data-mdb-input-init class="form-outline mb-2">
-
-                <div id="Vendor_Section"> </div>
-
+                <label class='form-label' for='vendor_checkbox'>Asking on behalf of a Vendor?</label>
+                <input id="vendor_checkbox" name="vendor_checkbox" type="checkbox">
             </div>
-
-            <div data-mdb-input-init class="form-outline mb-2">
-                <label class="form-label" for="PollTitle">Poll Title</label>
-                <input type="text" id="PollTitle" name="PollTitle" class="form-control form-control-md" maxlength="100"
-                    required>
-            </div>
-
-            <div data-mdb-input-init class="form-outline mb-2">
-                <label class="form-label" for="Amount">Amount of Choices</label>
-                <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="Amount" id="Amount"
-                    required>
-                    <option value="" disabled selected>Please select how many choices you would like
-                    </option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
+            <div data-mdb-input-init class="form-outline mb-2" id="vendor_name_section" hidden>
+                <label class='form-label' for='vendor_name'>Vendor Name</label>
+                <select class='form-select form-select-sm mb-2' name='vendor_name' id='vendor_name'>
+                    <option value='' disabled selected>Please select a Vendor</option>
+                    {% for vendor in vendors %}
+                    <option value="{{ vendor.get('Vendor_Name') }}">{{ vendor.get('Vendor_Name') }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
-            <div id="pollChoices"></div> <!-- Container for dynamically generated input fields -->
+            <div data-mdb-input-init class="form-outline mb-2">
+                <label class="form-label" for="title">Poll Title</label>
+                <input type="text" id="title" name="title" class="form-control form-control-md"
+                    placeholder="e.g. What do you prefer?" maxlength="100" required>
+            </div>
 
+            <div data-mdb-input-init class="form-outline mb-2" id="options_container">
+                <label for="addOptionBtn" class="form-label">Options</label>
 
-            <input id="vendor_checkbox" name="vendor_checkbox" type="checkbox" onclick="addVendorInput()">Is
-            this poll on behalf of a Vendor?
+                <div class="input-group mb-3">
+                    <input type="text" id="option_1" name="option_1" class="form-control form-control-md"
+                        placeholder="option" required>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" id="option_2" name="option_2" class="form-control form-control-md"
+                        placeholder="option" required>
+                </div>
+
+                <button id="addOptionBtn" class="btn btn-secondary w-100 text-start">Add Option</button>
+
+            </div>
 
             <div class="d-flex justify-content-center">
                 <button type="submit" data-mdb-button-init data-mdb-ripple-init
-                    class="btn btn-success btn-block btn-lg text-body">Submit</button>
+                    class="btn btn-dark btn-block btn-lg px-5">
+                    <h4 class="mb-0">Submit</h4>
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="">
+<div class="card">
     <h2 class="text-uppercase text-center mb-4">Polls</h2>
     <div class="d-flex flex-wrap justify-content-between">
         {% for poll_result in poll_results %}
         <div class="card m-2" style="width: 30%;">
             <div class="card-body">
-                <h4>{{ poll_result.poll_data.Title }}</h4>
-                {% if poll_result.poll_data.Vendor_Name != "No Vendor"%}
-                <p><strong>Vendor Name:</strong> {{ poll_result.poll_data.Vendor_Name }}</p>
-                {% endif%}
+                <h4>{{ poll_result.poll_data.title }}</h4>
+                {% if poll_result.poll_data.vendor_name%}
+                <p><strong>Vendor Name:</strong> {{ poll_result.poll_data.vendor_name }}</p>
+                {% endif %}
+                {% if not poll_result.total_responses > 0%}
+                <p class="fst-italic">No Responses now. Come back later ~</p>
+                {% else %}
                 <p><strong>Total Responses:</strong> {{ poll_result.total_responses }}</p>
                 <ul class="list-group mt-3">
                     {% for option, percentage in poll_result.option_percentages.items() %}
@@ -69,47 +74,15 @@
                     </li>
                     {% endfor %}
                 </ul>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectElement = document.getElementById('Amount');
-        const inputContainer = document.getElementById('pollChoices');
-
-        selectElement.addEventListener('change', function () {
-            // Clear existing input fields
-            inputContainer.innerHTML = '';
-
-            // Get the selected number of choices
-            const numberOfChoices = parseInt(this.value);
-
-            // Generate new input fields based on the selected number
-            for (let i = 0; i < numberOfChoices; i++) {
-                // Create a new input element
-                const inputField = document.createElement('input');
-                inputField.type = 'text';
-                inputField.className = 'form-control mb-2';
-                inputField.name = `choice${i + 1}`;
-                inputField.placeholder = `Choice ${i + 1}`;
-
-                // Append the new input field to the container
-                inputContainer.appendChild(inputField);
-            }
-        });
-    });
-</script>
-<script>
-    function addVendorInput() {
-
-        if (document.getElementById('vendor_checkbox').checked) {
-            document.getElementById("Vendor_Section").innerHTML = " <label class='form-label' for='VendorName'>Vendor Name</label> <select class='form-select form-select-sm mb-2' aria-label=''.form-select-sm' name='VendorName' id='VendorName' required> <option value='' disabled selected>Please select a Vendor</option>{% for vendor in vendors %} <option value='{{ vendor.id }}'>{{ vendor.get('Vendor_Name') }}</option>{% endfor %}</select>";
-        } else {
-            document.getElementById("Vendor_Section").innerHTML = "";
-        }
-    }
-</script>
 {%endblock%}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='/js/polls_manager.js') }}" type="module"></script>
+{% endblock %}

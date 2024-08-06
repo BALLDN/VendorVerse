@@ -1,11 +1,9 @@
-from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect, session
+import logging
 
-from firebase_admin import firestore
-
+from flask import Blueprint, request, flash, jsonify, url_for, redirect, session
 from models.booking_model import Booking
 from blueprints.auth import role_required
-from util import FlashCategory
-import logging
+from util import FlashCategory, send_admin_notif
 
 booking_bp = Blueprint('booking', __name__, url_prefix='/booking')
 
@@ -21,32 +19,55 @@ def create_booking():
         date = form.get('date')
         deal = form.get('deal')
         if vendor_email:
-            success = Booking.add_booking(
+            success = Booking.create_booking(
                 title, location, date, deal, vendor_email)
         else:
-            success = Booking.add_booking(
+            success = Booking.create_booking(
                 title, location, date, deal, session['user_id'])
         if success:
             flash("Your Booking has been created and is pending approval",
                   FlashCategory.SUCCESS.value)
+            send_admin_notif("BOOKING")
     except Exception as e:
         flash('An error was encountered during the attempt of creating a Booking. Please try again.',
               FlashCategory.ERROR.value)
     return redirect(url_for('index'))
 
 
-@booking_bp.route('/action', methods=['POST'])
-@role_required(['V', 'A'])
-def manage_booking_action():
-    action = request.form.get('action')
-    booking_id = request.form.get('bookingIdField')
-
+@booking_bp.route('/<booking_id>/edit', methods=['POST'])
+@role_required(['A', 'V'])
+def update_booking(booking_id):
     try:
-        if action == 'edit':
-            result = Booking.edit_booking(booking_id)
+        form = request.form
+        title = form.get('title')
+        location = form.get('location')
+        date = form.get('date')
+        deal = form.get('deal')
+        result = Booking.update_booking(
+            booking_id, title, location, date, deal)
 
-        if action == 'cancel':
-            result = Booking.cancel_booking(booking_id)
+        if result.update_time:
+            if session['user_type'] == 'V':
+                flash("Booking has been updated successfully and is pending approval",
+                      FlashCategory.SUCCESS.value)
+                send_admin_notif("BOOKING")
+            elif session['user_type'] == 'A':
+                flash("Booking has been updated successfully",
+                      FlashCategory.SUCCESS.value)
+
+    except Exception as e:
+        flash("An error has occuring during amendment of Booking. Please try again.",
+              FlashCategory.ERROR.value)
+        logging.ERROR(str(e))
+    return redirect(url_for('index'))
+
+
+@booking_bp.route('/<booking_id>/cancel', methods=['POST'])
+@role_required(['A', 'V'])
+def delete_booking(booking_id):
+    try:
+
+        result = Booking.delete_booking(booking_id)
 
         if not result.update_time:
             raise Exception('Booking update failed')
@@ -56,11 +77,17 @@ def manage_booking_action():
               FlashCategory.ERROR.value)
         logging.ERROR(str(e))
 
-    return redirect(url_for('booking.manage_booking'))
+    return redirect(url_for('index'))
+
+
+@booking_bp.route('/<booking_id>', methods=['GET'])
+@role_required(['A', 'V'])
+def get_booking_by_id(booking_id):
+    return jsonify(Booking.read_booking(booking_id))
 
 
 @booking_bp.route('/calendar', methods=['GET'])
-def get_bookings():
+def get_calendar_bookings():
     try:
         bookings = Booking.get_approved_bookings()
         return jsonify(bookings)

@@ -2,7 +2,7 @@
 {% block title %}Employee Dashboard{% endblock %}
 
 {% block content %}
-<h2>Welcome, Employee 👋</h2>
+<p class="h1 fst-italic fw-medium">Welcome, Employee 👋</h2>
 <div class="row">
     <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
         <div class="card p-4">
@@ -15,11 +15,11 @@
                 {% for poll in polls %}
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h5 class="card-title">{{ poll.get('Title') }}</h5>
+                        <h5 class="card-title">{{ poll.get('title') }}</h5>
                         {% if poll.get('Vendor_Name') != "No Vendor" %}
-                        <p class="card-text"><strong>Vendor Name:</strong> {{ poll.get('Vendor_Name') }}</p>
+                        <p class="card-text"><strong>Vendor Name:</strong> {{ poll.get('vendor_name') }}</p>
                         {% endif %}
-                        <form action="{{ url_for('polls.submit_poll_response') }}" method="post">
+                        <form action="{{ url_for('poll.submit_poll_response') }}" method="post">
                             <input type="hidden" name="poll_id" value="{{ poll.id }}">
                             {% for option in poll.get('options') %}
                             <div class="form-check">
@@ -47,6 +47,8 @@
     </div>
 </div>
 
-</div>
+{% endblock %}
 
+{%block scripts%}
+<script src="{{ url_for('static', filename='/js/calendar.js') }}" type="module"></script>
 {% endblock %}

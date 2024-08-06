@@ -1,16 +1,15 @@
 import array
 from functools import wraps
 from time import sleep
-from flask import Blueprint, get_flashed_messages, render_template, request, redirect, url_for, flash, make_response, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, session
 import logging
 from firebase_admin import firestore, auth, exceptions
-from firebase_admin._user_mgt import UserRecord
 from uuid import uuid4
 
 
 from models.user_model import User
 from models.vendor_model import Vendor
-from util import FlashCategory
+from util import FlashCategory, send_mail, send_admin_notif
 
 
 # For Auth Audit only
@@ -26,7 +25,7 @@ def register():
         if session.get('access_token'):
             return redirect(url_for('index'))
         else:
-            return render_template('register.html')
+            return render_template('auth_register.html')
 
     if request.method == 'POST':
         email = request.form['email']
@@ -41,10 +40,15 @@ def register():
         uid = uuid4().hex
 
         if user_type == "V":
+            session['UID'] = uid
+            session['user_email'] = email
             url_response = make_response(
                 redirect(url_for('auth.vendor_details_page')))
-            session['UID'] = uid
         elif user_type == "E":
+            send_mail('Welcome to VendorVerse!', email,
+                      'Your account is pending approval. We will let you know when your account has been approved and you can login to our site.')
+
+            send_admin_notif("EMPLOYEE")
             flash("Your Account is Pending Approval",
                   FlashCategory.SUCCESS.value)
             url_response = make_response(redirect(url_for('index')))
@@ -76,12 +80,16 @@ def vendor_details_page():
     if request.method == 'POST':
         Vendor.add_vendor_details(db, uid)
         session.clear()
+        send_mail('Welcome to VendorVerse!', session['user_email'],
+                  'Your account is pending approval. We will let you know when your account has been approved and you can login to our site.')
+        send_admin_notif("VENDOR")
+
         flash(
             "Your Details have been saved and your account is pending approval", FlashCategory.SUCCESS.value)
         return redirect(url_for('index'))
 
     if request.method == 'GET':
-        return render_template('vendor_details_page.html')
+        return render_template('auth_register_vendor.html')
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -92,10 +100,7 @@ def login():
 
         login_email = request.cookies.get('login_email')
 
-        if login_email:
-            return render_template('login.html', login_email=login_email)
-
-        return render_template('login.html')
+        return render_template('auth_login.html', login_email=login_email)
 
     if request.method == 'POST':
         access_token = request.authorization.token
@@ -141,9 +146,20 @@ def logout():
     return redirect(url_for('index'))
 
 
-@auth_bp.route('/password-reset')
+@auth_bp.route('/password-reset', methods=['GET', 'POST'])
 def reset():
-    return render_template('forgot_password.html')
+    if request.method == 'POST':
+        is_email_sent = request.form.get('is_email_sent')
+        if is_email_sent == 'SUCCESS':
+            flash('Password reset email has been sent.\nPlease check your inbox and reset your password accordingly.',
+                  FlashCategory.SUCCESS.value)
+        else:
+            flash('Error sending password reset email. Please try again.',
+                  FlashCategory.ERROR.value)
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'GET':
+        return render_template('auth_password_reset.html')
 
 
 def role_required(user_type: array):

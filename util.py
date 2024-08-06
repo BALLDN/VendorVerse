@@ -1,11 +1,35 @@
 import os
 import logging
-
 from enum import Enum
 from firebase_admin import credentials, initialize_app
 from flask_wtf import FlaskForm
+from flask_mail import Mail, Message
 from wtforms import StringField, TextAreaField, DateField
 from wtforms.validators import InputRequired
+
+
+def send_mail(subject, recipient, message):
+    msg = Message(subject=subject,
+                  sender='no-reply@vendorverse.com', recipients=[recipient])
+    msg.html = message
+    Mail().send(msg)
+
+
+def send_admin_notif(type):
+    if type == "VENDOR":
+        subject = "A New Vendor Registration is Pending Approval."
+
+    elif type == "EMPLOYEE":
+        subject = "A New Employee Registration is Pending Approval."
+
+    elif type == "BOOKING":
+        subject = "A New Booking is Pending Approval."
+
+    else:
+        return None
+
+    send_mail(subject=subject, recipient=os.environ.get(
+        'ADMIN_MAIL'), message="Please login to review Approval.")
 
 
 def init_firebase():
@@ -65,5 +89,5 @@ class BookingForm(FlaskForm):
     date = DateField('Date', validators=[InputRequired()])
     location = StringField('Location', validators=[InputRequired()])
     discount = TextAreaField('Discount', validators=[InputRequired()])
-    additional_info = TextAreaField(
-        'Additional Information', validators=[InputRequired()])
+    title = TextAreaField(
+        'Title', validators=[InputRequired()])

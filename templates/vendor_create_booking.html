@@ -1,25 +1,24 @@
 {%extends 'layout.html'%}
-{% block title %}Booking Creation (Admin){% endblock %}
+{% block title %}Booking Creation (Vendor){% endblock %}
 {%block content%}
 
-<div class="row d-flex justify-content-center align-items-center h-100">
+<div class="row d-flex justify-content-center">
   <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-6">
-    <div class="card mb-5 mt-5" style="border-radius: 15px;">
+    <div style="border-radius: 15px;" class="card mb-5">
       <div class="card-body p-5">
-        <h2 class="text-uppercase text-center mb-5">Booking on behalf of a Vendor</h2>
+        <h2 class="text-uppercase text-center mb-5">Please Enter the Details of your booking</h2>
 
         <form action="{{url_for('booking.create_booking')}}" method="post">
-
-          <div class="mb-3">
-            <label for="vendor_email" class="form-label">Vendor Email</label>
-            <input type="email" class="form-control" id="vendor_email" placeholder="name@example.com"
-              name="vendor_email">
-          </div>
 
           <div data-mdb-input-init class="form-outline mb-2">
             <label class="form-label" for="title">Booking Title</label>
             <input type="text" id="title" name="title" class="form-control form-control-md" maxlength="200" required>
-            </textarea>
+            </input>
+          </div>
+
+          <div data-mdb-input-init class="form-outline mb-2">
+            <label for="dateInput">Booking Date</label>
+            <input id="dateInput" name="date" class="form-control mb-2" type="date" />
           </div>
 
           <div data-mdb-input-init class="form-outline mb-2">
@@ -32,10 +31,6 @@
             </select>
           </div>
 
-          <div data-mdb-input-init class="form-outline mb-2">
-            <label for="dateInput">Date</label>
-            <input id="dateInput" name="date" class="form-control mb-2" type="date" />
-          </div>
 
           <div data-mdb-input-init class="form-check p-0">
             <input id="discount_checkbox" name="discount_checkbox" type="checkbox" onchange="toggleDealDetails()">
@@ -48,14 +43,13 @@
               required> </textarea>
           </div>
 
+
           <div class="d-flex justify-content-center mt-2">
             <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-block btn-lg px-5">
               <h4 class="m-0">Confirm</h4>
             </button>
           </div>
-
         </form>
-
       </div>
     </div>
   </div>
@@ -76,4 +70,5 @@
     dateInput.setAttribute('min', twoDaysAfter);
   });
 </script>
+
 {%endblock%}

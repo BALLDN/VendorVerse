@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
       plugins: ["dayGrid", "interaction"],
       events: events.map((event) => ({
         id: event.id,
-        title: `${event["Additional Info"]}\nby ${
+        title: `${event["Title"]}\nby ${
           event["Vendor_Name"] || event["Vendor_ID"]
         }`,
         start: event.Date,
@@ -39,12 +39,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const dateInput = document.getElementById("date");
         const locationInput = document.getElementById("location");
         const dealInput = document.getElementById("deal");
-        const additionalInfoInput = document.getElementById("additional-info");
+        const titleInput = document.getElementById("title");
 
         dateInput.value = event.Date;
         locationInput.value = event.Location;
         dealInput.value = event.Deal;
-        additionalInfoInput.value = `${event["Additional Info"]} by ${
+        titleInput.value = `${event["Title"]} by ${
           event["Vendor_Name"] || event["Vendor_ID"]
         }`;
 

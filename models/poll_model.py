@@ -1,45 +1,42 @@
-import datetime
-from flask import flash, redirect, request, jsonify, url_for, session
+from datetime import datetime
+from turtle import up
+from flask import flash, redirect, request, jsonify, session
 from firebase_admin import firestore
 
 
-class Polls:
+class Poll:
 
     @staticmethod
-    def create_poll(database_connection):
-        data = request.json
-        title = data.get('PollTitle')
-        User_ID = data.get('VendorName')
-        amount = int(request.form.get('Amount'))
+    def create_poll(title, options, vendor_name=None):
 
-        choices = []
-        for i in range(1, amount + 1):
-            choice = request.form.get(f'choice{i}')
-            if choice:
-                choices.append(choice)
-
-        if not title or not choices:
-            print(jsonify({'error': 'Missing fields'}), 400)
-
-        poll_ref = database_connection.collection('Polls').add({
-            'Title': title,
-            'Vendor_Name': User_ID,
-            'options': choices,
-            'createdAt': datetime.now(),
+        firestore.client().collection('Polls').add({
+            'title': title,
+            'vendor_name': vendor_name,
+            'options': options,
+            'created_at': datetime.now(),
         })
 
-        print(jsonify({'message': 'Poll created',
-              'poll_id': poll_ref[1].id}), 201)
-
-        return poll_ref
+    @staticmethod
+    def get_all_polls():
+        return firestore.client().collection('Polls').stream()
 
     @staticmethod
-    def get_polls():
+    def get_unresponded_polls(user_id):
         db = firestore.client()
         polls_ref = db.collection('Polls')
-        docs = polls_ref.get()
+        polls = polls_ref.stream()
 
-        return docs
+        unresponded_polls = []
+
+        for poll in polls:
+            responses_ref = polls_ref.document(poll.id).collection('Responses')
+            response = responses_ref.document(user_id).get()
+            if not response.exists:
+                poll_data = poll.to_dict()
+                poll_data['id'] = poll.id
+                unresponded_polls.append(poll_data)
+
+        return unresponded_polls
 
     @staticmethod
     def get_polls_by_vendor_id(database_connection, vendor_id):
@@ -62,25 +59,22 @@ class Polls:
         if existing_response.exists:
             raise Exception('You have already responded to this poll')
 
-        # Store the response
         return responses_ref.document(user_id).set({
             'selected_option': selected_option,
-            'responded_at': datetime.datetime.now()
+            'responded_at': datetime.now()
         })
 
     @staticmethod
-    def get_poll_results(database_connection, poll_id):
-        poll_ref = database_connection.collection('Polls').document(poll_id)
+    def get_poll_results(poll_id):
+        db = firestore.client()
+        poll_ref = db.collection('Polls').document(poll_id)
         responses_ref = poll_ref.collection('Responses')
 
-        # Retrieve all responses
         responses = responses_ref.get()
 
-        # If there are no responses, return empty results
         if not responses:
             return {}, 0
 
-        # Count the total number of responses and responses for each option
         total_responses = len(responses)
         option_counts = {}
 
@@ -92,7 +86,6 @@ class Polls:
                 else:
                     option_counts[selected_option] = 1
 
-        # Calculate the percentage for each option
         option_percentages = {
             option: (count / total_responses) * 100
             for option, count in option_counts.items()

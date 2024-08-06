@@ -22,7 +22,7 @@ def view_vendor_dashboard():
 def view_profile():
     try:
         vendor = Vendor.get_vendor_by_user_id(session['user_id'])
-        return render_template('account_details.html', vendor=vendor)
+        return render_template('vendor_profile.html', vendor=vendor)
 
     except TemplateNotFound:
         abort(404)
@@ -35,13 +35,13 @@ def view_manage_bookings():
 
     bookings = Booking.get_bookings_by_vendor_id(session['user_id'])
 
-    return render_template('manage_bookings_page.html', bookings=bookings, form=BookingForm())
+    return render_template('bookings_manager.html', bookings=bookings, form=BookingForm())
 
 
 @vendor_bp.route('/create-booking', methods=['GET'])
 @role_required(['V'])
 def view_create_booking():
-    return render_template('create_booking_vendor.html')
+    return render_template('vendor_create_booking.html')
 
 
 @vendor_bp.route('/vendor', methods=['POST'])
@@ -82,7 +82,7 @@ def vendor():
 
                     date = request.form.get('date')
                     location = request.form.get('location')
-                    additional_info = request.form.get('additional-info')
+                    title = request.form.get('title')
 
                     discount = request.form.get('deal', "No Discount")
 
@@ -91,7 +91,7 @@ def vendor():
                         "Date": date,
                         "Location": location,
                         "Deal": discount,
-                        "`Additional Info`": additional_info
+                        "Title": title
                     })
                     # Redirect to the admin page after modification
                     return redirect(url_for('vendor'))

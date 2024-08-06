@@ -27,12 +27,10 @@ class Vendor:
             return vendor
 
     @staticmethod
-    def get_users(database_connection):
-        # gets all users from db
-        users_ref = database_connection.collection('Vendors')
-        docs = users_ref.get()
-        return docs
+    def get_all_vendors():
+        return firestore.client().collection('Vendors').stream()
 
+    @staticmethod
     def add_vendor_details(database_connection, user_id):
         # adds a vendors details to db
         vendor_name = request.form['vendor_name']
@@ -48,6 +46,7 @@ class Vendor:
         database_connection.collection("Vendors").add(details)
         return details
 
+    @staticmethod
     def edit_vendor_details(database_connection, user_id):
         vendor_ref = database_connection.collection(
             'Vendors').where('User_ID', '==', user_id).get()

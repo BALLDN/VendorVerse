@@ -1,6 +1,6 @@
 {
   "approved_booking": {
-    "additional_info": "Local Art and Crafts",
+    "title": "Local Art and Crafts",
     "date": "2024-07-24",
     "deal": "No Discount",
     "location": "Side of Building",
@@ -32,7 +32,7 @@
     "user_type": "E"
   },
   "pending_booking": {
-    "additional_info": "Sells Fresh Baked Goods",
+    "title": "Sells Fresh Baked Goods",
     "date": "2024-07-24",
     "deal": "20% Off",
     "location": "Near Parking Lot",
@@ -40,7 +40,7 @@
     "vendor_id": "Uv3iBLNkJyzxPRSg5Qp7"
   },
   "pending_booking_amendment": {
-    "additional_info": "Sells Fresh Baked Goods",
+    "title": "Sells Fresh Baked Goods",
     "date": "2024-07-24",
     "deal": "20% Off",
     "location": "Near Parking Lot",
@@ -49,14 +49,14 @@
     "last_updated": "2024-07-26"
   },
   "valid_booking_details": {
-    "additional_info": "Sells Fresh Baked Goods",
+    "title": "Sells Fresh Baked Goods",
     "date": "2024-07-24",
     "deal": "20% Off",
     "location": "Near Parking Lot",
     "vendor_id": "Uv3iBLNkJyzxPRSg5Qp7"
   },
   "invalid_booking_details": {
-    "additional_info": "Local Art and Crafts",
+    "title": "Local Art and Crafts",
     "date": "2000-01-01",
     "deal": "No Discount",
     "location": "Side of Building",

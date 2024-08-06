@@ -1,7 +1,7 @@
 {%extends 'layout.html'%}
 {% block title %}Admin Dashboard{% endblock %}
 {%block content%}
-<h2>Welcome, Admin 👋</h2>
+<p class="h1 fst-italic fw-medium">Welcome, Admin 👋</h2>
 <div class="row">
     <div class="col-sm-12 col-lg-5">
         <div class="card p-4">
@@ -25,7 +25,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-7 justify-content-between align-items-start">
-                                    <div class="fs-4 fw-bold">{{ booking.get("Additional Info") }}</div>
+                                    <div class="fs-4 fw-bold">{{ booking.get("Title") }}</div>
                                     <div class="px-3">{{ booking.get("Deal") }}</div>
                                 </div>
                                 <div class="col-5 justify-content-end">
@@ -124,7 +124,6 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to approve?</p>
-                <!-- Additional content if needed -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -146,7 +145,6 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to cancel?</p>
-                <!-- Additional content if needed -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -178,4 +176,8 @@
         document.getElementById('mainForm').submit();
     }
 </script>
+
 {%endblock%}
+{%block scripts%}
+<script src="{{ url_for('static', filename='/js/calendar.js') }}" type="module"></script>
+{% endblock %}

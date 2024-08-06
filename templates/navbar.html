@@ -38,7 +38,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('polls.admin_polls') }}">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('admin.view_polls_manager') }}">
                             <h4>Manage Polls</h4>
                         </a>
                     </li>
@@ -84,7 +84,7 @@
                             {% set user_type = session.get('user_type')%}
                             {% if user_type == 'V' %}
                             <li>
-                                <a class="dropdown-item" aria-current="page"
+                                <a class="dropdown-item my-4" aria-current="page"
                                     href="{{ url_for('vendor.view_profile') }}">
                                     <span class="fs-5">My Profile</span>
                                 </a>

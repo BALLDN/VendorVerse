@@ -1,6 +1,7 @@
 import {
   signInWithEmailAndPassword,
   signOut,
+  sendPasswordResetEmail,
 } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
 import { auth } from "./firebase.js";
 
@@ -37,7 +38,6 @@ export function signIn(email, password) {
           }, 1000);
         });
       }
-      console.error("Error signing in:", error.code, error.message);
     });
 }
 
@@ -49,7 +49,7 @@ function auth_redirect(response) {
       window.location.assign("/");
     }
   } else {
-    throw Exception(response.statusText);
+    throw Exception(response);
   }
 }
 
@@ -75,6 +75,25 @@ document.addEventListener("DOMContentLoaded", function () {
           field.getAttribute("type") === "password" ? "text" : "password";
         field.setAttribute("type", type);
       });
+    });
+  }
+
+  const frmPasswordReset = document.getElementById("password_reset");
+  if (frmPasswordReset) {
+    frmPasswordReset.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const formData = new FormData(frmPasswordReset);
+      const email = formData.get("email");
+      let is_email_sent = document.getElementById("is_email_sent");
+      sendPasswordResetEmail(auth, email)
+        .then(function () {
+          is_email_sent.value = "SUCCESS";
+          event.target.submit();
+        })
+        .catch(function () {
+          is_email_sent.value = "ERROR";
+          event.target.submit();
+        });
     });
   }
 });

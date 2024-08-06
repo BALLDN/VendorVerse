@@ -1,24 +1,31 @@
 {% extends 'layout.html' %}
 {% block title %}Vendor Dashboard{% endblock %}
 {% block content %}
-<h2>Welcome, Vendor 👋</h2>
+<p class="h1 fst-italic fw-medium">Welcome, Vendor 👋</h2>
 <div class="row">
-    <div class="col-8 card p-4">
+    <div class="col-lg-8 col-sm-12 card p-4">
         {% include 'calendar.html' %}
     </div>
 
-    <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
-        <h2>About Us</h2>
-        <div class="about_us">
-            <p class="mt-5">Booking a time slot will allow your business to offer products to our Staff
-                Members. Bookings can be made in advance with the following link: <a href="#">Make a Booking
-                    here!</a></p>
-            <br>
-            <p class="mt-5">Request a poll for our staff members to gauge their interest in your services:
-                <a href="#">Create a poll here!</a>
-            </p>
-            <br>
-            <p class="mt-5">For any further information you require contact: <a href="#">068 12345</a></p>
+    <div class="col-sm-12 col-lg-4 card p-4">
+        <p class="h2 mb-3 fw-bold">Get Started</p>
+        <div class="card mb-3">
+            <div class="card-body d-flex flex-column align-items-center p-5">
+                <div class="lead mb-4">Schedule a visit to our office!</div>
+                <a href="{{url_for('vendor.view_create_booking')}}" class="btn btn-dark btn-block px-4"
+                    style="width: 150px; height: 40px;">Book</a>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body d-flex flex-column align-items-center p-5">
+                <div class="lead mb-4">Check your booking status.</div>
+                <a href="{{url_for('vendor.view_manage_bookings')}}" class="btn btn-dark btn-block px-4"
+                    style="width: 150px; height: 40px;">Manage</a>
+            </div>
+        </div>
+        <div class="mb-3">
+            For Poll requests and other inquiries, please email us at <a
+                href="mailto:admin@vendorverse.com">admin@vendorverse.com</a>
         </div>
     </div>
 </div>
@@ -63,3 +70,6 @@
     });
 </script>
 {%endblock%}
+{%block scripts%}
+<script src="{{ url_for('static', filename='/js/calendar.js') }}" type="module"></script>
+{% endblock %}

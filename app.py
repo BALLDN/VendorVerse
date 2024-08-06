@@ -8,7 +8,7 @@ from blueprints.vendor import vendor_bp
 from blueprints.booking import booking_bp
 from blueprints.poll import poll_bp
 
-from models.polls_model import Polls
+from models.poll_model import Poll
 from util import *
 
 
@@ -17,6 +17,16 @@ load_dotenv()
 
 def create_app(test_config=None):
     app = Flask(__name__)
+
+    app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'
+    app.config['MAIL_PORT'] = 2525
+    app.config['MAIL_USERNAME'] = '4c6dc14e4a73d4'
+    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USE_SSL'] = False
+
+    Mail(app)
+
     app.secret_key = os.environ.get('APP_SECRET_KEY')
     if test_config:
         app.config.from_object(test_config)
@@ -46,15 +56,15 @@ def create_app(test_config=None):
         else:
             return render_template('public_home_page.html')
 
-    @app.route('/employee', methods=['GET'])
-    @role_required(['E'])
-    def employee():
-        polls = Polls.get_polls()
-        return render_template('employee_home_page.html', home_url=url_for('employee'), polls=polls)
-
     @app.route('/about', methods=['GET'])
     def about():
         return render_template('about_us.html')
+
+    @app.route('/employee', methods=['GET'])
+    @role_required(['E'])
+    def employee():
+        polls = Poll.get_unresponded_polls(session['user_id'])
+        return render_template('employee_home_page.html', home_url=url_for('employee'), polls=polls)
 
     return app
 

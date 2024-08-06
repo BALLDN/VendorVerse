@@ -61,7 +61,7 @@ class Booking:
         else:
             raise Exception('Booking not found!')
 
-    @staticmethod
+    @ staticmethod
     def get_all_bookings():
         detailed_bookings = []
         bookings = firestore.client().collection('Bookings').get()
@@ -83,7 +83,7 @@ class Booking:
 
         return detailed_bookings
 
-    @staticmethod
+    @ staticmethod
     def get_bookings_by_vendor_id(vendor_id):
         detailed_bookings = []
         bookings = firestore.client().collection(
@@ -98,6 +98,7 @@ class Booking:
                 booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
                 booking['Vendor_Phone'] = vendor_details.get('Phone_Number')
                 booking['Vendor_Address'] = vendor_details.get('Address')
+                booking['Vendor_Email'] = vendor_details.get('Email')
 
             # Log the booking to verify all fields
             print(f"Retrieved Booking: {booking}")
@@ -106,7 +107,7 @@ class Booking:
 
         return detailed_bookings
 
-    @staticmethod
+    @ staticmethod
     def get_approved_bookings():
         detailed_bookings = []
         bookings = firestore.client().collection(
@@ -131,7 +132,7 @@ class Booking:
 
         return detailed_bookings
 
-    @staticmethod
+    @ staticmethod
     def get_pending_bookings_with_details():
         db = firestore.client()
         detailed_bookings = []
@@ -155,7 +156,7 @@ class Booking:
 
         return detailed_bookings
 
-    @staticmethod
+    @ staticmethod
     def get_vendor_email_by_booking_id(booking_id):
         db = firestore.client()
         vendor_id = db.collection('Bookings').document(

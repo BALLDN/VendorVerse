@@ -3,7 +3,7 @@ import logging
 from flask import Blueprint, request, flash, jsonify, url_for, redirect, session
 from models.booking_model import Booking
 from blueprints.auth import role_required
-from util import FlashCategory, send_admin_notif
+from util import FlashCategory, send_admin_notif, send_mail
 
 booking_bp = Blueprint('booking', __name__, url_prefix='/booking')
 
@@ -67,10 +67,12 @@ def update_booking(booking_id):
 def delete_booking(booking_id):
     try:
 
-        result = Booking.delete_booking(booking_id)
-
-        if not result.update_time:
-            raise Exception('Booking update failed')
+        Booking.delete_booking(booking_id)
+        flash("Booking has been cancelled successfully.",
+              FlashCategory.SUCCESS.value)
+        Booking.get_vendor_email_by_booking_id(booking_id)
+        send_mail("Your Booking has been cancelled by the Admin",
+                  Booking.get_vendor_email_by_booking_id(booking_id), "Please login to verify.")
 
     except Exception as e:
         flash("An error has occuring during cancellation of Booking. Please try again.",

@@ -39,6 +39,16 @@ def register():
 
         uid = uuid4().hex
 
+        try:
+            auth.create_user(
+                uid=uid, email=email, password=password)
+        except exceptions.InvalidArgumentError as e:
+            flash('Invalid Email!', FlashCategory.ERROR.value)
+            return redirect(url_for('auth.register'))
+        except Exception as e:
+            flash(str(e), FlashCategory.ERROR.value)
+            return redirect(url_for('auth.register'))
+
         if user_type == "V":
             session['UID'] = uid
             session['user_email'] = email
@@ -58,16 +68,6 @@ def register():
             url_response = make_response(
                 redirect(url_for('index')))
 
-        try:
-            auth.create_user(
-                uid=uid, email=email, password=password)
-        except exceptions.InvalidArgumentError as e:
-            flash('Invalid Email!', FlashCategory.ERROR.value)
-            return redirect(url_for('auth.register'))
-        except Exception as e:
-            flash(str(e), FlashCategory.ERROR.value)
-            return redirect(url_for('auth.register'))
-
         User.add_user(uid, email, user_type)
 
         return url_response
@@ -79,13 +79,13 @@ def vendor_details_page():
     uid = session['UID']
     if request.method == 'POST':
         Vendor.add_vendor_details(db, uid)
-        session.clear()
         send_mail('Welcome to VendorVerse!', session['user_email'],
                   'Your account is pending approval. We will let you know when your account has been approved and you can login to our site.')
         send_admin_notif("VENDOR")
 
+        session.clear()
         flash(
-            "Your Details have been saved and your account is pending approval", FlashCategory.SUCCESS.value)
+            "Your details have been saved and your account is pending approval", FlashCategory.SUCCESS.value)
         return redirect(url_for('index'))
 
     if request.method == 'GET':
@@ -115,9 +115,12 @@ def login():
             user = User.get_user_by_user_id(session['user_id'])
             session['user_type'] = user.get('User_Type')
             status = user.get('Status')
-            if status != 'A':
+            if status == 'P':
                 session.clear()
                 return redirect(url_for('index', status='PENDING'))
+            if status == 'D':
+                session.clear()
+                return redirect(url_for('index', status='DENIED'))
 
             if session['user_type'] == "A":
                 return redirect(

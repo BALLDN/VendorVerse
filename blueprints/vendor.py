@@ -101,12 +101,13 @@ def vendor():
             return jsonify({'error': str(e)}), 500
 
 
-@vendor_bp.route('/account', methods=['POST'])
+@vendor_bp.route('/profile/edit', methods=['POST'])
 def account():
     db = firestore.client()
 
     user_id = session['user_id']
 
     Vendor.edit_vendor_details(db, user_id)
-    flash("Your Details have been edited", FlashCategory.SUCCESS.value)
-    return redirect(url_for('vendor.account'))
+    flash("Your details have been updated and saved.",
+          FlashCategory.SUCCESS.value)
+    return redirect(url_for('vendor.view_profile'))

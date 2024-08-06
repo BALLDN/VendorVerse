@@ -65,7 +65,7 @@ def view_polls_manager():
     return render_template('admin_polls_page.html', poll_results=poll_results, vendors=vendors)
 
 
-@admin_bp.route('/approve', methods=['POST'])
+@admin_bp.route('/approval', methods=['POST'])
 def handle_approvals():
     action = request.form.get('action').upper()
     booking_id = request.form.get('bookingIdField')
@@ -74,11 +74,11 @@ def handle_approvals():
     try:
         if (booking_id):
             approve_booking(booking_id, action)
-            msg = "Booking approved successfully."
+            msg = f"Booking {action} action completed successfully."
 
         elif (user_id):
             approve_user(user_id, action)
-            msg = "User approved successfully."
+            msg = f"User {action} action completed successfully."
 
         flash(msg, FlashCategory.SUCCESS.value)
 
@@ -90,20 +90,26 @@ def handle_approvals():
 
 
 def approve_booking(booking_id, action):
-    _approve_entity('Bookings', booking_id, action)
+    is_approved = _approve_entity('Bookings', booking_id, action)
 
     vendor_email = Booking.get_vendor_email_by_booking_id(booking_id)
-    send_mail("Your Booking has been approved",
-              vendor_email, "Please login to verify.")
-    return
+    if is_approved:
+        send_mail("Your Booking has been approved",
+                  vendor_email, "Please login to verify.")
+    else:
+        send_mail("Your Booking has been denied",
+                  vendor_email, "Please login to verify.")
 
 
 def approve_user(user_id, action):
-    _approve_entity('Users', user_id, action)
+    is_approved = _approve_entity('Users', user_id, action)
     user_email = auth.get_user(user_id).email
-    send_mail("Your account has been approved",
-              user_email, "Please login to verify.")
-    return
+    if is_approved:
+        send_mail("Your account has been approved",
+                  user_email, "Please login to verify.")
+    else:
+        send_mail("Your account has been denied",
+                  user_email, "Please login to verify.")
 
 
 def _approve_entity(collection_name: str, entity_id, action):
@@ -116,8 +122,10 @@ def _approve_entity(collection_name: str, entity_id, action):
 
     if action == 'APPROVE':
         entity_ref.update({'Status': 'A'})
+        return True
     elif action == 'DENY':
         entity_ref.update({'Status': 'D'})
+        return False
     else:
         raise Exception("Invalid Action.")
 

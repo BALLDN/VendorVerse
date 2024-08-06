@@ -35,7 +35,7 @@ export function signIn(email, password) {
           input.classList.toggle("is-invalid");
           setTimeout(() => {
             input.classList.toggle("is-invalid");
-          }, 1000);
+          }, 1500);
         });
       }
     });

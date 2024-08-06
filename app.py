@@ -44,6 +44,9 @@ def create_app(test_config=None):
         if request.args.get('status') == 'PENDING':
             flash("Your account is still pending approval. Please come back later.",
                   FlashCategory.INFO.value)
+        if request.args.get('status') == 'DENIED':
+            flash("Your registration has been denied by the Admin.",
+                  FlashCategory.ERROR.value)
 
         user_type = session.get('user_type')
         if user_type and session.get('access_token'):
@@ -65,6 +68,14 @@ def create_app(test_config=None):
     def employee():
         polls = Poll.get_unresponded_polls(session['user_id'])
         return render_template('employee_home_page.html', home_url=url_for('employee'), polls=polls)
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('error_404.html'), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        return render_template('error_500.html'), 500
 
     return app
 

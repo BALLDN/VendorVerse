@@ -16,8 +16,8 @@ poll_bp = Blueprint('poll', __name__, url_prefix='/poll')
 def create_poll():
 
     form = request.form.to_dict()
+    vendor_name = request.form.get('vendor_name') or None
     title = form['title']
-    vendor_name = form['vendor_name'] or None
     options = [value for key, value in form.items()
                if key.startswith('option')]
 

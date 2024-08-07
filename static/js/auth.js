@@ -1,6 +1,5 @@
 import {
   signInWithEmailAndPassword,
-  signOut,
   sendPasswordResetEmail,
 } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
 import { auth } from "./firebase.js";
@@ -42,14 +41,10 @@ export function signIn(email, password) {
 }
 
 function auth_redirect(response) {
-  if (response.ok) {
-    if (response.redirected) {
-      window.location.assign(response.url);
-    } else {
-      window.location.assign("/");
-    }
+  if (response.redirected) {
+    window.location.assign(response.url);
   } else {
-    throw Exception(response);
+    window.location.assign("/");
   }
 }
 

@@ -86,4 +86,6 @@ class User:
     @staticmethod
     def get_user_by_user_id(user_id):
         user_doc = firestore.client().collection('Users').document(user_id).get()
+        if not user_doc.exists:
+            raise Exception('User not found.')
         return user_doc.to_dict()

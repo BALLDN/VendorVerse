@@ -31,8 +31,6 @@ def view_profile():
 @vendor_bp.route('/manage-bookings', methods=['GET'])
 @role_required(['V'])
 def view_manage_bookings():
-    db = firestore.client()
-
     bookings = Booking.get_bookings_by_vendor_id(session['user_id'])
 
     return render_template('bookings_manager.html', bookings=bookings, form=BookingForm())

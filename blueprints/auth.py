@@ -1,7 +1,8 @@
 import array
 from functools import wraps
+from re import T
 from time import sleep
-from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, session
+from flask import Blueprint, abort, render_template, request, redirect, url_for, flash, make_response, session
 import logging
 from firebase_admin import firestore, auth, exceptions
 from uuid import uuid4
@@ -111,7 +112,6 @@ def login():
             uid = decoded_token['uid']
             session['user_id'] = uid
             session['access_token'] = access_token
-
             user = User.get_user_by_user_id(session['user_id'])
             session['user_type'] = user.get('User_Type')
             status = user.get('Status')
@@ -131,15 +131,13 @@ def login():
             elif session['user_type'] == "E":
                 return redirect(url_for('employee'))
             else:
-                flash('An error has occured during sign in. Please try again.',
-                      FlashCategory.ERROR.value)
-                return redirect(url_for('index'))
-
+                raise Exception('Invalid User Type.')
         except Exception as e:
-            flash('An error has occured during sign in. Please try again.',
+            session.clear()
+            flash(f'An error has occured during sign in. {str(e)} Please try again.',
                   FlashCategory.ERROR.value)
-            logging.ERROR(e)
-            return redirect(url_for('index'))
+            logging.error(str(e))
+            return abort(make_response({'code': 'auth/invalid-login-credentials'}, 500))
 
 
 @auth_bp.route('/logout')

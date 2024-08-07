@@ -4,12 +4,14 @@
 <p class="h1 fst-italic fw-medium">Welcome, Admin 👋</h2>
 <div class="row">
     <div class="col-sm-12 col-lg-5">
-        <div class="card p-4">
+        <div class="card p-4 pb-0 h-100">
             <h2 class="text-center mb-4">Pending Approvals</h2>
 
             {% if not (bookings or vendors or employees)%}
-
-            <div class="m-4">Good job! No Pending Approvals at the moment. Take a break ☕!</div>
+            <div class="bg-light rounded border rounded-4">
+                <div class="m-4">Good job! No Pending Approvals at the moment</div>
+                <div class="m-4">Take a break ☕!</div>
+            </div>
 
             {% else %}
 
@@ -104,11 +106,13 @@
                 <input type="hidden" name="action" id="action">
             </form>
 
+            <i class="bi bi-arrow-down-circle align-self-center h3 mt-2"></i>
             {%endif%}
+
         </div>
     </div>
 
-    <div class="col-sm-12 col-lg-7 justify-content-center align-items-center d-flex">
+    <div class="col-sm-12 col-lg-7 justify-content-center align-items-center d-flex card p-4">
         {% include 'calendar.html' %}
     </div>
 </div>

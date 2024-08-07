@@ -15,14 +15,21 @@ class Vendor:
     def get_vendor_by_user_id(user_id):
         db = firestore.client()
 
+        vendor_email = db.collection('Users').document(
+            user_id).get().get('Email')
+
         vendors_ref = db.collection('Vendors')
         query = vendors_ref.where("User_ID", "==", user_id)
         results = query.get()
 
+        if len(results) == 0:
+            vendors_ref.add({"Vendor_Name": vendor_email, "Phone_Number": "N/A",
+                             "Address": "N/A", "About_Us": "N/A", "User_ID": user_id})
+            query = vendors_ref.where("User_ID", "==", user_id)
+            results = query.get()
+
         for result in results:
             vendor = result.to_dict()
-            vendor_email = db.collection('Users').document(
-                user_id).get().get('Email')
             vendor['Email'] = vendor_email
             return vendor
 

@@ -18,7 +18,7 @@
             <input type="text" name="vendor_name" id="vendor_name" value="{{vendor.get('Vendor_Name')}}"
               class="form-control form-control-md" maxlength="30" required>
             {% else %}
-            <input type="text" name="vendor_name" id="vendor_name" placeholder="Vendor Name"
+            <input type="text" name="vendor_name" id="vendor_name" placeholder="Business Name"
               class="form-control form-control-md" maxlength="30" required>
             {% endif %}
           </div>
@@ -27,10 +27,10 @@
 
             <label class="form-label" for="phone_number">Contact Number</label>
             {% if vendor.get("Phone_Number")%}
-            <input type="text" name="phone_number" id="phone_number" value="{{vendor.get('Phone_Number')}}"
+            <input type="tel" name="phone_number" id="phone_number" value="{{vendor.get('Phone_Number')}}"
               class="form-control form-control-md" maxlength="30" required>
             {% else %}
-            <input type="text" id="phone_number" name="phone_number" placeholder="Phone Number"
+            <input type="tel" id="phone_number" name="phone_number" placeholder="Contact Number"
               class="form-control form-control-md" maxlength="25" required>
             {% endif %}
 

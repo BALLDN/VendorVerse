@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function initializeCalendar(events) {
     const calendar = new FullCalendar.Calendar(calendarEl, {
-      height: "100%",
+      height: "auto",
       headerToolbar: {
         center: "customButton",
         right: "today,prev,next",

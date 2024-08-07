@@ -1,0 +1,80 @@
+{%extends 'layout.html'%}
+{% block title %}My Account{% endblock %}
+{%block content%}
+
+<div class="row d-flex justify-content-center align-items-center">
+  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-6 col-xl-5">
+    <div class="card rounded-4" style="border-radius: 15px; min-height: 80vh;">
+      <div class="card-body p-5">
+        <h2 class="text-uppercase mb-5">My Profile</h2>
+
+        <form action="{{url_for('vendor.account')}}" method="post">
+
+          <div data-mdb-input-init class="form-outline mb-4">
+
+            <label class="form-label" for="vendor_name">Business Name</label>
+
+            {% if vendor.get("Vendor_Name")%}
+            <input type="text" name="vendor_name" id="vendor_name" value="{{vendor.get('Vendor_Name')}}"
+              class="form-control form-control-md" maxlength="30" required>
+            {% else %}
+            <input type="text" name="vendor_name" id="vendor_name" placeholder="Vendor Name"
+              class="form-control form-control-md" maxlength="30" required>
+            {% endif %}
+          </div>
+
+          <div data-mdb-input-init class="form-outline mb-4">
+
+            <label class="form-label" for="phone_number">Contact Number</label>
+            {% if vendor.get("Phone_Number")%}
+            <input type="text" name="phone_number" id="phone_number" value="{{vendor.get('Phone_Number')}}"
+              class="form-control form-control-md" maxlength="30" required>
+            {% else %}
+            <input type="text" id="phone_number" name="phone_number" placeholder="Phone Number"
+              class="form-control form-control-md" maxlength="25" required>
+            {% endif %}
+
+          </div>
+
+          <div data-mdb-input-init class="form-outline mb-4">
+
+            <label class="form-label" for="address">Address</label>
+
+            {% if vendor.get("Address")%}
+            <input type="text" name="address" id="address" value="{{vendor.get('Address')}}"
+              class="form-control form-control-md" maxlength="70" required>
+            {% else %}
+            <input type="text" name="address" id="address" placeholder="Address" class="form-control form-control-md"
+              maxlength="70" required>
+            {% endif %}
+
+          </div>
+
+          <div data-mdb-input-init class="form-outline mb-4">
+            <label class="form-label" for="about_us">Description of Business</label>
+            {% if vendor.get("About_Us")%}
+            <textarea type="text" name="about_us" id="about_us" class="form-control form-control-md" maxlength="150"
+              required>{{vendor.get("About_Us")}}</textarea>
+
+            {% else %}
+            <textarea type="text" name="about_us" id="about_us" class="form-control form-control-md" maxlength="150"
+              required></textarea>
+            {% endif %}
+
+          </div>
+
+
+          <div class="d-flex justify-content-center">
+            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-block btn-lg px-5">
+              <h4 class="m-0">Confirm</h4>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{%endblock%}

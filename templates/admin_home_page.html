@@ -1,293 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
+{%extends 'layout.html'%}
+{% block title %}Admin Dashboard{% endblock %}
+{%block content%}
+<p class="h1 fst-italic fw-medium">Welcome, Admin 👋</h2>
+<div class="row">
+    <div class="col-sm-12 col-lg-5">
+        <div class="card p-4">
+            <h2 class="text-center mb-4">Pending Approvals</h2>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.3.0/main.min.css">
+            {% if not (bookings or vendors or employees)%}
 
-    <style>
-        #approvals_section {
-            height: 700px;
-            /* Adjust height as needed */
-            overflow-y: scroll;
-            overflow-x: hidden;
-        }
-    </style>
-</head>
+            <div class="m-4">Good job! No Pending Approvals at the moment. Take a break ☕!</div>
 
-<body>
-    {% include 'admin_navbar.html' %}
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="alert alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
+            {% else %}
 
 
-    <div class="gradient-custom-3">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <h2 class="text-center">Calendar</h2>
-                    <div id='calendar'></div>
-
-                    <!-- Modal for adding/editing bookings -->
-                    <div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modal-title">Edit Booking</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="booking-form">
-                                        <div class="mb-3">
-                                            <label for="date" class="form-label">Date</label>
-                                            <input type="date" class="form-control" id="date" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="location" class="form-label">Location</label>
-                                            <input type="text" class="form-control" id="location" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="deal" class="form-label">Deal</label>
-                                            <input type="text" class="form-control" id="deal" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="additional-info" class="form-label">Additional Info</label>
-                                            <textarea class="form-control" id="additional-info" required></textarea>
-                                        </div>
-                                        <input type="hidden" id="event-id">
-                                        <button type="submit" class="btn btn-primary" id="submit-button">Save
-                                            changes</button>
-                                    </form>
-                                </div>
-                            </div>
+            <form action="{{url_for('admin.handle_approvals')}}" method="post" id="mainForm">
+                <div class="overflow-scroll vstack gap-3" style="max-height: 640px; height: 640px;">
+                    {% for booking in bookings %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <div class="lead fw-bold">Booking Request</div>
                         </div>
-                    </div>
 
-                    <div id="danger-alert" class="alert alert-danger" style="display:none;">End date must be after start
-                        date.</div>
-
-                    <!-- Modal for Deleting Events -->
-                    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog"
-                        aria-labelledby="delete-modal-title" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="delete-modal-title">Delete Event</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body" id="delete-modal-body">
-                                    Are you sure you want to delete this event?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                        id="cancel-delete-button">Cancel</button>
-                                    <button type="button" class="btn btn-danger" id="delete-button">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-8 col-sm-8 col-lg-4 col-xl-4">
-                    <form action="{{url_for('admin.show_admin_dashboard')}}" method="post" id="mainForm">
-                        <h2 class="text-center">Pending Approvals</h2>
-                        <div id="approvals_section">
+                        <div class="card-body">
                             <div class="row">
-                                {% for booking in bookings %}
-                                {% if booking.get('Status') == 'P' %}
-                                <div class="card mt-5 ml-3">
-                                    <div class="card-body">
-                                        <h6>Booking Request #{{ loop.index }}</h6>
-                                        {% if booking.vendor_name %}
-                                        <p>Vendor Name: {{ booking.vendor_name }}</p>
-                                        <p>Phone Number: {{ booking.vendor_phone }}</p>
-                                        <p>Address: {{ booking.vendor_address }}</p>
-                                        {% else %}
-                                        <p>No vendor details available.</p>
-                                        {% endif %}
-                                        <p>Date: {{ booking.get('Date') }}</p>
-                                        <p>Description: {{ booking.get('Additional Info') }}</p>
-                                        <div class="text-center">
-                                            <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal"
-                                                data-bs-target="#approveModal"
-                                                onclick="setBookingId('{{ booking.id }}')">Approve</button>
-                                            <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
-                                                data-bs-target="#cancelModal"
-                                                onclick="setBookingId('{{ booking.id }}')">Cancel</button>
-                                        </div>
-                                    </div>
+                                <div class="col-7 justify-content-between align-items-start">
+                                    <div class="fs-4 fw-bold">{{ booking.get("Title") }}</div>
+                                    <div class="px-3">{{ booking.get("Deal") }}</div>
                                 </div>
-                                {% endif %}
-                                {% endfor %}
-
-                                {% for vendor in vendor_users %}
-                                {% if vendor.get('Status') == 'P' %}
-                                <div class="card mt-5 ml-3">
-                                    <div class="card-body">
-                                        <h6>Vendor Registration Request #{{ loop.index }}</h6>
-                                        {% if vendor.vendor_name %}
-                                        <p>Vendor Name: {{ vendor.vendor_name }}</p>
-                                        <p>Phone Number: {{ vendor.vendor_phone }}</p>
-                                        <p>Address: {{ vendor.vendor_address }}</p>
-                                        {% else %}
-                                        <p>No User details available.</p>
-                                        {% endif %}
-                                        <div class="text-center">
-                                            <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal"
-                                                data-bs-target="#approveModal"
-                                                onclick="setUserId('{{ vendor.id }}')">Approve</button>
-                                            <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
-                                                data-bs-target="#cancelModal"
-                                                onclick="setUserId('{{ vendor.id }}')">Cancel</button>
-                                        </div>
-                                    </div>
+                                <div class="col-5 justify-content-end">
+                                    <div class="text-end">{{ booking.get('Date') }}</div>
+                                    <div class="text-end">{{ booking.get('Location') }}</div>
                                 </div>
-                                {% endif %}
-                                {% endfor %}
-
-                                {% for user in users %}
-                                {% if user.get('Status') == 'P' %}
-                                <div class="card mt-5 ml-3">
-                                    <div class="card-body">
-                                        <h6>Employee Registration Request #{{ loop.index }}</h6>
-                                        {% if user.get("Email") %}
-                                        <p>Email: {{ user.get("Email") }}</p>
-                                        {% else %}
-                                        <p>No User details available.</p>
-                                        {% endif %}
-                                        <div class="text-center">
-                                            <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal"
-                                                data-bs-target="#approveModal"
-                                                onclick="setUserId('{{ user.id }}')">Approve</button>
-                                            <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
-                                                data-bs-target="#cancelModal"
-                                                onclick="setUserId('{{ user.id }}')">Cancel</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                {% endfor %}
                             </div>
+
+                            <hr>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <strong>{{ booking.get("Vendor_Name") }}</strong>
+                                    <div>📧 {{ booking.get("Vendor_Email") }}</div>
+                                    <div>📞 {{ booking.get("Vendor_Phone") }}</div>
+                                    <div>🏢 {{ booking.get("Vendor_Address") }}</div>
+                                </div>
+                            </div>
+
                         </div>
-                        <input type="hidden" name="bookingIdField" id="bookingIdField">
-                        <input type="hidden" name="userIdField" id="userIdField">
-                        <input type="hidden" name="userIdField" id="userIdField">
-                        <!-- Hidden input to identify the action -->
-                        <input type="hidden" name="action" id="action">
-                    </form>
-                </div>
-
-                <!-- Approve Modal -->
-                <div class="modal fade" id="approveModal" tabindex="-1" role="dialog"
-                    aria-labelledby="approveModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="approveModalLabel">Approve</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Are you sure you want to Approve the Booking request?</p>
-                                <!-- Additional content if needed -->
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" id="confirmApprove"
-                                    onclick="submitApproveForm()">Approve</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            </div>
+                        <div class="card-footer text-center">
+                            <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal"
+                                data-bs-target="#approveModal"
+                                onclick="setBookingId('{{ booking.id }}')">Approve</button>
+                            <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
+                                data-bs-target="#cancelModal" onclick="setBookingId('{{ booking.id }}')">Deny</button>
                         </div>
                     </div>
-                </div>
+                    {% endfor %}
 
-                <!-- Deny Modal -->
-                <div class="modal fade" id="denyModal" tabindex="-1" role="dialog" aria-labelledby="denyModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="denyModalLabel">Deny Booking</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Are you sure you want to DENY the Booking request?</p>
-                                <!-- Additional content if needed -->
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" id="confirmDeny"
-                                    onclick="submitDenyForm()">Deny</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            </div>
+                    {% for vendor in vendors %}
+                    <div class="card ">
+                        <div class="card-header">
+                            <div class="lead fw-bold">Vendor Registration Request</div>
+                        </div>
+
+                        <div class="card-body">
+
+                            <strong>{{ vendor.vendor_name or "N/A" }}</strong>
+                            <div>📧 {{ vendor.get("Email") }}</div>
+                            <div>📞 {{ vendor.vendor_phone or "N/A"}}</div>
+                            <div>🏢 {{ vendor.vendor_address or "N/A"}}</div>
+
+
+                        </div>
+                        <div class="card-footer text-center">
+                            <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal"
+                                data-bs-target="#approveModal" onclick="setUserId('{{ vendor.id }}')">Approve</button>
+                            <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
+                                data-bs-target="#cancelModal" onclick="setUserId('{{ vendor.id }}')">Deny</button>
                         </div>
                     </div>
+                    {% endfor %}
+
+                    {% for employee in employees %}
+                    <div class="card ">
+                        <div class="card-header">
+                            <div class="lead fw-bold">Employee Registration Request</div>
+                        </div>
+
+                        <div class="card-body">
+                            <div>📧 {{ employee.get("Email") }}</div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal"
+                                data-bs-target="#approveModal" onclick="setUserId('{{ employee.id }}')">Approve</button>
+                            <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal"
+                                data-bs-target="#cancelModal" onclick="setUserId('{{ employee.id }}')">Deny</button>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
+                <!-- Hidden input to identify the action -->
+                <input type="hidden" name="bookingIdField" id="bookingIdField">
+                <input type="hidden" name="userIdField" id="userIdField">
+                <input type="hidden" name="action" id="action">
+            </form>
 
-
-
-                <!-- JavaScript Libraries -->
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-                    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-                    crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.js"
-                    integrity="sha384-K4Nk3M58Sssp/XurpWfEZ76LWjdoa+RP28r8FR6/pc9tKVXcu+r8Bo+Q49u1u0n1"
-                    crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.2.0/main.js"
-                    integrity="sha384-HzsO7O03jzXNL71q5PoV/pyIOf38lLMWaZ2Gigw1XXKX7OGkJDgHk1mkABHkmw58"
-                    crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.2.0/main.js"
-                    integrity="sha384-v0JEKw0y8RBe98KpDRzj2XKsds7Ab6Qfuwa6RZFOcbWWOJKvLwIFUyxs2kYXLP9w"
-                    crossorigin="anonymous"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
-                    integrity="sha384-Uz1UHyakAAz121kPY0Nx6ZGzYeUTy9zAtcpdwVmFCEwiTGPA2K6zSGgkKJEQfMhK"
-                    crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"
-                    integrity="sha384-e2kr3z94YEVTtgf8bBbR3EHF3Oi1yLDp7GdxIRn6upe2VFHnSRQe0brjEOeRKCoj"
-                    crossorigin="anonymous"></script>
-                <script type="module" src="{{url_for('static', filename='script.js')}}"></script>
-
-                <script>
-                    function setBookingId(bookingId) {
-                        document.getElementById('bookingIdField').value = bookingId;
-                    }
-
-                    function setUserId(userId) {
-                        document.getElementById('userIdField').value = userId;
-                    }
-
-
-                    function submitDenyForm() {
-                        document.getElementById('action').value = 'DENY';
-                        document.getElementById('mainForm').submit();
-                    }
-
-                    function submitApproveForm() {
-                        document.getElementById('action').value = 'APPROVE';
-                        document.getElementById('mainForm').submit();
-                    }
-                </script>
-            </div>
+            {%endif%}
         </div>
     </div>
 </body>
 
-</html>
+    <div class="col-sm-12 col-lg-7 justify-content-center align-items-center d-flex">
+        {% include 'calendar.html' %}
+    </div>
+</div>
+
+<!-- Approve Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="approveModalLabel">Approve Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to APPROVE this request?</p>
+                <span class="admin-action-target"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="confirmApprove" onclick="submitApproveForm()">Confirm
+                    Approve</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deny Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Deny Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to DENY this request?</p>
+                <span class="admin-action-target"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="confirmCancel" onclick="submitDenyForm()">Confirm
+                    Deny</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function setBookingId(bookingId) {
+        document.getElementById('bookingIdField').value = bookingId;
+    }
+
+    function setUserId(userId) {
+        document.getElementById('userIdField').value = userId;
+    }
+
+
+    function submitDenyForm() {
+        document.getElementById('action').value = 'DENY';
+        document.getElementById('mainForm').submit();
+    }
+
+    function submitApproveForm() {
+        document.getElementById('action').value = 'APPROVE';
+        document.getElementById('mainForm').submit();
+    }
+</script>
+
+{%endblock%}
+{%block scripts%}
+<script src="{{ url_for('static', filename='/js/calendar.js') }}" type="module"></script>
+{% endblock %}

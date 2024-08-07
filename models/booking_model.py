@@ -1,20 +1,25 @@
-
-from flask import request
+from flask import session
+from firebase_admin import firestore
+from models.vendor_model import Vendor
+from util import send_mail
 
 
 class Booking:
 
-    def __init__(self, date, deal, location, additional_info, vendor_id, status):
+    def __init__(self, date, deal, location, title, vendor_id, status):
         self.date = date
         self.deal = deal
         self.location = location
-        self.additional_info = additional_info
+        self.title = title
         self.vendor_id = vendor_id
         self.status = status
 
     def display(self):
         print(self.date, self.deal, self.location,
-              self.additional_info, self.vendor_id, self.status)
+              self.title, self.vendor_id, self.status)
+
+    def get_date(self):
+        return self.date
 
     def get_date(self):
         return self.date
@@ -23,173 +28,143 @@ class Booking:
         return self.date
 
     @staticmethod
-    def add_booking(database_connection, vendor_id):
+    def create_booking(title, location, date, deal, vendor_id):
 
-        # adds a user to db
-        if (request.cookies.get('user_type') == "V"):
-
-            # adds a user to db
-        if (request.cookies.get('user_type') == "V"):
-            status = "P"
-        else:
+        status = 'P'
+        if (session['user_type'] == 'A'):
             status = "A"
-        date = request.form['Date']
-        location = request.form['Location']
-        date = request.form['Date']
-        location = request.form['Location']
-        additional_info = request.form['additional_info']
 
-        '''In case discount checkbox isn't checked'''
-        if request.form.get('discount_checkbox') is None or request.form['discount'] is None:
-            deal = "No Discount"
-        else:
-            deal = request.form['discount']
-
-        booking_details = Booking(
-            date, deal, location, additional_info, vendor_id, status)
-
-        booking = {"Date": booking_details.date, "Deal": booking_details.deal, "Location": booking_details.location,
-                   "Additional Info": booking_details.additional_info, "Vendor_ID": booking_details.vendor_id, "Status": booking_details.status}
-        database_connection.collection("Bookings").add(booking)
-        return booking
+        booking = {"Title": title, "Location": location, "Date": date, "Deal": deal,
+                   "Vendor_ID": vendor_id, "Status": status}
+        update_time, doc_ref = firestore.client().collection("Bookings").add(booking)
+        return update_time
 
     @staticmethod
-    def get_users(database_connection):
-        # gets all users from db
-        users_ref = database_connection.collection('Users')
-        docs = users_ref.get()
-        for doc in docs:
-            return ('{} => {}'.format(doc.id, doc.to_dict()))
-        return docs
+    def read_booking(booking_id):
+        return firestore.client().collection('Bookings').document(booking_id).get().to_dict()
 
     @staticmethod
-    def get_user_id(database_connection, email):
-        users_ref = database_connection.collection('Users')
+    def update_booking(booking_id, title, location, date, deal):
 
-        query = users_ref.where("Email", "==", email)
-        results = query.get()
+        booking_ref = firestore.client().collection('Bookings').document(booking_id)
+        vendor_id = booking_ref.get().get('Vendor_ID')
 
-        for doc in results:
-            user_id = doc.id
+        if vendor_id != session['user_id'] and session['user_type'] == 'A':
+            send_mail("Your Booking has been updated by the Admin.",
+                      Booking.get_vendor_email_by_booking_id(booking_id), "Please login to verify.")
 
-        if len(results) > 0:
-            return user_id
-        else:
+        updated_details = {"Title": title, "Location": location, "Date": date, "Deal": deal,
+                           "Status": 'A' if (session['user_type'] == 'A') else 'P'}
+        return booking_ref.update(updated_details)
 
-    def get_bookings_by_vendor_id(database_connection, vendor_id):
-        booking_ref = database_connection.collection('Bookings')
-        query = booking_ref.where("Vendor_ID", "==", vendor_id)
-        results = query.get()
-        return results
-
-    def get_approved_bookings(database_connection):
-        booking_ref = database_connection.collection('Bookings')
-        query = booking_ref.where("Status", "==", "A")
-        results = query.get()
-        return results
-    
-    def get_pending_bookings(database_connection):
-        booking_ref = database_connection.collection('Bookings')
-        query = booking_ref.where("Status", "==", "P")
-        results = query.get()
-        return results
-
-    def remove_booking(database_connection, booking_id):
-
-        booking_ref = database_connection.collection(
+    @staticmethod
+    def delete_booking(booking_id):
+        db = firestore.client()
+        booking_ref = db.collection(
             'Bookings').document(booking_id)
-        print(booking_id)
-        if booking_ref is not None:
-            print(booking_ref)
-            booking_ref.update({"Status": "D"})
-            return booking_ref
+        if booking_ref.get().exists:
+            return booking_ref.update({"Status": "D"})
         else:
-            return "No User Found!"
+            raise Exception('Booking not found!')
 
-    def modify_booking(database_connection, booking_id):
-        booking_ref = database_connection.collection(
-            'Bookings').document(booking_id)
-        if booking_ref is not None:
-            if (request.cookies.get('user_type') == "V"):
-                status = "P"
-            else:
-                status = "A"
-            date = request.form['date']
-            location = request.form['location']
-            additional_info = request.form['additional_info']
+    @ staticmethod
+    def get_all_bookings():
+        detailed_bookings = []
+        bookings = firestore.client().collection('Bookings').get()
+        for booking_snapshot in bookings:
+            booking = booking_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
+            booking['id'] = booking_snapshot.id
 
-            '''In case discount checkbox isn't checked'''
-            if request.form['discount'] is None:
-                discount = "No Discount"
-            else:
-                discount = request.form['discount']
+            vendor_id = booking.get("Vendor_ID")
+            vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
 
-            print(booking_ref)
-            booking_ref.update({"Status": status, "Date": date, "Location": location,
-                               "Deal": discount, "`Additional Info`": additional_info})
-            return booking_ref
+            # Ensure vendor_details is a dictionary and log any potential issues
+            if vendor_details:
+                booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
+                booking['Vendor_Phone'] = vendor_details.get(
+                    'Phone_Number')
+                booking['Vendor_Address'] = vendor_details.get('Address')
 
-        else:
-            return "No User Found!"
+            detailed_bookings.append(booking)
 
-    def get_bookings_by_vendor_id(database_connection, vendor_id):
-        booking_ref = database_connection.collection('Bookings')
-        query = booking_ref.where("Vendor_ID", "==", vendor_id)
-        results = query.get()
-        return results
+        return detailed_bookings
 
-    def get_approved_bookings(database_connection):
-        booking_ref = database_connection.collection('Bookings')
-        query = booking_ref.where("Status", "==", "A")
-        results = query.get()
-        return results
+    @ staticmethod
+    def get_bookings_by_vendor_id(vendor_id):
+        detailed_bookings = []
+        bookings = firestore.client().collection(
+            'Bookings').where("Vendor_ID", "==", vendor_id).get()
+        vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
 
-    def get_pending_bookings(database_connection):
-        booking_ref = database_connection.collection('Bookings')
-        query = booking_ref.where("Status", "==", "P")
-        results = query.get()
-        return results
+        for booking_snapshot in bookings:
+            booking = booking_snapshot.to_dict()
+            booking['id'] = booking_snapshot.id
 
-    def get_pending_bookings(database_connection):
-        booking_ref = database_connection.collection('Bookings')
-        query = booking_ref.where("Status", "==", "P")
-        results = query.get()
-        return results
+            if vendor_details:
+                booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
+                booking['Vendor_Phone'] = vendor_details.get('Phone_Number')
+                booking['Vendor_Address'] = vendor_details.get('Address')
+                booking['Vendor_Email'] = vendor_details.get('Email')
 
-    def remove_booking(database_connection, booking_id):
+            # Log the booking to verify all fields
+            print(f"Retrieved Booking: {booking}")
 
-        booking_ref = database_connection.collection(
-            'Bookings').document(booking_id)
-        print(booking_id)
-        if booking_ref is not None:
-            print(booking_ref)
-            booking_ref.update({"Status": "D"})
-            return booking_ref
-        else:
-            return "No User Found!"
+            detailed_bookings.append(booking)
 
-    def modify_booking(database_connection, booking_id):
-        booking_ref = database_connection.collection(
-            'Bookings').document(booking_id)
-        if booking_ref is not None:
-            if (request.cookies.get('user_type') == "V"):
-                status = "P"
-            else:
-                status = "A"
-            date = request.form['date']
-            location = request.form['location']
-            additional_info = request.form['additional_info']
+        return detailed_bookings
 
-            '''In case discount checkbox isn't checked'''
-            if request.form['discount'] is None:
-                discount = "No Discount"
-            else:
-                discount = request.form['discount']
+    @ staticmethod
+    def get_approved_bookings():
+        detailed_bookings = []
+        bookings = firestore.client().collection(
+            'Bookings').where("Status", "==", "A").get()
+        for booking_snapshot in bookings:
+            booking = booking_snapshot.to_dict()
+            booking['id'] = booking_snapshot.id
 
-            print(booking_ref)
-            booking_ref.update({"Status": status, "Date": date, "Location": location,
-                               "Deal": discount, "`Additional Info`": additional_info})
-            return booking_ref
+            vendor_id = booking.get("Vendor_ID")
+            vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
 
-        else:
-            return "No User Found!"
+            # Ensure vendor_details is a dictionary and log any potential issues
+            if vendor_details:
+                booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
+                booking['Vendor_Phone'] = vendor_details.get('Phone_Number')
+                booking['Vendor_Address'] = vendor_details.get('Address')
+
+            # Log the booking to verify all fields
+            print(f"Retrieved Booking: {booking}")
+
+            detailed_bookings.append(booking)
+
+        return detailed_bookings
+
+    @ staticmethod
+    def get_pending_bookings_with_details():
+        db = firestore.client()
+        detailed_bookings = []
+        booking_ref = db.collection('Bookings')
+        pending_bookings = booking_ref.where("Status", "==", "P").get()
+        for booking_snapshot in pending_bookings:
+            booking = booking_snapshot.to_dict()
+            booking['id'] = booking_snapshot.id
+
+            vendor_id = booking.get("Vendor_ID")
+            vendor_details = Vendor.get_vendor_by_user_id(vendor_id)
+
+            if vendor_details:
+                booking['Vendor_Name'] = vendor_details.get('Vendor_Name')
+                booking['Vendor_Phone'] = vendor_details.get(
+                    'Phone_Number')
+                booking['Vendor_Address'] = vendor_details.get('Address')
+                booking['Vendor_Email'] = vendor_details.get('Email')
+
+            detailed_bookings.append(booking)
+
+        return detailed_bookings
+
+    @ staticmethod
+    def get_vendor_email_by_booking_id(booking_id):
+        db = firestore.client()
+        vendor_id = db.collection('Bookings').document(
+            booking_id).get().get('Vendor_ID')
+        return db.collection('Users').document(vendor_id).get().get('Email')

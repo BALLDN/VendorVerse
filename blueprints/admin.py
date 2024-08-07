@@ -1,129 +1,138 @@
-from google.cloud.firestore import Client
-from flask.wrappers import Request
-from flask import jsonify, Blueprint, redirect, render_template, abort, request, url_for, flash
-from jinja2 import TemplateNotFound
-import logging
+from flask import Blueprint, redirect, render_template, request, url_for, flash
 
+from blueprints.auth import role_required
 from models.booking_model import Booking
 from models.user_model import User
 from models.vendor_model import Vendor
-from util import get_db
-from firebase_admin import firestore
+from models.poll_model import Poll
+from firebase_admin import firestore, auth
+
+from util import *
 
 
-admin_bp = Blueprint('admin', __name__)
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
-@admin_bp.route('/admin/', methods=['GET'])
-def show_admin_dashboard():
-    try:
-        detailed_bookings, users, vendor_users = _get_data()
-        return render_template('admin_home_page.html', bookings=detailed_bookings, users=users, vendor_users=vendor_users)
-    except TemplateNotFound:
-        abort(404)
+@admin_bp.route('/', methods=['GET'])
+@role_required(['A'])
+def view_admin_dashboard():
+    bookings, vendors, employees = _get_pending_approvals()
+    return render_template(
+        'admin_home_page.html',
+        bookings=bookings,
+        vendors=vendors,
+        employees=employees,
+        home_url=url_for('admin.view_admin_dashboard')
+    )
 
 
-@admin_bp.route('/admin/', methods=['POST'])
+@admin_bp.route('/manage-bookings', methods=['GET'])
+@role_required(['A'])
+def view_manage_bookings():
+
+    bookings = Booking.get_all_bookings()
+
+    return render_template('bookings_manager.html', bookings=bookings, form=BookingForm())
+
+
+@admin_bp.route('/create-booking', methods=['GET'])
+@role_required(['A'])
+def view_create_booking():
+    return render_template('admin_create_booking.html')
+
+
+@admin_bp.route('/manage-polls', methods=['GET'])
+@role_required(['A'])
+def view_polls_manager():
+    polls = Poll.get_all_polls()
+    vendors = Vendor.get_all_vendors()
+
+    poll_results = []
+
+    for poll in polls:
+        poll_info = poll.to_dict()
+        option_percentages, total_responses = Poll.get_poll_results(poll.id)
+
+        poll_result = {
+            'poll_id': poll.id,
+            'poll_data': poll_info,
+            'option_percentages': option_percentages,
+            'total_responses': total_responses
+        }
+        poll_results.append(poll_result)
+        print(poll_results)
+
+    return render_template('admin_polls_page.html', poll_results=poll_results, vendors=vendors)
+
+
+@admin_bp.route('/approval', methods=['POST'])
 def handle_approvals():
     action = request.form.get('action').upper()
     booking_id = request.form.get('bookingIdField')
     user_id = request.form.get('userIdField')
 
-    if not action:
-        return jsonify({'error': 'Action Undefined'}), 400
-
-    if (booking_id):
-        return _approve_entity('Bookings', booking_id, action)
-
-    elif (user_id):
-        return _approve_entity('Users', user_id, action)
-
-
-def _approve_entity(collection_name, entity_id, action):
     try:
-        db = firestore.client()
+        if (booking_id):
+            approve_booking(booking_id, action)
+            msg = f"Booking {action} action completed successfully."
 
-        entity_ref = db.collection(collection_name).document(entity_id)
+        elif (user_id):
+            approve_user(user_id, action)
+            msg = f"User {action} action completed successfully."
 
-        if not entity_ref.get().exists:
-            flash(f'{collection_name.capitalize()} not found', 'error')
-            return redirect(url_for('admin.show_admin_dashboard'))
+        flash(msg, FlashCategory.SUCCESS.value)
 
-        if action == 'APPROVE':
-            entity_ref.update({'Status': 'A'})
-            flash(
-                {'message': f'{collection_name.capitalize()} approved successfully'})
-        elif action == 'DENY':
-            entity_ref.update({'Status': 'D'})
-            flash(
-                {'message': f'{collection_name.capitalize()} denied successfully'})
-
-        else:
-            flash('Invalid action', 'error')
-            return redirect(url_for('admin.show_admin_dashboard'))
-
-        return redirect(url_for('admin.show_admin_dashboard'))
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        flash(str(e), FlashCategory.ERROR.value)
+
+    finally:
+        return redirect(url_for('admin.view_admin_dashboard'))
 
 
-def _get_data():
-    db = get_db()
-    bookings = Booking.get_pending_bookings(db)
-    users = User.get_pending_users(db)
-    detailed_bookings = []
-    vendor_users = []
-    for booking_snapshot in bookings:
-        booking = booking_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
-        booking['id'] = booking_snapshot.id
+def approve_booking(booking_id, action):
+    is_approved = _approve_entity('Bookings', booking_id, action)
 
-        vendor_id = booking.get("Vendor_ID")
-        vendor_details = Vendor.get_vendor_by_user_id(db, vendor_id)
+    vendor_email = Booking.get_vendor_email_by_booking_id(booking_id)
+    if is_approved:
+        send_mail("Your Booking has been approved",
+                  vendor_email, "Please login to verify.")
+    else:
+        send_mail("Your Booking has been denied",
+                  vendor_email, "Please login to verify.")
 
-        # Log vendor details fetched
-        logging.info(f"Fetched vendor details for Vendor_ID {
-                     vendor_id}: {vendor_details}")
 
-        # Ensure vendor_details is a dictionary and log any potential issues
-        if vendor_details:
-            booking['vendor_name'] = vendor_details.get('Vendor_Name')
-            booking['vendor_phone'] = vendor_details.get(
-                'Phone_Number')
-            booking['vendor_address'] = vendor_details.get('Address')
-            logging.info(f"Vendor details added to booking: {
-                         vendor_details}")
-        else:
-            logging.warning(
-                f"No vendor details found for Vendor_ID: {vendor_id}")
+def approve_user(user_id, action):
+    is_approved = _approve_entity('Users', user_id, action)
+    user_email = auth.get_user(user_id).email
+    if is_approved:
+        send_mail("Your account has been approved",
+                  user_email, "Please login to verify.")
+    else:
+        send_mail("Your account has been denied",
+                  user_email, "Please login to verify.")
 
-        detailed_bookings.append(booking)
 
-    for user_snapshot in users:
-        if (user_snapshot.get("User_Type") == "V"):
-            user = user_snapshot.to_dict()  # Convert DocumentSnapshot to dictionary
-            user['id'] = user_snapshot.id
+def _approve_entity(collection_name: str, entity_id, action):
+    db = firestore.client()
 
-            user_id = user_snapshot.id
-            vendor_details = Vendor.get_vendor_by_user_id(db, user_id)
+    entity_ref = db.collection(collection_name).document(entity_id)
 
-            # Log vendor details fetched
+    if not entity_ref.get().exists:
+        raise Exception(f'{collection_name.capitalize()[:-1]} not found')
 
-            # Ensure vendor_details is a dictionary and log any potential issues
-            if vendor_details:
-                user['vendor_name'] = vendor_details.get('Vendor_Name')
-                user['vendor_phone'] = vendor_details.get(
-                    'Phone_Number')
-                user['vendor_address'] = vendor_details.get('Address')
-                logging.info(f"Vendor details added to User: {
-                             vendor_details}")
-            else:
-                logging.warning(
-                    f"No vendor details found for Vendor_ID: {user_id}")
+    if action == 'APPROVE':
+        entity_ref.update({'Status': 'A'})
+        return True
+    elif action == 'DENY':
+        entity_ref.update({'Status': 'D'})
+        return False
+    else:
+        raise Exception("Invalid Action.")
 
-            vendor_users.append(user)
 
-        # Log the detailed bookings list
-    logging.info(f"Detailed bookings: {detailed_bookings}")
-    logging.info(f"Vendors: {vendor_users}")
+def _get_pending_approvals():
+    bookings = Booking.get_pending_bookings_with_details()
+    vendors = User.get_pending_vendors_with_details()
+    employees = User.get_pending_employees()
 
-    return detailed_bookings, users, vendor_users
+    return bookings, vendors, employees

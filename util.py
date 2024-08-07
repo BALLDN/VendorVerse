@@ -1,21 +1,46 @@
-
+import os
+import logging
+from enum import Enum
+from firebase_admin import credentials, initialize_app
 from flask_wtf import FlaskForm
+from flask_mail import Mail, Message
 from wtforms import StringField, TextAreaField, DateField
 from wtforms.validators import InputRequired
-from firebase_admin import firestore
-
-import logging
-import os
-
-from firebase_config import init_firebase_admin
-
-init_firebase_admin()
 
 
-def get_db():
-    if 'FIREBASE_ENV' in os.environ:
-        return firestore.client()
-    return None
+def send_mail(subject, recipient, message):
+    msg = Message(subject=subject,
+                  sender='no-reply@vendorverse.com', recipients=[recipient])
+    msg.html = message
+    Mail().send(msg)
+
+
+def send_admin_notif(type):
+    if type == "VENDOR":
+        subject = "A New Vendor Registration is Pending Approval."
+
+    elif type == "EMPLOYEE":
+        subject = "A New Employee Registration is Pending Approval."
+
+    elif type == "BOOKING":
+        subject = "A New Booking is Pending Approval."
+
+    else:
+        return None
+
+    send_mail(subject=subject, recipient=os.environ.get(
+        'ADMIN_MAIL'), message="Please login to review Approval.")
+
+
+def init_firebase():
+    try:
+        cred = credentials.Certificate(
+            os.environ.get('FIREBASE_PRIVATE_KEY'))
+        initialize_app(cred)
+        logging.info("Firebase Admin initialized successfully")
+
+    except Exception as e:
+        logging.exception("Failed to initialize Firebase Admin: %s", e)
 
 
 def setup_logging():
@@ -43,16 +68,26 @@ def setup_logging():
     auth_logger.addHandler(auth_handler)
 
 
-class BookingForm(FlaskForm):
-    date = DateField('Date', validators=[InputRequired()])
-    location = StringField('Location', validators=[InputRequired()])
-    discount = TextAreaField('Discount', validators=[InputRequired()])
-    additional_info = TextAreaField(
-        'Additional Information', validators=[InputRequired()])
-
-
 # config.py
 class TestConfig:
     TESTING = True
     DEBUG = True
     FIRESTORE_PROJECT_ID = 'test-project'
+
+
+class FlashCategory(Enum):
+    SUCCESS = 'success'
+    ERROR = 'danger'
+    INFO = 'info'
+    WARNING = 'warning'
+
+    def __str__(self):
+        return self.value
+
+
+class BookingForm(FlaskForm):
+    date = DateField('Date', validators=[InputRequired()])
+    location = StringField('Location', validators=[InputRequired()])
+    discount = TextAreaField('Discount', validators=[InputRequired()])
+    title = TextAreaField(
+        'Title', validators=[InputRequired()])

@@ -1,0 +1,126 @@
+{% extends 'layout.html' %}
+{% block title %}Bookings Manager{% endblock %}
+{% block content %}
+
+<div class="vstack gap-3" id="bookings_container">
+    {% for booking in bookings %}
+    <div class="card" key="{{ booking.id }}">
+        <div class="card-header">
+            <h3>Status - {{ booking.get("Status") }}</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-7 justify-content-between align-items-start">
+                    <div class="fs-4 fw-bold">{{ booking.get("Title") }}</div>
+                    <div class="px-3">{{ booking.get("Deal") }}</div>
+                </div>
+                <div class="col-5 justify-content-end">
+                    <div class="text-end">{{ booking.get('Date') }}</div>
+                    <div class="text-end">{{ booking.get('Location') }}</div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-12">
+                    <strong>{{ booking.get("Vendor_Name") }}</strong>
+                    <div>📧 {{ booking.get("Vendor_Email") }}</div>
+                    <div>📞 {{ booking.get("Vendor_Phone") }}</div>
+                    <div>🏢 {{ booking.get("Vendor_Address") }}</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer text-center">
+            <button type="button" class="btn btn-primary m-2 edit-btn" data-bs-toggle="modal"
+                data-bs-target="#editModal" data-booking-id="{{ booking.id }}">Edit</button>
+            <button type="button" class="btn btn-danger m-2 cancel-btn" data-bs-toggle="modal"
+                data-bs-target="#cancelModal" data-booking-id="{{ booking.id }}">Cancel</button>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+
+<!-- Edit Booking -->
+<div class="modal fade edit-form" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="modal-title">Edit Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frm_edit" method="POST">
+                    <input type="hidden" name="booking_id" id="booking_id">
+
+
+                    <div data-mdb-input-init class="form-outline mb-2">
+                        <label class="form-label" for="title">Booking Title</label>
+                        <input type="text" id="title" name="title" class="form-control form-control-md" maxlength="200"
+                            value="" required>
+                        </input>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-2">
+                        <label for="date">Booking Date</label>
+                        <input id="date" name="date" class="form-control mb-2" type="date" value="" />
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-2">
+                        <label class="form-label" for="location">Location</label>
+                        <select class="form-select form-select-sm mb-2" aria-label=".form-select-sm" name="location"
+                            id="location" required>
+                            <option value="" disabled selected>Select Location</option>
+                            <option value="Front Car park">Front Car Park</option>
+                            <option value="Back Car Park">Back Car Park</option>
+                        </select>
+                    </div>
+
+                    <div data-mdb-input-init id="deal_details" class='form-outline mb-4'>
+                        <label class='form-label' for='deal'>Deal Details</label>
+                        <textarea type='text' maxlength='200' id='deal' name="deal" class='form-control form-control-md'
+                            required> </textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-2">
+                        <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                            class="btn btn-dark btn-block btn-lg px-5">
+                            <h4 class="m-0">Confirm</h4>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Booking -->
+<div class="modal fade" id="cancelModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Cancel Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to cancel this booking?
+            </div>
+            <div class="modal-footer">
+                <form id="frm_cancel" method="POST">
+                    <button type="submit" class="btn btn-danger m-2 w-full">Confirm
+                        Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='/js/bookings_manager.js') }}" type="module"></script>
+{% endblock %}

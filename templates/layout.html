@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="VendorVerse aims to connect local SMEs in Tralee with our company as a portal to engage with our staff. See how we can help your business thrive. 📈">
+    <meta name="keywords"
+        content="VendorVerse, local vendors, Tralee, JRI America, booking platform, community engagement, small businesses, SME">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="VendorVerse">
+    <meta property="og:description"
+        content="VendorVerse aims to connect local SMEs in Tralee with our company as a portal to engage with our staff. See how we can help your business thrive. 📈">
+    <meta property="og:image" content="{{ url_for('static', filename='og-image.png') }}">
+    <meta property="og:url" content="{{ request.url }}">
+
+    <title>{% block title %}Home{% endblock %} | VendorVerse</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block style_override %}{% endblock %}
+</head>
+
+
+<body>
+    {% include 'navbar.html' %}
+
+    {% if not messages %}
+    {% set messages = get_flashed_messages(with_categories=true) %}
+    {% endif %}
+
+    <div id="älert_container" class="position-fixed top-4 end-0 p-3 z-3">
+        {% for category, message in messages %}
+        <div class="alert alert-dismissible fade show rounded-3 mb-3 {{ 'alert-' + category }}" role="alert">
+            {{ message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="content container p-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {%block cookie_consent%}{% endblock %}
+    {%block scripts%}{% endblock %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha384-Uz1UHyakAAz121kPY0Nx6ZGzYeUTy9zAtcpdwVmFCEwiTGPA2K6zSGgkKJEQfMhK"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"
+        integrity="sha384-e2kr3z94YEVTtgf8bBbR3EHF3Oi1yLDp7GdxIRn6upe2VFHnSRQe0brjEOeRKCoj"
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.js"
+        integrity="sha384-K4Nk3M58Sssp/XurpWfEZ76LWjdoa+RP28r8FR6/pc9tKVXcu+r8Bo+Q49u1u0n1"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.2.0/main.js"
+        integrity="sha384-HzsO7O03jzXNL71q5PoV/pyIOf38lLMWaZ2Gigw1XXKX7OGkJDgHk1mkABHkmw58"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

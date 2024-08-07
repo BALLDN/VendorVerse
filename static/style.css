@@ -1,28 +1,39 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
-body {
-  font-family: "Montserrat", sans-serif;
-  width: 100vw;
-  min-height: 100%;
-  background: #84fab0;
+@import url("https://fonts.cdnfonts.com/css/nuku-nuku");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css");
+@import url("https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.css");
+@import url("https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.3.0/main.min.css");
+
+.ubuntu-bold {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: normal;
 }
 
 html {
-  min-height: 100%;
-  background: linear-gradient(
-    to right,
-    rgba(132, 250, 176, 0.5),
-    rgba(143, 211, 244, 0.5)
-  );
+  height: 100dvh;
 }
 
-.cd__main {
-  position: relative;
-  background: linear-gradient(to right, #4e54c8, #8f94fb) !important;
+body {
+  background: url("/static/images/general-bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
-.registration_card {
-  padding-top: 5%;
-  padding-bottom: 5%;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Nuku Nuku", sans-serif;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 #header {
@@ -30,10 +41,6 @@ html {
   margin: auto;
   padding: 20px;
   width: 600px;
-}
-
-.about_us {
-  padding-top: 100px;
 }
 
 /*Modify scrollbar for approvals section*/
@@ -54,80 +61,12 @@ html {
 .addScroll {
   overflow-y: auto;
   height: 700px;
+  overflow-x: hidden;
 }
 
-Select {
-  padding: 2px;
-}
-
-.gradient-custom-3 {
-  /* fallback for old browsers */
-
-  /* W3C, IE 10+/ Edge, Firefox 16+, Ch    background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));rome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(
-    to right,
-    rgba(132, 250, 176, 0.5),
-    rgba(143, 211, 244, 0.5)
-  );
-
-  background-repeat: repeat-y;
-}
-.gradient-custom-4 {
-  /* fallback for old browsers */
-  background: #84fab0;
-
-  min-height: 100%;
-
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(
-    to right,
-    rgba(132, 250, 176, 1),
-    rgba(143, 211, 244, 1)
-  );
-
-  background-repeat: repeat-y;
-}
-
-#calendar {
-  background: #fff;
-  margin: 40px;
-  min-height: 600px;
-  padding: 20px;
-}
-
-/*Set width for every <p> and <a>*/
-@media (max-width: 550px) {
-  p,
-  a {
-    font-size: 1em;
-  }
-  #calendar {
-    width: 80vw;
-    height: 400px;
-  }
-
-  .fc {
-    height: 350px;
-  }
-}
-
-@media (max-width: 1000px) {
-  /*#calendar{
-        width: 70vw;
-    }*/
-
-  #approvals_section {
-    width: 80vw;
-    margin: auto;
-    height: 100%;
-  }
-}
-
-@media (min-width: 551px) {
-  p,
-  a {
-    font-size: 1.1rem;
-  }
+#hideMe {
+  -webkit-animation: cssAnimation 5s forwards;
+  animation: cssAnimation 5s forwards;
 }
 
 #text_section {
@@ -153,11 +92,8 @@ Select {
   font-weight: 500;
 }
 
-.fc-customButton-button {
-  font-size: 13px !important;
-  top: 80px;
-  transform: translateY(-50%);
-  margin: 10px;
+button.fc-today-button {
+  text-transform: capitalize;
 }
 
 .form-group {
@@ -172,10 +108,6 @@ Select {
   border-radius: 3px !important;
   padding: 0px 8px !important;
   font-size: 15px;
-}
-
-.fc .fc-ltr .fc-unthemed {
-  height: 700px;
 }
 
 .context-menu {
@@ -211,15 +143,75 @@ Select {
   border-radius: 2px;
 }
 
-.fa,
-.fas {
-  font-size: 13px;
-  margin-right: 4px;
+.navbar-logo {
+  width: 40px; /* Adjust the width as per your requirement */
+  height: auto; /* Ensures the height scales proportionally */
+  padding-bottom: 2px; /* Optional: Adjust margin for spacing */
 }
 
-.cookie_banner {
-  position: sticky;
-  width: 60%;
+.image_boxes {
   display: flex;
   align-items: center;
+  margin-bottom: 2%;
+  border: 2px solid #585858;
+  overflow: hidden; /* Ensure content stays within box */
+  border-radius: 15px;
+}
+
+.image_boxes img {
+  max-width: 100%; /* Limit image width to the size of its container */
+  height: auto; /* Maintain aspect ratio */
+  display: block; /* Ensure image is displayed as a block element */
+}
+
+.fix_text {
+  margin-left: 2%;
+  text-align: center;
+  flex: 1;
+}
+
+.home_page_boxes a:link,
+a:visited,
+a:active {
+  text-decoration: none;
+}
+.home_page_boxes a:hover {
+  text-decoration: underline;
+}
+
+.home_page_logins {
+  display: flex;
+  justify-content: space-between;
+  margin: 2% 20% 2% 20%;
+}
+
+.home_page_login_areas {
+  border: 2px solid #000000;
+  border-radius: 15px;
+  text-align: center;
+  padding: 2%;
+}
+
+.home_page_login_areas p {
+  font-size: 20px;
+}
+
+.home_page_login_areas input[type="button"] {
+  background-color: #212529;
+  color: #ffffff8c;
+  border: 1px solid #212529;
+  border-radius: 10px;
+  padding: 3%;
+}
+
+.scrollable-panel {
+  max-height: 800px;
+  /* Adjust height as needed */
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.divider-vertical {
+  border-left: 1px solid #ccc;
+  height: 100%;
 }

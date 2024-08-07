@@ -1,0 +1,116 @@
+<nav class="navbar navbar-expand-lg sticky-top w-100 bg-light shadow-sm">
+    <div class="container-fluid d-flex align-items-center ">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo"
+            aria-controls="navbarTogglerDemoW" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <a class="navbar-brand d-flex align-items-center gap-2 p-4" href="{{ home_url or '/' }}">
+            <img src="/static/images/Logo.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+            <h1 class="">VendorVerse</h1>
+        </a>
+
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo">
+            <div class="d-flex flex-column flex-lg-row w-100">
+                <!-- Left Nav -->
+                <ul class="nav navbar-nav flex-column flex-lg-row me-lg-auto d-flex gap-2">
+                    {% set user_type = session.get('user_type')%}
+                    {% if user_type %}
+                    <div class="vr d-none d-lg-block me-4"></div>
+                    {%endif%}
+
+                    {% if user_type == 'A' %}
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('admin.view_admin_dashboard') }}">
+                            <h4>Dashboard</h4>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('admin.view_create_booking') }}">
+                            <h4>Create Booking</h4>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('admin.view_manage_bookings') }}">
+                            <h4>Manage Bookings</h4>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('admin.view_polls_manager') }}">
+                            <h4>Manage Polls</h4>
+                        </a>
+                    </li>
+                    {% elif user_type == 'V' %}
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('vendor.view_vendor_dashboard') }}">
+                            <h4>Dashboard</h4>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('vendor.view_create_booking') }}">
+                            <h4>Create Booking</h4>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('vendor.view_manage_bookings') }}">
+                            <h4>Manage Bookings</h4>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                </ul>
+
+                <!-- Responsive Divider -->
+                <div class="d-lg-none my-2 divider"></div>
+
+                <!-- Right Nav -->
+                <ul class="nav navbar-nav flex-column flex-lg-row ms-lg-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{url_for('about')}}">
+                            <h4>About</h4>
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <button class="btn btn-lg btn-block dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-lg-end">
+                            {% if session.get('access_token') %}
+                            {% set user_type = session.get('user_type')%}
+                            {% if user_type == 'V' %}
+                            <li>
+                                <a class="dropdown-item my-4" aria-current="page"
+                                    href="{{ url_for('vendor.view_profile') }}">
+                                    <span class="fs-5">My Profile</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li class="px-2">
+                                <a class="btn btn-danger w-100" href="{{ url_for('auth.logout') }}">
+                                    <span class="my-0 fs-5">Logout</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a class="dropdown-item" aria-current="page" href="{{ url_for('auth.register') }}">
+                                    <span class="fs-5">Register</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" aria-current="page" href="{{ url_for('auth.login') }}">
+                                    <span class="fs-5">Login</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

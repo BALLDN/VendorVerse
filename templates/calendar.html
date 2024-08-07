@@ -1,0 +1,33 @@
+<div id='calendar' class="card p-4 h-100 justify-content-center"></div>
+
+<!-- Booking Details -->
+<div id="form" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Booking Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="booking-form">
+                    <div class="mb-3">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <textarea class="form-control" id="title" disabled readonly></textarea>
+                        </div>
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="date" disabled readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" disabled readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="deal" class="form-label">Deal</label>
+                        <input type="text" class="form-control" id="deal" disabled readonly>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

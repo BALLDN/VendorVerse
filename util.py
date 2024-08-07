@@ -9,10 +9,14 @@ from wtforms.validators import InputRequired
 
 
 def send_mail(subject, recipient, message):
-    msg = Message(subject=subject,
-                  sender='no-reply@vendorverse.com', recipients=[recipient])
-    msg.html = message
-    Mail().send(msg)
+    try:
+        msg = Message(subject=subject,
+                      sender='no-reply@vendorverse.com', recipients=[recipient])
+        msg.html = message
+        logging.info(f'Sending email {subject} to {recipient}...')
+        Mail().send(msg)
+    except Exception as e:
+        logging.error(str(e))
 
 
 def send_admin_notif(type):

@@ -92,6 +92,10 @@ h6 {
   font-weight: 500;
 }
 
+.fc-toolbar {
+  display: block;
+}
+
 button.fc-today-button {
   text-transform: capitalize;
 }

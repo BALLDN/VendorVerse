@@ -32,6 +32,7 @@ def create_app(test_config=None):
         app.config.from_object(test_config)
 
     init_firebase()
+    setup_logging()
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)

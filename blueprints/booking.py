@@ -56,7 +56,7 @@ def update_booking(booking_id):
                       FlashCategory.SUCCESS.value)
 
     except Exception as e:
-        flash("An error has occuring during amendment of Booking. Please try again.",
+        flash("An error has occured during amendment of Booking. Please try again.",
               FlashCategory.ERROR.value)
         logging.error(str(e))
     return redirect(url_for('index'))
@@ -75,7 +75,7 @@ def delete_booking(booking_id):
                   Booking.get_vendor_email_by_booking_id(booking_id), "Please login to verify.")
 
     except Exception as e:
-        flash("An error has occuring during cancellation of Booking. Please try again.",
+        flash("An error has occured during cancellation of Booking. Please try again.",
               FlashCategory.ERROR.value)
         logging.error(str(e))
 

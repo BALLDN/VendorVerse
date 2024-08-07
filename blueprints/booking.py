@@ -58,7 +58,7 @@ def update_booking(booking_id):
     except Exception as e:
         flash("An error has occuring during amendment of Booking. Please try again.",
               FlashCategory.ERROR.value)
-        logging.ERROR(str(e))
+        logging.error(str(e))
     return redirect(url_for('index'))
 
 

@@ -84,6 +84,7 @@ class Booking:
                 booking['Vendor_Phone'] = vendor_details.get(
                     'Phone_Number')
                 booking['Vendor_Address'] = vendor_details.get('Address')
+                booking['Vendor_Email'] = vendor_details.get('Email')
 
             detailed_bookings.append(booking)
 

@@ -23,14 +23,6 @@ body {
   font-style: normal;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: "Nuku Nuku", sans-serif;
-}
 
 .card {
   background-color: rgba(255, 255, 255, 0.8);

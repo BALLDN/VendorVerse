@@ -25,9 +25,13 @@ def create_booking():
             success = Booking.create_booking(
                 title, location, date, deal, session['user_id'])
         if success:
-            flash("Your Booking has been created and is pending approval",
+            if session['user_type'] == 'V':
+                flash("Your Booking has been created and is pending approval",
                   FlashCategory.SUCCESS.value)
-            send_admin_notif("BOOKING")
+                send_admin_notif("BOOKING")
+            elif session['user_type'] == 'A':
+                flash("Booking has been created successfully and is auto-approved",
+                      FlashCategory.SUCCESS.value)
     except Exception as e:
         flash('An error was encountered during the attempt of creating a Booking. Please try again.',
               FlashCategory.ERROR.value)

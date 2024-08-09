@@ -41,7 +41,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <strong>{{ booking.get("Vendor_Name") }}</strong>
-                                    <div>📧 {{ booking.get("Vendor_Email") }}</div>
+                                    <div>📧 {{ booking.get("Vendor_Email") or booking.get("Vendor_ID") }}</div>
                                     <div>📞 {{ booking.get("Vendor_Phone") }}</div>
                                     <div>🏢 {{ booking.get("Vendor_Address") }}</div>
                                 </div>
@@ -111,7 +111,7 @@
 
         </div>
     </div>
-</body>
+    </body>
 
     <div class="col-sm-12 col-lg-7 justify-content-center align-items-center d-flex card p-4">
         {% include 'calendar.html' %}

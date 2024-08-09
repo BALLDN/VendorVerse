@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-12">
                     <strong>{{ booking.get("Vendor_Name") }}</strong>
-                    <div>📧 {{ booking.get("Vendor_Email") }}</div>
+                    <div>📧 {{ booking.get("Vendor_Email") or booking.get("Vendor_ID") }}</div>
                     <div>📞 {{ booking.get("Vendor_Phone") }}</div>
                     <div>🏢 {{ booking.get("Vendor_Address") }}</div>
                 </div>

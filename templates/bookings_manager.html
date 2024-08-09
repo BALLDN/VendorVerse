@@ -6,6 +6,7 @@
     {% for booking in bookings %}
     <div class="card" key="{{ booking.id }}">
         <div class="card-header">
+            
             <h3>Status - {{ booking.get("Status") }}</h3>
         </div>
 

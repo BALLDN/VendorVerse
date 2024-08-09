@@ -6,8 +6,13 @@
     {% for booking in bookings %}
     <div class="card" key="{{ booking.id }}">
         <div class="card-header">
-            
-            <h3>Status - {{ booking.get("Status") }}</h3>
+            {% if booking.get("Status") == "P" %}
+            <h3>Status - Pending</h3>
+            {% elif booking.get("Status") == "A" %}
+            <h3>Status - Approved</h3>
+            {% else %}
+            <h3>Status - Cancelled</h3>
+            {% endif %}
         </div>
 
         <div class="card-body">

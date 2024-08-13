@@ -63,22 +63,6 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        var toastEl = document.getElementById('myToast');
-        var toast = new bootstrap.Toast(toastEl, {
-            autohide: true,
-            delay: 7000
-        });
-        toast.show();
-        document.getElementById('discount_checkbox').checked = false;
-        const dateInput = document.getElementById('dateInput');
-        const today = new Date();
-        today.setDate(today.getDate() + 3);
-        const twoDaysAfter = today.toISOString().split('T')[0];
-
-        dateInput.setAttribute('min', twoDaysAfter);
-    });
-
     function submitBookingCancelForm() {
         document.getElementById('booking-action').value = 'cancel';
         document.getElementById('booking-form').submit();
@@ -90,19 +74,19 @@
         console.log(document.getElementById('event-id').value)
     }
 
-    document.getElementById('submit-button').addEventListener('click', submitBookingModifyForm);
-
-    function getCurrentDate() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
     function toggleDealDetails() {
         document.getElementById("deal_details").toggleAttribute('hidden');
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('discount_checkbox').checked = false;
+        const dateInput = document.getElementById('dateInput');
+        const today = new Date();
+        today.setDate(today.getDate() + 3);
+        const twoDaysAfter = today.toISOString().split('T')[0];
+
+        dateInput.setAttribute('min', twoDaysAfter);
+    });
 </script>
 {%endblock%}
 {%block scripts%}

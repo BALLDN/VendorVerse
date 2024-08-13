@@ -80,10 +80,7 @@ def create_app(test_config=None):
 
     return app
 
-    #         # Set cookies for login details + user type
-    #         url_response.set_cookie('login_email', login_email)
-    #         url_response.set_cookie('user_type', User.validate_user(db))
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)

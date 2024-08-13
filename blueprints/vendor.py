@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for, flash, jsonify, session, abort
 from jinja2 import TemplateNotFound
 from firebase_admin import firestore
+import logging
 
 from models.vendor_model import Vendor
 from models.booking_model import Booking
@@ -96,7 +97,8 @@ def vendor():
                 else:
                     return "No Booking Found!"
         except Exception as e:
-            return jsonify({'error': str(e)}), 500
+            logging.error(str(e))
+            return jsonify({'error': 'An internal error occurred. Please try again later.'}), 500
 
 
 @vendor_bp.route('/profile/edit', methods=['POST'])

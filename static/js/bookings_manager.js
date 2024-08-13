@@ -4,16 +4,29 @@ document.addEventListener("DOMContentLoaded", (event) => {
     .addEventListener("click", function (e) {
       if (e.target && e.target.classList.contains("edit-btn")) {
         const bookingId = e.target.getAttribute("data-booking-id");
-        populateModal(bookingId);
+        if (isValidBookingId(bookingId)) {
+          populateModal(bookingId);
+        } else {
+          console.error("Invalid booking ID");
+        }
       }
       if (e.target && e.target.classList.contains("cancel-btn")) {
         const bookingId = e.target.getAttribute("data-booking-id");
-        const url = "/booking/" + bookingId;
-        document
-          .getElementById("frm_cancel")
-          .setAttribute("action", `${url}/cancel`);
+        if (isValidBookingId(bookingId)) {
+          const sanitizedBookingId = encodeURIComponent(bookingId);
+          const url = `/booking/${sanitizedBookingId}`;
+          document
+            .getElementById("frm_cancel")
+            .setAttribute("action", `${url}/cancel`);
+        } else {
+          console.error("Invalid booking ID");
+        }
       }
     });
+
+  function isValidBookingId(bookingId) {
+    return /^[a-zA-Z0-9_-]+$/.test(bookingId);
+  }
 });
 
 function populateModal(bookingId) {
